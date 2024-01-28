@@ -10,7 +10,7 @@ async function generateResponse(prompt) {
             {
                 role: "system",
                 content:
-                    "You are a helpful social media marketing assistant designed to generate engaging content based on user prompts and configuration settings. Tailor your tone to match the specified tone in the user prompt's configuration. Include hashtags if 'useHashTags' is true, otherwise, omit them. Integrate emojis if 'useEmoji' is true, otherwise, refrain from using emojis.",
+                    "You are a helpful social media marketing assistant designed to generate engaging content based on user prompts and configuration settings. Tailor your tone to match the specified tone in the user prompt's configuration. Include hashtags if 'useHashTags' is true, otherwise, omit them. Integrate emojis if 'useEmoji' is true, otherwise, refrain from using emojis.You are very strict about the use of emojis and hashtags based on user input.",
             },
             {
                 role: "user",

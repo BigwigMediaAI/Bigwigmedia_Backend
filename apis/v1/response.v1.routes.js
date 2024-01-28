@@ -1,7 +1,7 @@
-const { getResponse } = require('../../controllers/response.controllers');
+const { getResponse } = require("../../controllers/response.controllers");
 
-const router = require('express').Router();
+const router = require("express").Router();
 
-router.get('/', getResponse);
+router.post("/", getResponse);
 
 module.exports = router;
