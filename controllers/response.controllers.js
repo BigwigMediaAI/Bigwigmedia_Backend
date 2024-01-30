@@ -1,4 +1,5 @@
 const Templete = require("../models/templetes.models");
+const User = require("../models/users.models");
 const generatePrompt = require("../utils.js/generatePrompt.utils");
 const generateResponse = require("../utils.js/generateResponse.utils");
 const {
@@ -15,7 +16,17 @@ exports.getResponse = async (req, res) => {
         const useHashTags = (req.body.useHashTags);
         const templateId = req.body.templateId;
         const template = await Templete.findById(templateId);
-console.log(req.body);
+        console.log(req.body);
+        
+        // get user from req.user
+        const user = await User.findById(req.user._id);
+
+        // decrease limits
+        await user.descreseLimit();
+        console.log(user)
+        console.log(template)
+
+        // generate prompt
         const generatedPrompt = generatePrompt(
             template.templete,
             prompt,
@@ -24,7 +35,7 @@ console.log(req.body);
             useHashTags=== "true" ? true : false
         );
         console.log(generatedPrompt);
-        // return;
+
 
         const response = await generateResponse(generatedPrompt);
         console.log(response);

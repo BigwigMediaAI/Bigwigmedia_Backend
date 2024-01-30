@@ -1,7 +1,8 @@
 const { getResponse } = require("../../controllers/response.controllers");
+const { checkLimit } = require("../../middleware/limitCheck.middleware");
 
 const router = require("express").Router();
 
-router.post("/", getResponse);
+router.post("/", checkLimit ,getResponse);
 
 module.exports = router;

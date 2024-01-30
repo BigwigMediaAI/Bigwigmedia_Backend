@@ -3,13 +3,34 @@ const {
     response_500,
     response_200,
 } = require("../utils.js/responseCodes.utils");
+
+const User = require("../models/users.models");
 exports.searchTemplete = async (req, res) => {
     try {
         const { search } = req.query;
         const templetes = await Templete.find({
             name: { $regex: search, $options: "i" },
         }).select("name logo description");
-        response_200(res, "Templetes found", templetes);
+
+        const templateObj = [];
+        templetes.forEach((templete) => {
+            templateObj.push({
+                ...templete._doc,
+                isBookmarked: false,
+            });
+        });
+
+        // console.log('req user', req.user)
+        if (req.user) {
+            const user = await User.findById(req.user._id);
+            console.log(user);
+            templateObj.forEach((templete) => {
+                if (user.isBookedMarked(templete._id)) {
+                    templete.isBookmarked = true;
+                }
+            });
+        }
+        response_200(res, "Templetes found", templateObj);
     } catch (err) {
         return response_500(res, "Error searching templete", err);
     }
@@ -19,7 +40,26 @@ exports.getTemplete = async (req, res) => {
     try {
         const { id } = req.params;
         const templete = await Templete.findById(id);
-        response_200(res, "Templete found", templete);
+
+        const templateObj = [];
+        templete.forEach((templete) => {
+            templateObj.push({
+                ...templete._doc,
+                isBookmarked: false,
+            });
+        });
+
+        // console.log('req user', req.user)
+        if (req.user) {
+            const user = await User.findById(req.user._id);
+            console.log(user);
+            templateObj.forEach((templete) => {
+                if (user.isBookedMarked(templete._id)) {
+                    templete.isBookmarked = true;
+                }
+            });
+        }
+        response_200(res, "Templete found", templateObj);
     } catch (err) {
         return response_500(res, "Error getting templete", err);
     }
@@ -66,7 +106,26 @@ exports.getTempletesByLabel = async (req, res) => {
         const templetes = await Templete.find({
             labels: { $in: [label] },
         }).select("name logo description");
-        response_200(res, "Templetes found", templetes);
+
+        const templateObj = [];
+        templetes.forEach((templete) => {
+            templateObj.push({
+                ...templete._doc,
+                isBookmarked: false,
+            });
+        });
+
+        // console.log('req user', req.user)
+        if (req.user) {
+            const user = await User.findById(req.user._id);
+            console.log(user);
+            templateObj.forEach((templete) => {
+                if (user.isBookedMarked(templete._id)) {
+                    templete.isBookmarked = true;
+                }
+            });
+        }
+        response_200(res, "Templetes found", templateObj);
     } catch (err) {
         return response_500(res, "Error searching templete", err);
     }
@@ -75,8 +134,29 @@ exports.getTempletesByLabel = async (req, res) => {
 exports.getAllTemplates = async (req, res) => {
     try {
         const templetes = await Templete.find().select("name logo description");
-        response_200(res, "Templetes found", templetes);
+        // also send if is bookmarked or not
+        const templateObj = [];
+        templetes.forEach((templete) => {
+            templateObj.push({
+                ...templete._doc,
+                isBookmarked: false,
+            });
+        });
+
+        // console.log('req user', req.user)
+        if (req.user) {
+            const user = await User.findById(req.user._id);
+            console.log(user);
+            templateObj.forEach((templete) => {
+                if (user.isBookedMarked(templete._id)) {
+                    templete.isBookmarked = true;
+                }
+            });
+        }
+
+        // console.log(templateObj);
+        response_200(res, "Templetes found", templateObj);
     } catch (err) {
         return response_500(res, "Error searching templete", err);
     }
-}
+};
