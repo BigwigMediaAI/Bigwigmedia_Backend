@@ -41,25 +41,9 @@ exports.getTemplete = async (req, res) => {
         const { id } = req.params;
         const templete = await Templete.findById(id);
 
-        const templateObj = [];
-        templete.forEach((templete) => {
-            templateObj.push({
-                ...templete._doc,
-                isBookmarked: false,
-            });
-        });
-
         // console.log('req user', req.user)
-        if (req.user) {
-            const user = await User.findById(req.user._id);
-            console.log(user);
-            templateObj.forEach((templete) => {
-                if (user.isBookedMarked(templete._id)) {
-                    templete.isBookmarked = true;
-                }
-            });
-        }
-        response_200(res, "Templete found", templateObj);
+
+        response_200(res, "Templete found", templete);
     } catch (err) {
         return response_500(res, "Error getting templete", err);
     }
