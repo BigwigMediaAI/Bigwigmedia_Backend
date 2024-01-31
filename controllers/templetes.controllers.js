@@ -144,3 +144,24 @@ exports.getAllTemplates = async (req, res) => {
         return response_500(res, "Error searching templete", err);
     }
 };
+
+exports.updateTemplate = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, description, templete, labels, logo } = req.body;
+        const updatedTemplate = await Templete.findByIdAndUpdate(
+            id,
+            {
+                name,
+                description,
+                templete,
+                labels,
+                logo,
+            },
+            { new: true }
+        );
+        response_200(res, "Templete updated", updatedTemplate);
+    } catch (err) {
+        return response_500(res, "Error updating templete", err);
+    }
+}
