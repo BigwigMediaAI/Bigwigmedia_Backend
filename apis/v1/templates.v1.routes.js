@@ -6,6 +6,8 @@ const {
     getTempletesByLabel,
     getAllTemplates,
     updateTemplate,
+    deleteTemplate,
+    getAllSavedImagesURL,
 } = require("../../controllers/templetes.controllers");
 
 const router = require("express").Router();
@@ -17,4 +19,6 @@ router.post("/add", addTemplate);
 router.get("/labels", getLabels);
 router.get("/label/:label", getTempletesByLabel);
 router.post("/update/:id", updateTemplate);
+router.delete("/delete/:id", deleteTemplate);
+router.get("/all/logo", getAllSavedImagesURL);
 module.exports = router;

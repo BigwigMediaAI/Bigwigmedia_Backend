@@ -51,16 +51,17 @@ exports.getTemplete = async (req, res) => {
 
 exports.addTemplate = async (req, res) => {
     try {
-        const { name, description, templete, labels, logo } = req.body;
-        const newTemplete = new Templete({
+        const { name, description, templete, labels, logo, faq } = req.body;
+        const newTemplate = new Templete({
             name,
             description,
             templete,
             labels,
             logo,
+            faq,
         });
-        await newTemplete.save();
-        response_200(res, "Templete added", newTemplete);
+        await newTemplate.save();
+        response_200(res, "Templete added", newTemplate);
     } catch (err) {
         return response_500(res, "Error adding templete", err);
     }
@@ -117,7 +118,7 @@ exports.getTempletesByLabel = async (req, res) => {
 
 exports.getAllTemplates = async (req, res) => {
     try {
-        const templetes = await Templete.find().select("name logo description");
+        const templetes = await Templete.find();
         // also send if is bookmarked or not
         const templateObj = [];
         templetes.forEach((templete) => {
@@ -148,20 +149,40 @@ exports.getAllTemplates = async (req, res) => {
 exports.updateTemplate = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, description, templete, labels, logo } = req.body;
-        const updatedTemplate = await Templete.findByIdAndUpdate(
-            id,
-            {
-                name,
-                description,
-                templete,
-                labels,
-                logo,
-            },
-            { new: true }
-        );
+        const { name, description, templete, labels, logo, faq } = req.body;
+        const updatedTemplate = await Templete.findByIdAndUpdate(id, {
+            name,
+            description,
+            templete,
+            labels,
+            logo,
+            faq,
+        });
         response_200(res, "Templete updated", updatedTemplate);
     } catch (err) {
         return response_500(res, "Error updating templete", err);
+    }
+}
+
+exports.deleteTemplate = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedTemplate = await Templete.findByIdAndDelete(id);
+        response_200(res, "Templete deleted", deletedTemplate);
+    } catch (err) {
+        return response_500(res, "Error deleting templete", err);
+    }
+}
+
+exports.getAllSavedImagesURL = async (req, res) => {
+    try {
+        const templetes = await Templete.find();
+        const images = [];
+        templetes.forEach((templete) => {
+            images.push(templete.logo);
+        });
+        response_200(res, "Images found", images);
+    } catch (err) {
+        return response_500(res, "Error getting images", err);
     }
 }

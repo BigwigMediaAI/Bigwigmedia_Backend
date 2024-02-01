@@ -17,6 +17,12 @@ const templetesSchema = new Schema({
     logo: {
         type: String,
     },
+    faq: [
+        {
+            question: { type: String },
+            answer: { type: String },
+        },
+    ],
 });
 
 const Templetes = mongoose.model("Templete", templetesSchema);
