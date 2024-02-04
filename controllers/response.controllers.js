@@ -2,6 +2,8 @@ const Templete = require("../models/templetes.models");
 const User = require("../models/users.models");
 const generatePrompt = require("../utils.js/generatePrompt.utils");
 const generateResponse = require("../utils.js/generateResponse.utils");
+const removeEmoji = require("../utils.js/removeEmoji");
+const removeHashtag = require("../utils.js/removeHashtag");
 const {
     response_500,
     response_200,
@@ -37,8 +39,15 @@ exports.getResponse = async (req, res) => {
         console.log(generatedPrompt);
 
 
-        const response = await generateResponse(generatedPrompt);
+        let response = await generateResponse(generatedPrompt);
         console.log(response);
+        if(useEmoji!== "true"){
+            response = removeEmoji(response);
+        }
+
+        if(useHashTags!== "true"){
+            response = removeHashtag(response);
+        }
 
         response_200(res, "Response generated successfully", response);
     } catch (error) {
