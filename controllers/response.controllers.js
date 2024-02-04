@@ -9,6 +9,7 @@ const {
     response_200,
 } = require("../utils.js/responseCodes.utils");
 
+const generateParaphrase = require("../utils.js/generateParaphrase");
 exports.getResponse = async (req, res) => {
     try {
         
@@ -54,3 +55,13 @@ exports.getResponse = async (req, res) => {
         response_500(res, "Error getting response", error);
     }
 };
+
+exports.getParaPhrase = async (req, res) => {
+    try {
+        const prompt = req.body.prompt;
+        const response = await generateParaphrase(prompt);
+        response_200(res, "Paraphrase generated successfully", response);
+    } catch (error) {
+        response_500(res, "Error getting paraphrase", error);
+    }
+}
