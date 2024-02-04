@@ -41,9 +41,21 @@ exports.getTemplete = async (req, res) => {
         const { id } = req.params;
         const templete = await Templete.findById(id);
 
-        // console.log('req user', req.user)
+        let templateLabels = templete.labels;
+        templateLabels = templateLabels.filter(
+            (label) => label !== "All Tools" || label !== "In Demand Tools"
+        );
 
-        response_200(res, "Templete found", templete);
+        const relatedTempletes = await Templete.find({
+            labels: { $in: templateLabels },
+        }).select("name logo");
+
+        res.status(200).json({
+            data: templete,
+            relatedTempletes,
+            message: "Templete found",
+            status: "OK",
+        });
     } catch (err) {
         return response_500(res, "Error getting templete", err);
     }
@@ -162,7 +174,7 @@ exports.updateTemplate = async (req, res) => {
     } catch (err) {
         return response_500(res, "Error updating templete", err);
     }
-}
+};
 
 exports.deleteTemplate = async (req, res) => {
     try {
@@ -172,7 +184,7 @@ exports.deleteTemplate = async (req, res) => {
     } catch (err) {
         return response_500(res, "Error deleting templete", err);
     }
-}
+};
 
 exports.getAllSavedImagesURL = async (req, res) => {
     try {
@@ -185,4 +197,4 @@ exports.getAllSavedImagesURL = async (req, res) => {
     } catch (err) {
         return response_500(res, "Error getting images", err);
     }
-}
+};
