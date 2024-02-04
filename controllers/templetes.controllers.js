@@ -43,7 +43,7 @@ exports.getTemplete = async (req, res) => {
 
         let templateLabels = templete.labels;
         templateLabels = templateLabels.filter(
-            (label) => label !== "All Tools" || label !== "In Demand Tools"
+            (label) => label !== "All Tools" && label !== "In Demand Tools"
         );
 
         const relatedTempletes = await Templete.find({
