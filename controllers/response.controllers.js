@@ -10,9 +10,10 @@ const {
 } = require("../utils.js/responseCodes.utils");
 
 const generateParaphrase = require("../utils.js/generateParaphrase");
+
+const { generateImage, QUALITY } = require("../utils.js/generateImage.utils");
 exports.getResponse = async (req, res) => {
     try {
-        
         const prompt = req.body.prompt;
         const tone = req.body.tone;
         const useEmoji = String(req.body.useEmoji);
@@ -20,14 +21,14 @@ exports.getResponse = async (req, res) => {
         const templateId = req.body.templateId;
         const template = await Templete.findById(templateId);
         console.log(req.body);
-        
+
         // get user from req.user
         const user = await User.findById(req.user._id);
 
         // decrease limits
         await user.descreseLimit();
-        console.log(user)
-        console.log(template)
+        console.log(user);
+        console.log(template);
 
         // generate prompt
         const generatedPrompt = generatePrompt(
@@ -35,18 +36,17 @@ exports.getResponse = async (req, res) => {
             prompt,
             tone,
             useEmoji === "true" ? true : false,
-            useHashTags=== "true" ? true : false
+            useHashTags === "true" ? true : false
         );
         console.log(generatedPrompt);
 
-
         let response = await generateResponse(generatedPrompt);
         console.log(response);
-        if(useEmoji!== "true"){
+        if (useEmoji !== "true") {
             response = removeEmoji(response);
         }
 
-        if(useHashTags!== "true"){
+        if (useHashTags !== "true") {
             response = removeHashtag(response);
         }
 
@@ -64,4 +64,23 @@ exports.getParaPhrase = async (req, res) => {
     } catch (error) {
         response_500(res, "Error getting paraphrase", error);
     }
-}
+};
+
+exports.getImage = async (req, res) => {
+    try {
+        const prompt = req.body.prompt;
+        const n = req.body.n;
+        const quality = req.body.quality || QUALITY.STANDARD;
+        // check quality is valid
+        if (!Object.values(QUALITY).includes(quality)) {
+            response_500(res, "Invalid quality", null);
+            return;
+        }
+        const response = (await generateImage(prompt, n, quality)).map(
+            x => x.url
+        );
+        response_200(res, "Image generated successfully", response);
+    } catch (error) {
+        response_500(res, "Error getting image", error);
+    }
+};
