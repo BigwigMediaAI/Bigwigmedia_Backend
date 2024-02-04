@@ -11,7 +11,7 @@ const {
 
 const generateParaphrase = require("../utils.js/generateParaphrase");
 
-const { generateImage, QUALITY } = require("../utils.js/generateImage.utils");
+const { generateImage, QUALITY } = require("../utils.js/generateImage");
 exports.getResponse = async (req, res) => {
     try {
         const prompt = req.body.prompt;
