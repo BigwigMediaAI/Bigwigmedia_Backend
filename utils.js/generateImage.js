@@ -18,4 +18,4 @@ async function generateImage(prompt, n, quality) {
     return response.data;
 }
 
-exports.module =  { generateImage, QUALITY };
+module.exports =  { generateImage, QUALITY };
