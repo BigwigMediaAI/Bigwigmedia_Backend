@@ -4,7 +4,7 @@ require("dotenv").config();
 const openai = new OpenAI();
 
 const QUALITY = {
-    HI: "hi",
+    HD: "hd",
     STANDARD: "standard",
 };
 async function generateImage(prompt, n, quality) {
