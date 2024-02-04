@@ -14,8 +14,8 @@ exports.getResponse = async (req, res) => {
         
         const prompt = req.body.prompt;
         const tone = req.body.tone;
-        const useEmoji = (req.body.useEmoji);
-        const useHashTags = (req.body.useHashTags);
+        const useEmoji = String(req.body.useEmoji);
+        const useHashTags = String(req.body.useHashTags);
         const templateId = req.body.templateId;
         const template = await Templete.findById(templateId);
         console.log(req.body);
