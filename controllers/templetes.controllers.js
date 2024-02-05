@@ -10,7 +10,7 @@ exports.searchTemplete = async (req, res) => {
         const { search } = req.query;
         const templetes = await Templete.find({
             name: { $regex: search, $options: "i" },
-        }).select("name logo description");
+        }).select("name logo labels description");
 
         const templateObj = [];
         templetes.forEach((templete) => {
@@ -48,7 +48,7 @@ exports.getTemplete = async (req, res) => {
 
         const relatedTempletes = await Templete.find({
             labels: { $in: templateLabels },
-        }).select("name logo");
+        }).select("name logo labels");
 
         res.status(200).json({
             data: templete,
@@ -102,7 +102,7 @@ exports.getTempletesByLabel = async (req, res) => {
         // labels is a array of strings
         const templetes = await Templete.find({
             labels: { $in: [label] },
-        }).select("name logo description");
+        }).select("name logo labels description");
 
         const templateObj = [];
         templetes.forEach((templete) => {
