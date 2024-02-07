@@ -7,10 +7,10 @@ const QUALITY = {
     HD: "hd",
     STANDARD: "standard",
 };
-async function generateImage(prompt, n, quality) {
+async function generateImage(prompt, n, quality, style) {
     const response = await openai.images.generate({
         model: "dall-e-2",
-        prompt: prompt,
+        prompt: prompt + "With style: " + style,
         n: n,
         size: "1024x1024",
         quality: quality,
@@ -18,4 +18,4 @@ async function generateImage(prompt, n, quality) {
     return response.data;
 }
 
-module.exports =  { generateImage, QUALITY };
+module.exports = { generateImage, QUALITY };

@@ -6,6 +6,7 @@ const {
 const Objects = require("../models/objects.models");
 const Group = require("../models/group.models");
 const Input = require("../models/input.models");
+const generateResponse = require("../utils.js/generateResponse.utils");
 
 exports.addInput = async (req, res) => {
     try {
@@ -136,8 +137,19 @@ exports.getObjectByLabel = async (req, res) => {
 exports.getResponseOfObject = async (req, res) => {
     try {
         const object = await Objects.findById(req.params.id);
-        // object.
+        const groups = req.body.groups;
+        let prompt = "";
+        for (let i = 0; i < object.groups.length; i++) {
+            for (let j = 0; j < object.groups[i].inputs.length; j++) {
+                prompt += object.groups[i].inputs[j].replace("<%%>", groups[i][j]) + " ";
+            }
+        }
+
+        console.log(prompt);
+        const response = await generateResponse(prompt);
+        console.log(response);
+        response_200(res, response);
     } catch (error) {
         response_500(res, "Error getting response of object", error);
     }
-}
+};

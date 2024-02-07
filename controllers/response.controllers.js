@@ -71,12 +71,13 @@ exports.getImage = async (req, res) => {
         const prompt = req.body.prompt;
         const n = req.body.n;
         const quality = req.body.quality || QUALITY.STANDARD;
+        const style = req.body.style;
         // check quality is valid
         if (!Object.values(QUALITY).includes(quality)) {
             response_500(res, "Invalid quality", null);
             return;
         }
-        const response = (await generateImage(prompt, n, quality)).map(
+        const response = (await generateImage(prompt, n, quality, style)).map(
             x => x.url
         );
         response_200(res, "Image generated successfully", response);
