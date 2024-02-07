@@ -20,6 +20,7 @@ app.get("/", (req, res) => {
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api/v1", require("./apis/v1/index"));
+app.use("/api/v2", require("./apis/v2/index"));
 
 app.listen(PORT, () => {
     console.log(`🌟 App live at http://localhost:${PORT}`);
