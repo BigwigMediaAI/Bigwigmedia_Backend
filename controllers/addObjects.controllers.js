@@ -143,8 +143,7 @@ exports.getResponseOfObject = async (req, res) => {
         for (let i = 0; i < object.groups.length; i++) {
             for (let j = 0; j < object.groups[i].length; j++) {
                 prompt +=
-                    object.groups[i][j].gpt.replace("{%%}", groups[i][j]) +
-                    " ";
+                    object.groups[i][j].gpt.replace("{%%}", groups[i][j]) + " ";
             }
         }
 
@@ -155,5 +154,20 @@ exports.getResponseOfObject = async (req, res) => {
         response_200(res, response);
     } catch (error) {
         response_500(res, "Error getting response of object", error);
+    }
+};
+
+exports.getCategories = async (req, res) => {
+    try {
+        const objects = await Objects.find();
+        const categories = [];
+        objects.forEach((object) => {
+            for (let i = 0; i < object.labels.length; i++) {
+                categories.push(object.labels[i]);
+            }
+        });
+        response_200(res, categories);
+    } catch (error) {
+        response_500(res, "Error getting categories", error);
     }
 };
