@@ -149,7 +149,6 @@ exports.getResponseOfObject = async (req, res) => {
         }
 
         console.log(prompt);
-        return;
         const response = await generateResponse(prompt);
         console.log(response);
 
