@@ -7,7 +7,7 @@ const {
     getObject,
     getObjectByLabel,
     getObjects,
-    getResponseOfObject
+    getResponseOfObject,
 } = require("../../controllers/addObjects.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
 const { auth } = require("../../middleware/auth.middleware");
@@ -20,7 +20,6 @@ router.get("/getObjects", getObjects);
 router.get("/getObject/:id", getObject);
 router.get("/getObjectByLabel/:label", getObjectByLabel);
 
-
-router.post("/getResponseOfObject/:id",auth, checkLimit, getResponseOfObject);
+router.post("/getResponseOfObject/:id", auth, checkLimit, getResponseOfObject);
 
 module.exports = router;
