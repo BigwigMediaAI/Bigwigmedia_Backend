@@ -153,7 +153,13 @@ exports.getResponseOfObject = async (req, res) => {
         const response = await generateResponse(prompt);
         console.log(response);
 
-        response_200(res, response);
+        res.status(200).json({
+            status: "success",
+            message: "Response generated successfully",
+            data: response,
+            prompt: prompt,
+        });
+        // response_200(res, response);
     } catch (error) {
         response_500(res, "Error getting response of object", error);
     }
