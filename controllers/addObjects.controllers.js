@@ -74,6 +74,7 @@ exports.addObjectOnce = async (req, res) => {
             name,
             accoName,
             description,
+            tagLine,
             groups,
             labels,
             logo,
@@ -85,6 +86,7 @@ exports.addObjectOnce = async (req, res) => {
             name,
             accoName,
             description,
+            tagLine,
             groups,
             labels,
             logo,
@@ -102,7 +104,7 @@ exports.addObjectOnce = async (req, res) => {
 
 exports.getObjects = async (req, res) => {
     try {
-        const objects = await Objects.find().select("name logo description");
+        const objects = await Objects.find().select("name logo description tagLine");
         response_200(res, objects);
     } catch (error) {
         response_500(res, "Error getting objects", error);
@@ -127,7 +129,7 @@ exports.getObjectByLabel = async (req, res) => {
             labels: {
                 $in: [req.params.label],
             },
-        }).select("name logo description");
+        }).select("name logo description tagLine");
         response_200(res, objects);
     } catch (error) {
         response_500(res, "Error getting objects by label", error);

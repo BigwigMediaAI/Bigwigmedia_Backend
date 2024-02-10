@@ -5,7 +5,8 @@ const Schema = mongoose.Schema;
 const objectsSchema = new Schema({
     name: { type: String, required: true },
     accoName: { type: String, required: true },
-    description: { type: String, default: ""},
+    description: { type: String, default: "" },
+    tagLine: { type: String, default: "" },
     groups: [
         [
             {
