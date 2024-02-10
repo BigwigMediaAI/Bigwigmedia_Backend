@@ -7,6 +7,7 @@ const objectsSchema = new Schema({
     accoName: { type: String, required: true },
     description: { type: String, default: "" },
     tagLine: { type: String, default: "" },
+    isUpcomming: { type: Boolean, default: false },
     groups: [
         [
             {

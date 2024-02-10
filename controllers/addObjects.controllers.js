@@ -75,6 +75,7 @@ exports.addObjectOnce = async (req, res) => {
             accoName,
             description,
             tagLine,
+            isUpcomming,
             groups,
             labels,
             logo,
@@ -86,6 +87,7 @@ exports.addObjectOnce = async (req, res) => {
             name,
             accoName,
             description,
+            isUpcomming,
             tagLine,
             groups,
             labels,
@@ -104,7 +106,9 @@ exports.addObjectOnce = async (req, res) => {
 
 exports.getObjects = async (req, res) => {
     try {
-        const objects = await Objects.find().select("name logo description tagLine");
+        const objects = await Objects.find().select(
+            "name logo description tagLine isUpcomming labels"
+        );
         response_200(res, objects);
     } catch (error) {
         response_500(res, "Error getting objects", error);
@@ -116,7 +120,7 @@ exports.getObject = async (req, res) => {
         const object = await Objects.findById(req.params.id);
         const similarObject = await Objects.find({
             groupBy: object.groupBy,
-        }).select("accoName logo");
+        }).select("accoName logo isUpcomming");
         response_200(res, { object, similarObject });
     } catch (error) {
         response_500(res, "Error getting object", error);
@@ -129,7 +133,7 @@ exports.getObjectByLabel = async (req, res) => {
             labels: {
                 $in: [req.params.label],
             },
-        }).select("name logo description tagLine");
+        }).select("name logo description tagLine labels");
         response_200(res, objects);
     } catch (error) {
         response_500(res, "Error getting objects by label", error);
@@ -171,7 +175,8 @@ exports.getCategories = async (req, res) => {
         const categories = [];
         objects.forEach((object) => {
             for (let i = 0; i < object.labels.length; i++) {
-                categories.push(object.labels[i]);
+                if (!categories.includes(object.labels[i]))
+                    categories.push(object.labels[i]);
             }
         });
         response_200(res, categories);

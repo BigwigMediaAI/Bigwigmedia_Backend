@@ -10,7 +10,7 @@ const usersSchema = new Schema({
     bookmarks: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Templete",
+            ref: "Object",
         },
     ],
     current_limit: {
