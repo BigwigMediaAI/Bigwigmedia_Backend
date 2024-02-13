@@ -7,6 +7,7 @@ const Objects = require("../models/objects.models");
 const Group = require("../models/group.models");
 const Input = require("../models/input.models");
 const generateResponse = require("../utils.js/generateResponse.utils");
+const User = require("../models/users.models");
 
 exports.addInput = async (req, res) => {
     try {
@@ -154,6 +155,10 @@ exports.getResponseOfObject = async (req, res) => {
         }
 
         console.log(prompt);
+
+        const user = await User.findById(req.user._id);
+        user.decreaseLimit();
+
         const response = await generateResponse(prompt);
         console.log(response);
 
