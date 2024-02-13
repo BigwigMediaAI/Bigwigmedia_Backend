@@ -2,6 +2,7 @@ const {
     response_500,
     response_201,
     response_200,
+    response_400,
 } = require("../utils.js/responseCodes.utils");
 const Objects = require("../models/objects.models");
 const Group = require("../models/group.models");
@@ -155,6 +156,8 @@ exports.getResponseOfObject = async (req, res) => {
         }
 
         console.log(prompt);
+
+        if (!req.user) return response_400(res, "User not found");
 
         const user = await User.findById(req.user._id);
         user.decreaseLimit();
