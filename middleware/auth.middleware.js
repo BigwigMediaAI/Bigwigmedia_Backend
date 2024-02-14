@@ -6,7 +6,7 @@ exports.auth = async (req, res, next) => {
         const { clerkId } = req.query;
         console.log(req.query)
         if (!clerkId) {
-            req.user = undefined;
+            req.user = false;
             return next();
         }
         let user = await User.findOne({ clerkId });
