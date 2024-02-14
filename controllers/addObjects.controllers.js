@@ -160,7 +160,7 @@ exports.getResponseOfObject = async (req, res) => {
         if (!req.user) return response_400(res, "User not found");
 
         const user = await User.findById(req.user._id);
-        user.decreaseLimit();
+        user.descreseLimit();
 
         const response = await generateResponse(prompt);
         console.log(response);
