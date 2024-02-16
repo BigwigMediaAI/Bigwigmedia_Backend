@@ -192,3 +192,28 @@ exports.getCategories = async (req, res) => {
         response_500(res, "Error getting categories", error);
     }
 };
+
+exports.searchObjects = async (req, res) => {
+    try {
+        const objects = await Objects.find({
+            name: {
+                $regex: req.params.query,
+                $options: "i",
+            },
+        }).select("name logo description tagLine labels isUpcomming");
+        response_200(res, objects);
+    } catch (error) {
+        response_500(res, "Error searching objects", error);
+    }
+}
+
+exports.updateObject = async (req, res) => {
+    try {
+        const object = await Objects.findByIdAndUpdate
+            (req.params.id, req.body, { new: true });
+        response_200(res, object);
+    }
+    catch (error) {
+        response_500(res, "Error updating object", error);
+    }
+}
