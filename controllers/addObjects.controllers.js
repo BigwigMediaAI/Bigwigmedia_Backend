@@ -111,7 +111,28 @@ exports.getObjects = async (req, res) => {
         const objects = await Objects.find().select(
             "name logo description tagLine isUpcomming labels"
         );
-        response_200(res, objects);
+
+        const objectArr = [];
+
+        objects.forEach((object) => {
+            objectArr.push({
+                ...object._doc,
+                isBookmarked: false,
+            });
+        });
+
+        if (req.user) {
+            const user = await User.findById(req.user._id);
+            user.bookmarks.forEach((bookmark) => {
+                objectArr.forEach((object) => {
+                    if (bookmark.equals(object._id)) {
+                        object.isBookmarked = true;
+                    }
+                });
+            });
+        }
+
+        response_200(res, objectArr);
     } catch (error) {
         response_500(res, "Error getting objects", error);
     }
@@ -136,6 +157,26 @@ exports.getObjectByLabel = async (req, res) => {
                 $in: [req.params.label],
             },
         }).select("name logo description tagLine labels");
+
+        const objectArr = [];
+
+        objects.forEach((object) => {
+            objectArr.push({
+                ...object._doc,
+                isBookmarked: false,
+            });
+        });
+
+        if (req.user) {
+            const user = await User.findById(req.user._id);
+            user.bookmarks.forEach((bookmark) => {
+                objectArr.forEach((object) => {
+                    if (bookmark.equals(object._id)) {
+                        object.isBookmarked = true;
+                    }
+                });
+            });
+        }
         response_200(res, objects);
     } catch (error) {
         response_500(res, "Error getting objects by label", error);
@@ -205,15 +246,17 @@ exports.searchObjects = async (req, res) => {
     } catch (error) {
         response_500(res, "Error searching objects", error);
     }
-}
+};
 
 exports.updateObject = async (req, res) => {
     try {
-        const object = await Objects.findByIdAndUpdate
-            (req.params.id, req.body, { new: true });
+        const object = await Objects.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
         response_200(res, object);
-    }
-    catch (error) {
+    } catch (error) {
         response_500(res, "Error updating object", error);
     }
-}
+};
