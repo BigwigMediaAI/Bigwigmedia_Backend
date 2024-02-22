@@ -10,5 +10,25 @@ exports.getLimit = async (req, res) => {
     } catch (error) {
         response_200(res, "Error getting limits", error);
     }
-}
+};
 
+exports.decreaseLimit = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        user.decreaseLimit();
+        response_200(res, "Limit decreased", user.getLimits());
+    } catch (error) {
+        response_200(res, "Error decreasing limits", error);
+    }
+};
+
+
+exports.increaseLimit = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        user.increaseLimit();
+        response_200(res, "Limit increased", user.getLimits());
+    } catch (error) {
+        response_200(res, "Error increasing limits", error);
+    }
+}
