@@ -3,18 +3,20 @@ const { response_401 } = require("../utils.js/responseCodes.utils");
 
 exports.auth = async (req, res, next) => {
     try {
-        const { clerkId } = req.query;
-        console.log(req.query)
+        const { clerkId, name, email, imageUrl } = req.query;
+        console.log(req.query);
         if (!clerkId) {
             req.user = false;
             return next();
         }
-        let user = await User.findOne({ clerkId });
+        let user = await User.findOne({
+            clerkId,
+        });
         if (!user) {
-            user = new User({ clerkId });
+            user = new User({ clerkId, name, email, image: imageUrl });
             await user.save();
         }
-        console.log("auth")
+        console.log("auth");
         console.log(user);
         req.user = user;
         next();

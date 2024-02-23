@@ -7,6 +7,16 @@ const Schema = mongoose.Schema;
 
 const usersSchema = new Schema({
     clerkId: { type: String, required: true },
+    name: {
+        type: String,
+    },
+    email: {
+        type: String,
+    },
+    image: {
+        type: String,
+    },
+
     bookmarks: [
         {
             type: mongoose.Schema.Types.ObjectId,
