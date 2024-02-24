@@ -17,8 +17,8 @@ exports.getPaymentm = async (req, res) => {
             },
         ],
         mode: "payment",
-        success_url: "http://localhost:3000/success",
-        cancel_url: "http://localhost:3000/cancel",
+        success_url: "https://www.bigwigmedia.ai/success?plan=" + product.name,
+        cancel_url: "https://www.bigwigmedia.ai/cancel",
     });
     res.json({ id: session.id });
 };
