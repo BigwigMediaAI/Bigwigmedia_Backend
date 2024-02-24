@@ -3,7 +3,7 @@ const { response_401, response_404, response_400, response_500 } = require("../u
 
 exports.getAllUser = async (req, res) => {
     try {
-        const users = await User.find().select("name email image");
+        const users = await User.find();
         res.status(200).json({
             data: users,
             message: "Users found",
