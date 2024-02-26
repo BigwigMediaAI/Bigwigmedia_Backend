@@ -21,7 +21,7 @@ router.post("/addObject", addObject);
 router.post("/addObjectOnce", addObjectOnce);
 router.get("/getObjects", getObjects);
 router.get("/getObject/:id", getObject);
-router.get("/getObjectByLabel/:label", getObjectByLabel);
+router.get("/getObjectByLabel/:label",auth, getObjectByLabel);
 
 router.post("/getResponseOfObject/:id", auth, checkLimit, getResponseOfObject);
 

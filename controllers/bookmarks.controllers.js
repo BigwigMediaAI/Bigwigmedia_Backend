@@ -11,7 +11,6 @@ const {
 exports.addOrRemoveBookmark = async (req, res) => {
     try {
         const { id } = req.params;
-        // console.log(id);
         const user = await User.findById(req.user._id);
         // const templete = await Templete.findById(id);
         const templete = await Object.findById(id);
