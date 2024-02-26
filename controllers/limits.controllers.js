@@ -27,7 +27,8 @@ exports.increaseLimit = async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
         const increase = req.body.increase;
-        user.increaseLimit(increase);
+        const plan = req.body.plan;
+        user.increaseLimit(increase,plan);
         response_200(res, "Limit increased", user.getLimits());
     } catch (error) {
         response_200(res, "Error increasing limits", error);

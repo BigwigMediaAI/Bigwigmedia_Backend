@@ -31,6 +31,9 @@ const usersSchema = new Schema({
         type: Number,
         default: process.env.INITIAL_LIMIT,
     },
+    plan:{
+        type:string,
+    }
 });
 
 usersSchema.methods.descreseLimit = function () {
@@ -42,12 +45,14 @@ usersSchema.methods.getLimits = function () {
     return {
         current_limit: this.current_limit,
         max_limit: this.max_limit,
+        plan:this?.plan ??"free"
     };
 };
 
-usersSchema.methods.increaseLimit = function (increment) {
+usersSchema.methods.increaseLimit = function (increment,plan) {
     this.current_limit = this.current_limit + increment;
     this.max_limit = this.max_limit + increment;
+    this.plan=plan;
     return this.save();
 }
 
