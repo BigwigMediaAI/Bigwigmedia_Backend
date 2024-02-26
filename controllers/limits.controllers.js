@@ -6,6 +6,7 @@ exports.getLimit = async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
         const limits = user.getLimits();
+        console.log(limits)
         response_200(res, "Limits found", limits);
     } catch (error) {
         response_200(res, "Error getting limits", error);
