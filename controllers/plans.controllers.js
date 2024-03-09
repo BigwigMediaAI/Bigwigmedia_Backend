@@ -9,6 +9,19 @@ const {
 
 exports.getAllPlans = async (req, res) => {
     console.log("getAllPlans");
+    const plan = {
+        PLAN: PLAN,
+    };
+    if (req.user) {
+        const user = await User.findById(req.user._id);
+        const token = await Token.findOne({ user: user._id });
+        if (token.hasValidity()) {
+            plan.currentPlan = token.getCurrentPlan();
+            plan.planHistory = token.getPlansDetails();
+            plan.showTop = true;
+        }
+    }
+
     try {
         response_200(res, "success", PLAN);
     } catch (error) {

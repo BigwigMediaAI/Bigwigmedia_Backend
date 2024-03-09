@@ -72,6 +72,11 @@ tokenSchema.methods.isValid = function () {
     return this.currentLimit > 0 && this.expairyDate >= Date.now();
 };
 
+tokenSchema.methods.hasValidity = function () { 
+    return this.expairyDate >= Date.now();
+}
+
+
 tokenSchema.methods.getPlansDetails = function () {
     return this.plans.map((plan) => {
         const planDetails = PLAN[plan.name]; // need testing
