@@ -56,7 +56,7 @@ exports.getCurrentPlan = async (req, res) => {
         }
         const tokenObj = await Token.findOne({ user: user._id });
 
-        const planDetails = tokenObj.getCurrentPlan();
+        const planDetails = tokenObj?.getCurrentPlan();
 
         response_200(res, "success", planDetails);
     } catch (error) {
