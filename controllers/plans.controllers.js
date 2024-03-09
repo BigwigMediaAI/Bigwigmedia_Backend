@@ -14,6 +14,9 @@ exports.getAllPlans = async (req, res) => {
     };
     if (req.user) {
         const user = await User.findById(req.user._id);
+        if (!user) {
+            response_500(res, "User not found");
+        }
         const token = await Token.findOne({ user: user._id });
         if (token.hasValidity()) {
             plan.currentPlan = token.getCurrentPlan();
