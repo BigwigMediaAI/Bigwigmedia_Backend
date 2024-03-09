@@ -46,7 +46,7 @@ const tokenSchema = new mongoose.Schema({
         type: [planSchema],
         default: [
             {
-                name: PLAN.FREE,
+                name: PLAN.FREE.name,
                 obtainedBy: WAYS.SIGNUP,
             },
         ],
