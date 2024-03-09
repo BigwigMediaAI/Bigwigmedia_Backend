@@ -1,4 +1,6 @@
 const PLAN = require("../enums/plan.enums");
+const User = require("../models/user.model");
+
 const {
     response_200,
     response_500,
@@ -19,7 +21,10 @@ exports.getAllPlans = async (req, res) => {
 
 exports.getPlanHistory = async (req, res) => {
     try {
-        response_200(res, "success", req.user.token.plans);
+
+        const user = await User.findById(req.user._id).select("plans");
+        
+
     } catch (error) {
         response_500(res, error);
     }

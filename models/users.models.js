@@ -34,7 +34,7 @@ const usersSchema = new Schema({
 
   planObj: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Plan",
+    ref: "Token",
   },
 
   plan: {
