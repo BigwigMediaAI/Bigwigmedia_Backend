@@ -34,27 +34,20 @@ exports.getAllUserData = async (req, res) => {
     }
 };
 
-
 exports.addCreditM = async (req, res) => {
     try {
         const userId = req.body.userId;
-        const plan = req.body.plan;
-        if (Object.values(PLAN).map(plan => plan.name).indexOf(plan) === -1) {
-            return response_401(res, "Invalid Plan");
-        }
-
-        const user = await User.findById(userId);
-        if (!user) {
-            return response_401(res, "User not found");
-        }
+        const credit = req.body.credit;
+        const days = req.body.days;
 
         const token = await Token.findOne({ user: userId });
-        const currentToken = token.addPlanByAdmin(PLAN[plan]);
+        if (!token) {
+            response_401(res, "User not found");
+        }
+        const currentToken = token.addPlanByAdmin(credit, days);
 
         response_200(res, "Credit added", currentToken);
-
-        
     } catch (err) {
         response_500(res, err);
     }
-}
+};

@@ -143,20 +143,20 @@ tokenSchema.methods.addPlanRefferal = function (reffered) {
 };
 
 
-tokenSchema.methods.addPlanByAdmin = function (plan) { 
+tokenSchema.methods.addPlanByAdmin = function (credit, days) { 
+    
     const planData = {
-        name: plan.name,
+        name: WAYS.ADMIN,
         obtainedBy: WAYS.ADMIN,
     };
     this.plans.push(planData);
-    this.currentLimit += plan.limit;
-    this.maxLimit += plan.limit;
+    this.currentLimit += credit;
+    this.maxLimit += credit;
     this.expairyDate = Math.max(
-        Date.now() + plan.expairy * 24 * 60 * 60 * 1000,
+        Date.now() + days * 24 * 60 * 60 * 1000,
         this.expairyDate
     );
     this.updatedAt = Date.now();
     return this.save();
-
 }
 module.exports = mongoose.model("Token", tokenSchema);
