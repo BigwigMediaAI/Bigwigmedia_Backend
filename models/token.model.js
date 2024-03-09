@@ -5,7 +5,9 @@ const WAYS = require("../enums/ways.enums");
 const planSchema = new mongoose.Schema({
     name: {
         type: String,
-        enum: Object.values(Object.values(PLAN).map((plan) => plan.name)),
+
+        enum: Object.values(PLAN).map((plan) => plan.name),
+
         required: true,
     },
     obtainedBy: {

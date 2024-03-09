@@ -8,6 +8,7 @@ const {
 } = require("../utils.js/responseCodes.utils");
 
 exports.getAllPlans = async (req, res) => {
+    console.log("getAllPlans")
     try {
         response_200(
             res,
