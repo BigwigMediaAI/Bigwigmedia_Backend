@@ -32,7 +32,7 @@ const usersSchema = new Schema({
     default: process.env.INITIAL_LIMIT,
   },
 
-  planObj: {
+  token: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Token",
   },
