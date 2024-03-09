@@ -12,7 +12,14 @@ exports.auth = async (req, res, next) => {
             clerkId,
         });
         if (!user) {
-            user = new User({ clerkId, name, email, image: imageUrl });
+            const reffered = req.query.reffered || null;
+            user = new User({
+                clerkId,
+                name,
+                email,
+                image: imageUrl,
+                referral: reffered,
+            });
             await user.save();
         }
         req.user = user;

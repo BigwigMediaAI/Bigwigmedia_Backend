@@ -117,20 +117,20 @@ tokenSchema.methods.addPlanDirectBuy = function (plan) {
     return this.save();
 };
 
-tokenSchema.methods.addPlanRefferal = function (plan, reffered) {
+tokenSchema.methods.addPlanRefferal = function (reffered) {
+    const refferedPlan = PLAN.MONTHLY;
     const planData = {
-        name: plan.name,
+        name: refferedPlan.name,
         obtainedBy: WAYS.REFFERAL,
         reffered,
     };
     this.plans.push(planData);
-    this.currentLimit += plan.limit;
-    this.maxLimit += plan.limit;
+    this.currentLimit += refferedPlan.limit;
+    this.maxLimit += refferedPlan.limit;
     this.expairyDate = Math.max(
-        Date.now() + plan.expairy * 24 * 60 * 60 * 1000,
+        Date.now() + refferedPlan.expairy * 24 * 60 * 60 * 1000,
         this.expairyDate
     );
-
     this.updatedAt = Date.now();
     return this.save();
 };

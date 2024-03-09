@@ -6,82 +6,86 @@ require("dotenv").config();
 const Schema = mongoose.Schema;
 
 const usersSchema = new Schema({
-  clerkId: { type: String, required: true },
-  name: {
-    type: String,
-  },
-  email: {
-    type: String,
-  },
-  image: {
-    type: String,
-  },
-
-  bookmarks: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Object",
+    clerkId: { type: String, required: true },
+    name: {
+        type: String,
     },
-  ],
-  current_limit: {
-    type: Number,
-    default: process.env.INITIAL_LIMIT,
-  },
-  max_limit: {
-    type: Number,
-    default: process.env.INITIAL_LIMIT,
-  },
+    email: {
+        type: String,
+    },
+    image: {
+        type: String,
+    },
 
-  token: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Token",
-  },
+    bookmarks: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Object",
+        },
+    ],
+    current_limit: {
+        type: Number,
+        default: process.env.INITIAL_LIMIT,
+    },
+    max_limit: {
+        type: Number,
+        default: process.env.INITIAL_LIMIT,
+    },
 
-  plan: {
-    type: mongoose.Schema.Types.String,
-  },
+    token: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Token",
+    },
+
+    plan: {
+        type: mongoose.Schema.Types.String,
+    },
+    referral: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
 });
 
 usersSchema.methods.descreseLimit = function () {
-  this.current_limit = this.current_limit - 1;
-  return this.save();
+    this.current_limit = this.current_limit - 1;
+    return this.save();
 };
 
 usersSchema.methods.getLimits = function () {
-  return {
-    current_limit: this.current_limit,
-    max_limit: this.max_limit,
-    plan: this?.plan ?? "free",
-  };
+    return {
+        current_limit: this.current_limit,
+        max_limit: this.max_limit,
+        plan: this?.plan ?? "free",
+    };
 };
 
 usersSchema.methods.increaseLimit = function (increment, plan) {
-  this.current_limit = this.current_limit + increment;
-  this.max_limit = this.max_limit + increment;
-  this.plan = plan;
-  return this.save();
+    this.current_limit = this.current_limit + increment;
+    this.max_limit = this.max_limit + increment;
+    this.plan = plan;
+    return this.save();
 };
 
 usersSchema.methods.removeBookmark = function (templeteId) {
-  const updatedBookmarks = this.bookmarks.filter((t) => {
-    return t.toString() !== templeteId.toString();
-  });
-  this.bookmarks = updatedBookmarks;
-  return this.save();
+    const updatedBookmarks = this.bookmarks.filter((t) => {
+        return t.toString() !== templeteId.toString();
+    });
+    this.bookmarks = updatedBookmarks;
+    return this.save();
 };
 
 usersSchema.methods.addOrRemoveBookmark = function (templeteId) {
-  const templeteIndex = this.bookmarks.findIndex((t) => {
-    return t.toString() === templeteId.toString();
-  });
-  const updatedBookmarks = [...this.bookmarks];
-  if (templeteIndex >= 0) {
-    updatedBookmarks.splice(templeteIndex, 1);
-  } else {
-    updatedBookmarks.push(templeteId);
-  }
-  this.bookmarks = updatedBookmarks;
-  return this.save();
+    const templeteIndex = this.bookmarks.findIndex((t) => {
+        return t.toString() === templeteId.toString();
+    });
+    const updatedBookmarks = [...this.bookmarks];
+    if (templeteIndex >= 0) {
+        updatedBookmarks.splice(templeteIndex, 1);
+    } else {
+        updatedBookmarks.push(templeteId);
+    }
+    this.bookmarks = updatedBookmarks;
+    return this.save();
 };
 
 // usersSchema.methods.getBookmarks =  async function () {
@@ -98,11 +102,23 @@ usersSchema.methods.addOrRemoveBookmark = function (templeteId) {
 // };
 
 usersSchema.methods.isBookedMarked = function (templeteId) {
-  return (
-    this.bookmarks.findIndex((t) => {
-      return t.toString() === templeteId.toString();
-    }) >= 0
-  );
+    return (
+        this.bookmarks.findIndex((t) => {
+            return t.toString() === templeteId.toString();
+        }) >= 0
+    );
+};
+
+usersSchema.methods.addReferral = function (referralId) {
+    this.referral = referralId;
+    return this.save();
+};
+
+usersSchema.methods.giveCreditToReferral = function () {
+  if (!this.referral) return;
+  const referral = Users.findById(this.referral);
+  const tokenObj = Token.findOne({ user: referral._id });
+  tokenObj.addPlanRefferal(this._id);
 };
 
 const Users = mongoose.model("User", usersSchema);
