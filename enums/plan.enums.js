@@ -23,6 +23,12 @@ const PLAN = {
         expairy: -1, // Till current plan is active
         price: 10,
     },
+    ADMIN: {
+        name: "ADMIN",
+        limit: -1,
+        expairy: -1, // Till current plan is active
+        price: -1,
+    },
 };
 
 Object.values(PLAN);
