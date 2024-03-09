@@ -25,6 +25,6 @@ const PLAN = {
     },
 };
 
-Object.freeze(PLAN);
+// Object.freeze(PLAN);
 
 module.exports = PLAN;
