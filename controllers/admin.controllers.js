@@ -35,6 +35,7 @@ exports.getAllUserData = async (req, res) => {
 };
 
 exports.addCreditM = async (req, res) => {
+    console.log(req.body)
     try {
         const userId = req.body.userId;
         const credit = req.body.credit;
