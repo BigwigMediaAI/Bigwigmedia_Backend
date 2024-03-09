@@ -142,4 +142,21 @@ tokenSchema.methods.addPlanRefferal = function (reffered) {
     return this.save();
 };
 
+
+tokenSchema.methods.addPlanByAdmin = function (plan) { 
+    const planData = {
+        name: plan.name,
+        obtainedBy: WAYS.ADMIN,
+    };
+    this.plans.push(planData);
+    this.currentLimit += plan.limit;
+    this.maxLimit += plan.limit;
+    this.expairyDate = Math.max(
+        Date.now() + plan.expairy * 24 * 60 * 60 * 1000,
+        this.expairyDate
+    );
+    this.updatedAt = Date.now();
+    return this.save();
+
+}
 module.exports = mongoose.model("Token", tokenSchema);
