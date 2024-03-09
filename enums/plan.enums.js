@@ -27,4 +27,4 @@ const PLAN = {
 
 Object.freeze(PLAN);
 
-export default PLAN;
+module.exports = PLAN;

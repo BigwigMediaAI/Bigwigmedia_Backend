@@ -94,16 +94,45 @@ tokenSchema.methods.getCurrentPlan = function (name) {
         currentLimit: this.currentLimit,
         maxLimit: this.maxLimit,
         expairyDate: this.expairyDate,
-    }
+    };
 };
 
 tokenSchema.methods.addPlanDirectBuy = function (plan) {
     const planData = {
-        name: plan,
+        name: plan.name,
         obtainedBy: WAYS.DIRECT,
-    }
+    };
     this.plans.push(planData);
-    
-}
+    this.currentLimit += plan.limit;
+    this.maxLimit += plan.limit;
+
+    if (plan.expairy != -1) {
+        this.expairyDate = Math.max(
+            Date.now() + plan.expairy * 24 * 60 * 60 * 1000,
+            this.expairyDate
+        );
+    }
+
+    this.updatedAt = Date.now();
+    return this.save();
+};
+
+tokenSchema.methods.addPlanRefferal = function (plan, reffered) {
+    const planData = {
+        name: plan.name,
+        obtainedBy: WAYS.REFFERAL,
+        reffered,
+    };
+    this.plans.push(planData);
+    this.currentLimit += plan.limit;
+    this.maxLimit += plan.limit;
+    this.expairyDate = Math.max(
+        Date.now() + plan.expairy * 24 * 60 * 60 * 1000,
+        this.expairyDate
+    );
+
+    this.updatedAt = Date.now();
+    return this.save();
+};
 
 module.exports = mongoose.model("Token", tokenSchema);

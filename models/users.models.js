@@ -31,6 +31,12 @@ const usersSchema = new Schema({
     type: Number,
     default: process.env.INITIAL_LIMIT,
   },
+
+  planObj: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Plan",
+  },
+
   plan: {
     type: mongoose.Schema.Types.String,
   },
