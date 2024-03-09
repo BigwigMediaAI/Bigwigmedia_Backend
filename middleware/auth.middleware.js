@@ -1,4 +1,5 @@
 const User = require("../models/users.models");
+const Token = require("../models/token.model");
 const { response_401 } = require("../utils.js/responseCodes.utils");
 
 exports.auth = async (req, res, next) => {
@@ -20,6 +21,11 @@ exports.auth = async (req, res, next) => {
                 image: imageUrl,
                 referral: reffered,
             });
+            const token = new Token({
+                user: user._id,
+            });
+            user.token = token._id;
+            await token.save();
             await user.save();
         }
         req.user = user;
