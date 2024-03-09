@@ -8,13 +8,9 @@ const {
 } = require("../utils.js/responseCodes.utils");
 
 exports.getAllPlans = async (req, res) => {
-    console.log("getAllPlans")
+    console.log("getAllPlans");
     try {
-        response_200(
-            res,
-            "success",
-            PLAN
-        );
+        response_200(res, "success", PLAN);
     } catch (error) {
         response_500(res, error);
     }
@@ -29,6 +25,22 @@ exports.getPlanHistory = async (req, res) => {
         const tokenObj = await Token.findOne({ user: user._id });
 
         const planDetails = tokenObj.getPlansDetails();
+
+        response_200(res, "success", planDetails);
+    } catch (error) {
+        response_500(res, error);
+    }
+};
+
+exports.getCurrentPlan = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            response_500(res, "User not found");
+        }
+        const tokenObj = await Token.findOne({ user: user._id });
+
+        const planDetails = tokenObj.getCurrentPlan();
 
         response_200(res, "success", planDetails);
     } catch (error) {
