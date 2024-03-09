@@ -12,9 +12,9 @@ router.get("/", (req, res) => {
 });
 
 router.use("/objects", objectsRoutes);
-router.use("/payment", paymentRoutes);
+router.use("/payment",auth, paymentRoutes);
 router.use("/limits", auth, limitsRoutes);
 router.use("/user", userRoutes);
-router.use("/plans", plansRoutes);
+router.use("/plans",auth, plansRoutes);
 
 module.exports = router;

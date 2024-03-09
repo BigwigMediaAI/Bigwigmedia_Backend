@@ -12,7 +12,7 @@ exports.getAllPlans = async (req, res) => {
         response_200(
             res,
             "success",
-            PLAN.filter((plan) => plan.name !== "FREE")
+            PLAN
         );
     } catch (error) {
         response_500(res, error);
