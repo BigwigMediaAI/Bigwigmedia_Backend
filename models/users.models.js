@@ -44,6 +44,11 @@ const usersSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
     },
+
+    role: {
+        type: String,
+        default: "user",
+    },
 });
 
 usersSchema.methods.descreseLimit = function () {
@@ -115,10 +120,10 @@ usersSchema.methods.addReferral = function (referralId) {
 };
 
 usersSchema.methods.giveCreditToReferral = function () {
-  if (!this.referral) return;
-  const referral = Users.findById(this.referral);
-  const tokenObj = Token.findOne({ user: referral._id });
-  tokenObj.addPlanRefferal(this._id);
+    if (!this.referral) return;
+    const referral = Users.findById(this.referral);
+    const tokenObj = Token.findOne({ user: referral._id });
+    tokenObj.addPlanRefferal(this._id);
 };
 
 const Users = mongoose.model("User", usersSchema);
