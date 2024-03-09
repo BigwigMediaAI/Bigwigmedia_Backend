@@ -8,6 +8,7 @@ exports.getPaymentm = async (req, res) => {
       },
     });
     const { product } = req.body;
+    console.log(product)
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         line_items: [
@@ -19,7 +20,7 @@ exports.getPaymentm = async (req, res) => {
                     },
                     unit_amount: product.price * 100,
                 },
-                quantity: product.quantity,
+                quantity: product.limit,
             },
         ],
         mode: "payment",
@@ -27,28 +28,7 @@ exports.getPaymentm = async (req, res) => {
         success_url: "https://www.bigwigmedia.ai/success",
         cancel_url: "https://www.bigwigmedia.ai/cancel",
     });
+    
     res.json({ id: session.id });
 };
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET ;
-exports.webhookController = async (req, res) => {
-    let event;
-    let data;
-    try {
-        event = stripe.webhooks.constructEvent(
-            req.rawBody,
-            req.headers["stripe-signature"],endpointSecret
-            
-        );
-        data  = event.data.object;
-    } catch (err) {
-        console.log(err);
-        return res.status(400).send(`Webhook Error: ${err.message}`);
-    }
 
-    if (event.type === "checkout.session.completed") {
-        console.log("data",data)
-        const customer = await stripe.customers.retrieve(data.customer);
-        console.log("customer:",customer)
-    }
-    res.status(200);
-}

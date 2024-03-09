@@ -5,9 +5,11 @@ const db = require("./config/db.config");
 db.connect();
 
 const path = require("path");
+const { webhookController } = require("./controllers/webhook.controller");
 require("dotenv").config();
 
 app.use(cors());
+app.use("/api/v2/webhook", express.raw({ type: "*/*" }),webhookController);
 app.use(express.json());
 
 const PORT = 4000 || process.env.PORT;
