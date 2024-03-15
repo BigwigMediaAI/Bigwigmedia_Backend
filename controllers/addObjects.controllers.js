@@ -43,8 +43,17 @@ exports.addGroup = async (req, res) => {
 
 exports.addObject = async (req, res) => {
   try {
-    const { name, accoName, description, groups, labels, logo, accoLogo, faq } =
-      req.body;
+    const {
+      name,
+      accoName,
+      description,
+      groups,
+      labels,
+      logo,
+      accoLogo,
+      faq,
+      groupBy,
+    } = req.body;
     const newObject = new Objects({
       name,
       accoName,
@@ -54,6 +63,7 @@ exports.addObject = async (req, res) => {
       logo,
       accoLogo,
       faq,
+      groupBy
     });
     await newObject.save();
     response_201(res, newObject);
@@ -75,6 +85,7 @@ exports.addObjectOnce = async (req, res) => {
       logo,
       accoLogo,
       faq,
+      groupBy,
     } = req.body;
     const newObject = new Objects({
       name,
@@ -87,6 +98,7 @@ exports.addObjectOnce = async (req, res) => {
       logo,
       accoLogo,
       faq,
+      groupBy,
     });
     await newObject.save();
 
