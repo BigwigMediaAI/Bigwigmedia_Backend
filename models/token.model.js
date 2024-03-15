@@ -72,10 +72,9 @@ tokenSchema.methods.isValid = function () {
     return this.currentLimit > 0 && this.expairyDate >= Date.now();
 };
 
-tokenSchema.methods.hasValidity = function () { 
+tokenSchema.methods.hasValidity = function () {
     return this.expairyDate >= Date.now();
-}
-
+};
 
 tokenSchema.methods.getPlansDetails = function () {
     return this.plans.map((plan) => {
@@ -142,11 +141,9 @@ tokenSchema.methods.addPlanRefferal = function (reffered) {
     return this.save();
 };
 
-
-tokenSchema.methods.addPlanByAdmin = function (credit, days) { 
-    
+tokenSchema.methods.addPlanByAdmin = function (credit, days) {
     const planData = {
-        name: WAYS.ADMIN,
+        name: PLAN.ADMIN.name,
         obtainedBy: WAYS.ADMIN,
     };
     this.plans.push(planData);
@@ -158,5 +155,5 @@ tokenSchema.methods.addPlanByAdmin = function (credit, days) {
     );
     this.updatedAt = Date.now();
     return this.save();
-}
+};
 module.exports = mongoose.model("Token", tokenSchema);
