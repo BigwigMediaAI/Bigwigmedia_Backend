@@ -79,49 +79,62 @@ exports.searchUser = async (req, res) => {
         const creditLessThan = req.query.creditLessThan;
         const limit = req.query.limit || 10;
         const page = req.query.page || 1;
-        // email and name is present in user model where as currentLimit is present in token model
+
+        // email and name are present in the user model, while currentLimit is present in the token model
         const queryArray = [];
         if (email) {
-            queryArray.push({ email: { $regex: email, $options: "i" } });
+          queryArray.push({ email: { $regex: email, $options: "i" } });
         }
         if (name) {
-            queryArray.push({ name: { $regex: name, $options: "i" } });
+          queryArray.push({ name: { $regex: name, $options: "i" } });
         }
         let users;
         if (queryArray.length)
-            users = await User.find({
-                $or: queryArray,
-            }).sort({ createdAt: -1 });
+          users = await User.find({
+            $or: queryArray,
+          }).sort({ createdAt: -1 });
         else users = await User.find().sort({ createdAt: -1 });
+
         let userArray = [];
         for (let i = 0; i < users.length; i++) {
-            const user = users[i];
-            const token = await Token.findOne({ user: user._id });
-            if (!token) continue;
-            if (
-                (creditGreaterThan && token.currentLimit < creditGreaterThan) ||
-                (creditLessThan && token.currentLimit > creditLessThan)
-            ) {
-                continue;
-            }
-            const userObj = {
-                registeredAt: user.createdAt,
-                _id: user._id,
-                clientId: user.clerkId,
-                name: user.name,
-                email: user.email,
-                plan: token.getCurrentPlan(),
-                planHistory: token.getPlansDetails(),
-            };
-            if (user.referral) {
-                userObj.referral = await User.findById(user.referral);
-            }
-            userArray.push(userObj);
+          const user = users[i];
+          const token = await Token.findOne({ user: user._id });
+          if (!token) continue;
+          if (
+            (creditGreaterThan && token.currentLimit < creditGreaterThan) ||
+            (creditLessThan && token.currentLimit > creditLessThan)
+          ) {
+            continue;
+          }
+          const userObj = {
+            registeredAt: user.createdAt,
+            _id: user._id,
+            clientId: user.clerkId,
+            name: user.name,
+            email: user.email,
+            plan: token.getCurrentPlan(),
+            planHistory: token.getPlansDetails(),
+          };
+          if (user.referral) {
+            userObj.referral = await User.findById(user.referral);
+          }
+          userArray.push(userObj);
         }
 
+        // Calculate total number of users
+        const totalUsers = userArray.length;
+
+        // Apply pagination
         userArray = userArray.slice((page - 1) * limit, page * limit);
 
-        response_200(res, "success", userArray);
+        response_200(res, "success", {
+          users: userArray,
+          numberOfPages:totalUsers/limit,
+          userCount:totalUsers,
+          limit,
+          page,
+        });
+
     } catch (error) {
         response_500(res, error);
     }
