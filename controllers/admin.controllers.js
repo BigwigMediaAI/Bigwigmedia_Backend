@@ -16,7 +16,10 @@ exports.getAllUserData = async (req, res) => {
         for (let i = 0; i < users.length; i++) {
             const user = users[i];
             const token = await Token.findOne({ user: user._id });
+            if (!token) continue;
             const userObj = {
+                _id: user._id,
+                clientId: user.clerkId,
                 name: user.name,
                 email: user.email,
                 plan: token.getCurrentPlan(),
@@ -35,7 +38,7 @@ exports.getAllUserData = async (req, res) => {
 };
 
 exports.addCreditM = async (req, res) => {
-    console.log(req.body)
+    console.log(req.body);
     try {
         const userId = req.body.userId;
         const credit = req.body.credit;
@@ -45,8 +48,9 @@ exports.addCreditM = async (req, res) => {
         if (!token) {
             response_401(res, "User not found");
         }
-        const currentToken = token.addPlanByAdmin(credit, days);
-
+        // console.log(token, "Before adding credit");
+        const currentToken = await token.addPlanByAdmin(credit, days);
+        // console.log(currentToken, "After adding credit");
         response_200(res, "Credit added", currentToken);
     } catch (err) {
         response_500(res, err);

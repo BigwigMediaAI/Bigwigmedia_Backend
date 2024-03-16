@@ -68,6 +68,18 @@ const tokenSchema = new mongoose.Schema({
     },
 });
 
+tokenSchema.methods.descreseLimit = async function () {
+    console.log("User current limit", this.currentLimit);
+    if (this.currentLimit > 0) {
+        this.currentLimit -= 1;
+        this.updatedAt = Date.now();
+        console.log("User limit decreased to ", this.currentLimit);
+        return this.save();
+    } else {
+        throw new Error("No credit left!");
+    }
+};
+
 tokenSchema.methods.isValid = function () {
     return this.currentLimit > 0 && this.expairyDate >= Date.now();
 };
@@ -141,7 +153,7 @@ tokenSchema.methods.addPlanRefferal = function (reffered) {
     return this.save();
 };
 
-tokenSchema.methods.addPlanByAdmin = function (credit, days) {
+tokenSchema.methods.addPlanByAdmin = async function (credit, days) {
     const planData = {
         name: PLAN.ADMIN.name,
         obtainedBy: WAYS.ADMIN,
@@ -154,6 +166,6 @@ tokenSchema.methods.addPlanByAdmin = function (credit, days) {
         this.expairyDate
     );
     this.updatedAt = Date.now();
-    return this.save();
+    return await this.save();
 };
 module.exports = mongoose.model("Token", tokenSchema);

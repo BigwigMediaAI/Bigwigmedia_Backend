@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Templete = require("./templetes.models");
+const Token = require("./token.model");
 
 require("dotenv").config();
 
@@ -51,9 +52,9 @@ const usersSchema = new Schema({
     },
 });
 
-usersSchema.methods.descreseLimit = function () {
-    this.current_limit = this.current_limit - 1;
-    return this.save();
+usersSchema.methods.descreseLimit = async function () {
+    const token = await Token.findOne({ user: this._id });
+    return await token.descreseLimit();
 };
 
 usersSchema.methods.getLimits = function () {
