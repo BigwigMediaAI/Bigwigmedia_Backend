@@ -129,7 +129,7 @@ exports.searchUser = async (req, res) => {
 
         response_200(res, "success", {
           users: userArray,
-          numberOfPages:totalUsers/limit,
+          numberOfPages:parseInt(totalUsers/limit+1),
           userCount:totalUsers,
           limit,
           page,
