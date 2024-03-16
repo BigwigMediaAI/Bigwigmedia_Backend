@@ -13,6 +13,8 @@ exports.getAllUserData = async (req, res) => {
     try {
         const limit = req.query.limit || 10;
         const page = req.query.page || 1;
+        const userCount = await User.countDocuments();
+        const numberOfPages = Math.ceil(userCount / limit);
         const users = await User.find()
             .sort({ createdAt: -1 })
             .limit(limit)
@@ -37,7 +39,13 @@ exports.getAllUserData = async (req, res) => {
             userArray.push(userObj);
         }
 
-        response_200(res, "success", userArray);
+        response_200(res, "success", {
+            userArray,
+            numberOfPages,
+            userCount,
+            limit,
+            page,
+        });
     } catch (error) {
         response_500(res, error);
     }
