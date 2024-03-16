@@ -50,7 +50,13 @@ const usersSchema = new Schema({
         type: String,
         default: "user",
     },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
 });
+
+
 
 usersSchema.methods.descreseLimit = async function () {
     const token = await Token.findOne({ user: this._id });

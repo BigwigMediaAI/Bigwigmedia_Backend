@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const PLAN = require("../enums/plan.enums");
 const WAYS = require("../enums/ways.enums");
+const User = require("./users.models");
 
 const planSchema = new mongoose.Schema({
     name: {
@@ -67,6 +68,16 @@ const tokenSchema = new mongoose.Schema({
         default: Date.now,
     },
 });
+
+// circular access error
+// tokenSchema.pre("save", async function (next) {
+//     console.log("User id", this.user);
+//     const user = await User.findById(this.user);
+//     user.current_limit = this.currentLimit;
+//     user.max_limit = this.maxLimit;
+//     await user.save();
+//     next();
+// });
 
 tokenSchema.methods.descreseLimit = async function () {
     console.log("User current limit", this.currentLimit);

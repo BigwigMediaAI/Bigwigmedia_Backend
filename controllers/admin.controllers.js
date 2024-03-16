@@ -11,13 +11,19 @@ const {
 
 exports.getAllUserData = async (req, res) => {
     try {
-        const users = await User.find();
+        const limit = req.query.limit || 10;
+        const page = req.query.page || 1;
+        const users = await User.find()
+            .sort({ createdAt: -1 })
+            .limit(limit)
+            .skip((page - 1) * limit);
         const userArray = [];
         for (let i = 0; i < users.length; i++) {
             const user = users[i];
             const token = await Token.findOne({ user: user._id });
-            if (!token) continue;
+            // if (!token) continue;
             const userObj = {
+                registeredAt: user.createdAt,
                 _id: user._id,
                 clientId: user.clerkId,
                 name: user.name,
@@ -54,5 +60,61 @@ exports.addCreditM = async (req, res) => {
         response_200(res, "Credit added", currentToken);
     } catch (err) {
         response_500(res, err);
+    }
+};
+
+exports.searchUser = async (req, res) => {
+    try {
+        const email = req.query.email;
+        const name = req.query.name;
+        const creditGreaterThan = req.query.creditGreaterThan;
+        const creditLessThan = req.query.creditLessThan;
+        const limit = req.query.limit || 10;
+        const page = req.query.page || 1;
+        // email and name is present in user model where as currentLimit is present in token model
+        const queryArray = [];
+        if (email) {
+            queryArray.push({ email: { $regex: email, $options: "i" } });
+        }
+        if (name) {
+            queryArray.push({ name: { $regex: name, $options: "i" } });
+        }
+        let users;
+        if (queryArray.length)
+            users = await User.find({
+                $or: queryArray,
+            }).sort({ createdAt: -1 });
+        else users = await User.find().sort({ createdAt: -1 });
+        let userArray = [];
+        for (let i = 0; i < users.length; i++) {
+            const user = users[i];
+            const token = await Token.findOne({ user: user._id });
+            if (!token) continue;
+            if (
+                (creditGreaterThan && token.currentLimit < creditGreaterThan) ||
+                (creditLessThan && token.currentLimit > creditLessThan)
+            ) {
+                continue;
+            }
+            const userObj = {
+                registeredAt: user.createdAt,
+                _id: user._id,
+                clientId: user.clerkId,
+                name: user.name,
+                email: user.email,
+                plan: token.getCurrentPlan(),
+                planHistory: token.getPlansDetails(),
+            };
+            if (user.referral) {
+                userObj.referral = await User.findById(user.referral);
+            }
+            userArray.push(userObj);
+        }
+
+        userArray = userArray.slice((page - 1) * limit, page * limit);
+
+        response_200(res, "success", userArray);
+    } catch (error) {
+        response_500(res, error);
     }
 };
