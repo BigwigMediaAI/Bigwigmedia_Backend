@@ -4,7 +4,7 @@ const { response_401 } = require("../utils.js/responseCodes.utils");
 
 exports.auth = async (req, res, next) => {
     try {
-        const { clerkId, name, email, imageUrl } = req.query;
+        const { clerkId, name, email, imageUrl, address } = req.query;
         if (!clerkId) {
             req.user = false;
             return next();
@@ -14,7 +14,7 @@ exports.auth = async (req, res, next) => {
         });
         // console.log(user, clerkId, name, email, imageUrl, "swaroop")
         if (!user) {
-            console.log("swaroop")
+            console.log("swaroop");
             // check if name, email and imageUrl are present and string
             // if (
             //     !name ||
@@ -34,6 +34,7 @@ exports.auth = async (req, res, next) => {
                 email,
                 image: imageUrl,
                 referral: reffered,
+                address,
             });
             // console.log(user, "swaroop")
             const token = new Token({
@@ -43,7 +44,6 @@ exports.auth = async (req, res, next) => {
             user.token = token._id;
             await token.save();
             await user.save();
-            
         }
         req.user = user;
         next();

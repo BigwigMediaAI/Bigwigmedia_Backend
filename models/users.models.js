@@ -17,6 +17,9 @@ const usersSchema = new Schema({
     image: {
         type: String,
     },
+    address: {
+        type: String,
+    },
 
     bookmarks: [
         {
@@ -55,8 +58,6 @@ const usersSchema = new Schema({
         default: Date.now,
     },
 });
-
-
 
 usersSchema.methods.descreseLimit = async function () {
     const token = await Token.findOne({ user: this._id });
