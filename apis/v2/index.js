@@ -16,7 +16,7 @@ router.get("/", (req, res) => {
 router.use("/objects", objectsRoutes);
 router.use("/payment", auth, paymentRoutes);
 router.use("/limits", auth, limitsRoutes);
-router.use("/user", userRoutes);
+router.use("/user", auth, userRoutes);
 router.use("/plans", auth, plansRoutes);
 router.use("/admin", adminRoutes);
 // router.post("/webhook", webhookController);

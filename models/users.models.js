@@ -7,7 +7,11 @@ require("dotenv").config();
 const Schema = mongoose.Schema;
 
 const usersSchema = new Schema({
-    clerkId: { type: String, required: true, unique: true },
+    clerkId: {
+        type: String,
+        required: true,
+        unique: true,
+    },
     name: {
         type: String,
     },

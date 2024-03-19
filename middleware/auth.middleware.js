@@ -1,7 +1,7 @@
 const User = require("../models/users.models");
 const Token = require("../models/token.model");
 const { response_401 } = require("../utils.js/responseCodes.utils");
-
+let userCreationInProgress = false;
 exports.auth = async (req, res, next) => {
     try {
         const { clerkId, name, email, imageUrl, address } = req.query;
@@ -9,6 +9,11 @@ exports.auth = async (req, res, next) => {
             req.user = false;
             return next();
         }
+        if (userCreationInProgress) {
+            // Wait until user creation is completed
+            await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust the delay as needed
+        }
+        userCreationInProgress = true;
         let user = await User.findOne({
             clerkId,
         });
@@ -45,12 +50,12 @@ exports.auth = async (req, res, next) => {
             await token.save();
             await user.save();
         }
-        if(!user.address){
+        if (!user.address) {
             user.address = address;
             await user.save();
-            
         }
         req.user = user;
+        userCreationInProgress = false;
         next();
     } catch (err) {
         return response_401(res, "Auth failed");
