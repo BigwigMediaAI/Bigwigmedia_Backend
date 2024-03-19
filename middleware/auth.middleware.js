@@ -14,7 +14,7 @@ exports.auth = async (req, res, next) => {
         });
         // console.log(user, clerkId, name, email, imageUrl, "swaroop")
         if (!user) {
-            console.log("swaroop");
+            // console.log("swaroop");
             // check if name, email and imageUrl are present and string
             // if (
             //     !name ||
@@ -44,6 +44,11 @@ exports.auth = async (req, res, next) => {
             user.token = token._id;
             await token.save();
             await user.save();
+        }
+        if(!user.address){
+            user.address = address;
+            await user.save();
+            
         }
         req.user = user;
         next();
