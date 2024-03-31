@@ -108,10 +108,12 @@ tokenSchema.methods.getPlansDetails = function () {
             reffered: plan.reffered,
             createdAt: plan.createdAt,
             validTill:
-                plan.createdAt +
-                (planDetails.expairy == -1
+                planDetails.expairy == -1
                     ? this.expairyDate
-                    : planDetails.expairy * 24 * 60 * 60 * 1000),
+                    : new Date(
+                          plan.createdAt.getTime() +
+                              planDetails.expairy * 24 * 60 * 60 * 1000
+                      ),
             price: planDetails.price,
             creditOptained: planDetails.limit,
         };
