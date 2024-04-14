@@ -1,4 +1,5 @@
 const Templete = require("../models/templetes.models");
+const objectModel=require("../models/objects.models")
 const {
     response_500,
     response_200,
@@ -39,14 +40,14 @@ exports.searchTemplete = async (req, res) => {
 exports.getTemplete = async (req, res) => {
     try {
         const { id } = req.params;
-        const templete = await Templete.findById(id);
+        const templete = await objectModel.findById(id);
 
         let templateLabels = templete.labels;
         templateLabels = templateLabels.filter(
             (label) => label !== "All Tools" && label !== "In Demand Tools"
         );
 
-        const relatedTempletes = await Templete.find({
+        const relatedTempletes = await objectModel.find({
             labels: { $in: templateLabels },
         }).select("name logo labels");
 
@@ -179,7 +180,7 @@ exports.updateTemplate = async (req, res) => {
 exports.deleteTemplate = async (req, res) => {
     try {
         const { id } = req.params;
-        const deletedTemplate = await Templete.findByIdAndDelete(id);
+        const deletedTemplate = await objectModel.findByIdAndDelete(id);
         response_200(res, "Templete deleted", deletedTemplate);
     } catch (err) {
         return response_500(res, "Error deleting templete", err);

@@ -15,7 +15,7 @@ const PLAN = {
         name: "YEARLY",
         limit: 2550,
         expairy: 365,
-        price: 100,
+        price: 200,
     },
     TOPUP: {
         name: "TOPUP",

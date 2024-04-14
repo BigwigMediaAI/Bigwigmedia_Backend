@@ -27,6 +27,9 @@ exports.decreaseLimit = async (req, res) => {
 exports.increaseLimit = async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
+        if(!user){
+            res.status(200).send({msg:"user not found"})
+        }
         const increase = req.body.increase;
         const plan = req.body.plan;
         user.increaseLimit(increase,plan);
