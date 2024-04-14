@@ -1,8 +1,5 @@
 const Templete = require("../models/templetes.models");
-<<<<<<< HEAD
 const objectModel=require("../models/objects.models")
-=======
->>>>>>> b771cc896ca4cdc8801940e1f4230867b1df4b45
 const {
     response_500,
     response_200,
@@ -43,22 +40,14 @@ exports.searchTemplete = async (req, res) => {
 exports.getTemplete = async (req, res) => {
     try {
         const { id } = req.params;
-<<<<<<< HEAD
         const templete = await objectModel.findById(id);
-=======
-        const templete = await Templete.findById(id);
->>>>>>> b771cc896ca4cdc8801940e1f4230867b1df4b45
 
         let templateLabels = templete.labels;
         templateLabels = templateLabels.filter(
             (label) => label !== "All Tools" && label !== "In Demand Tools"
         );
 
-<<<<<<< HEAD
         const relatedTempletes = await objectModel.find({
-=======
-        const relatedTempletes = await Templete.find({
->>>>>>> b771cc896ca4cdc8801940e1f4230867b1df4b45
             labels: { $in: templateLabels },
         }).select("name logo labels");
 
@@ -191,11 +180,7 @@ exports.updateTemplate = async (req, res) => {
 exports.deleteTemplate = async (req, res) => {
     try {
         const { id } = req.params;
-<<<<<<< HEAD
         const deletedTemplate = await objectModel.findByIdAndDelete(id);
-=======
-        const deletedTemplate = await Templete.findByIdAndDelete(id);
->>>>>>> b771cc896ca4cdc8801940e1f4230867b1df4b45
         response_200(res, "Templete deleted", deletedTemplate);
     } catch (err) {
         return response_500(res, "Error deleting templete", err);
