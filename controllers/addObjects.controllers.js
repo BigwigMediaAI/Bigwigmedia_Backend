@@ -201,7 +201,11 @@ exports.getResponseOfObject = async (req, res) => {
         console.log("prompt", prompt);
 
         try {
+<<<<<<< HEAD
             prompt += ` generate entire output as json string, like this eg: {output:"<div><p>line 1<br/>line2 and so on ... </div>"}, including all texts also.`;
+=======
+            prompt += ` i want output like this {output:"<div><p>line 1<br/>line2 and so on ... </div>"} as json string and nothing else in the output. just return html output and no feedback`;
+>>>>>>> b771cc896ca4cdc8801940e1f4230867b1df4b45
             console.log(prompt);
         } catch (error) {
             console.log(error);
