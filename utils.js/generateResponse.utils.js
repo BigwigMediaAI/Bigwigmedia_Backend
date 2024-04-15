@@ -17,7 +17,7 @@ async function generateResponse(prompt) {
                 content: prompt,
             },
         ],
-        model: "gpt-3.5-turbo-1106",
+        model: "gpt-4-turbo",
         // response_format: { type: "json_object" },
     });
     return completion.choices[0].message.content.replace(/(\r\n|\n|\r)/gm, "");
