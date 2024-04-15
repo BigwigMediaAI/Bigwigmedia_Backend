@@ -18,12 +18,16 @@ const callBackApi = async (req, res) => {
       return res.status(401).json({msg:"Invalid Signature"})
     }else{
       // in the else part i need to do
-      const user = await User.findById(req.user.clerkId)
-      console.log(user)
-      if(user){
-        await token.addPlanDirectBuy(plan);
-        await OrderModel.savePaymentDetails(req.clerkId, razorpay_order_id , razorpay_payment_id );
-        res.send({ msg: "Payment Successful!", status : true });
+      const clerkId = req.query.clerkId;
+      console.log(clerkId)
+      if(clerkId){
+        const plan = plan[req.query.plan.toUpperCase()];
+        if (plan && (plan === plan.MONTHLY || plan === plan.YEARLY)){
+          await token.addPlanDirectBuy(plan);
+          await OrderModel.savePaymentDetails(clerkId, razorpay_order_id , razorpay_payment_id );
+          return res.status(200).json({ msg: "Payment Successful!", status: true });
+
+        }
       }else{
         res.status(401).send({msg:"Payment Failed!"});
       }
