@@ -12,7 +12,7 @@ const createOrder = async (req, res) => {
   const {name,amount}=req.body
       const order=await Razorpay_Instance.orders.create({
       amount:Number(amount*100),
-      currency:"USD",
+      currency:"INR",
       receipt:"receipt_no_"+Math.floor(Date.now()),
     })
 

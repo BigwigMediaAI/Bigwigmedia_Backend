@@ -32,7 +32,7 @@ const callBackApi = async (req, res) => {
           razorpay_payment_id
         );
         setTimeout(() => {
-          window.location.href = "https://bigwigmedia.ai/success";
+          return res.redirect("https://bigwigmedia.ai/success");
         }, 3000);
         return res
           .status(200)
@@ -40,8 +40,9 @@ const callBackApi = async (req, res) => {
       }
     } else {
       res.status(401).send({ msg: "Payment Failed!" });
-      window.location.href = "https://bigwigmedia.ai/cancel";
-    }
+      setTimeout(() => {
+        return res.redirect("https://bigwigmedia.ai/cancel");
+      }, 3000);    }
   }
 
   try {
