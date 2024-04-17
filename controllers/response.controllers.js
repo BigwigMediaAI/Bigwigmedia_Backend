@@ -10,6 +10,7 @@ const {
 } = require("../utils.js/responseCodes.utils");
 
 const generateParaphrase = require("../utils.js/generateParaphrase");
+const getSpecialtool=require("../utils.js/generateSpecialtool")
 
 const { generateImage, QUALITY } = require("../utils.js/generateImage");
 exports.getResponse = async (req, res) => {
@@ -65,6 +66,18 @@ exports.getParaPhrase = async (req, res) => {
         response_500(res, "Error getting paraphrase", error);
     }
 };
+
+exports.getSpecialtool=async(req,res)=>{
+    try {
+        const prompt=req.body.prompt;
+        const response=await getSpecialtool(prompt);
+        response_200(res, "response generated successfully", response);
+    } catch (error) {
+        response_500(res, "Error getting paraphrase", error);
+
+    }
+}
+
 
 exports.getImage = async (req, res) => {
     try {
