@@ -73,7 +73,7 @@ exports.getSpecialtool=async(req,res)=>{
         const response=await getSpecialtool(prompt);
         response_200(res, "response generated successfully", response);
     } catch (error) {
-        response_500(res, "Error getting paraphrase", error);
+        response_500(res, "Error getting response", error);
 
     }
 }
