@@ -3,6 +3,7 @@ const templatesRoutes = require("./templates.v1.routes");
 const responseRoutes = require("./response.v1.routes");
 const { auth } = require("../../middleware/auth.middleware");
 const bookmarksRoutes = require("./bookmarks.v1.routes");
+const contactus=require("../v1/contact.v1.routes")
 
 router.get("/", (req, res) => {
     res.send("API LIVE!");
@@ -10,5 +11,6 @@ router.get("/", (req, res) => {
 router.use("/templates", auth, templatesRoutes);
 router.use("/response", auth, responseRoutes);
 router.use("/bookmarks", auth, bookmarksRoutes);
+router.use("/contact",contactus)
 
 module.exports = router;
