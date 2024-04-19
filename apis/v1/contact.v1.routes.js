@@ -1,8 +1,9 @@
 const router = require("express").Router();
-const {PostData}=require("../../controllers/contact.controllers")
+const {PostData,GetData}=require("../../controllers/contact.controllers")
 
 
 router.post("/form",PostData)
+router.get("/getdata",GetData)
 
 
 module.exports = router;

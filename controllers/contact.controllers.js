@@ -4,6 +4,21 @@ const {
     response_200,
 } =require("../utils.js/responseCodes.utils")
 
+
+
+exports.GetData=async(req,res)=>{
+    try {
+        const data=await ContactSchema.find()
+        if(!data){
+            res.status(401).json({msg:"data not found"})
+        }else{
+            res.status(200).json(data)
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 exports.PostData=async(req,res)=>{
     try {
         const {name,email,message}=req.body;
