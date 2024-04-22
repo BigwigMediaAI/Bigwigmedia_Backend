@@ -6,8 +6,8 @@ const {
 
 exports.Postfeedback=async(req,res)=>{
     try {
-    const {name,email,review}=req.body;
-    const data=new FeedbackModel({name,email,review})
+    const {name,email,tool,review}=req.body;
+    const data=new FeedbackModel({name,email,tool,review})
     await data.save()
     response_200(res,"Your response added successfully ",data)
     } catch (error) {
