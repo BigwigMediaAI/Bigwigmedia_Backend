@@ -9,13 +9,13 @@ const PLAN = {
         name: "MONTLY",
         limit: 200,
         expairy: 30,
-        price: 20,
+        price: 1000,
     },
     YEARLY: {
         name: "YEARLY",
         limit: 2550,
         expairy: 365,
-        price: 200,
+        price: 10000,
     },
     TOPUP: {
         name: "TOPUP",
