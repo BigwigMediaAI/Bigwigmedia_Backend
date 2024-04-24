@@ -10,7 +10,8 @@ const {
 } = require("../utils.js/responseCodes.utils");
 
 const generateParaphrase = require("../utils.js/generateParaphrase");
-const getSpecialtool=require("../utils.js/generateSpecialtool")
+const getSpecialtool=require("../utils.js/generateSpecialtool");
+const getDecision=require("../utils.js/generateDecision")
 
 const { generateImage, QUALITY } = require("../utils.js/generateImage");
 exports.getResponse = async (req, res) => {
@@ -77,6 +78,24 @@ exports.getSpecialtool=async(req,res)=>{
 
     }
 }
+
+exports.getDecision = async (req, res) => {
+    try {
+        const prompt = req.body.prompt;
+        const response = await getDecision(prompt);
+
+        // Check if pros and cons are present in the response
+        if (response.pros.length === 0 || response.cons.length === 0) {
+            response_500(res, "No pros and cons found in the response");
+            return;
+        }
+
+        response_200(res, "Pros and cons generated successfully", { data: response });
+    } catch (error) {
+        response_500(res, "Error getting response", error);
+    }
+}
+
 
 
 exports.getImage = async (req, res) => {
