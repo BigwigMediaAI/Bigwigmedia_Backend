@@ -159,7 +159,7 @@ exports.getObjectByLabel = async (req, res) => {
             labels: {
                 $in: [req.params.label],
             },
-        }).select("name logo description tagLine labels");
+        }).select("name logo description tagLine labels").sort({ _id: -1 });
 
         const objectArray = objects.map((object) => {
             return {
