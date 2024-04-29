@@ -7,7 +7,7 @@ router.post("/", checkLimit, getResponse);
 router.post("/paraphrase", checkLimit, getParaPhrase);
 router.post("/image", checkLimit, getImage);
 router.post("/special",checkLimit, getSpecialtool);
-router.post("/decision", getDecision);
-router.post("/getseo", getSeo);
+router.post("/decision",checkLimit, getDecision);
+router.post("/getseo",checkLimit, getSeo);
 
 module.exports = router;
