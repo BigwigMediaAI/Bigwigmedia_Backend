@@ -12,6 +12,7 @@ const {
 const generateParaphrase = require("../utils.js/generateParaphrase");
 const getSpecialtool=require("../utils.js/generateSpecialtool");
 const getDecision=require("../utils.js/generateDecision")
+const getSeo=require("../utils.js/generateSeo")
 
 const { generateImage, QUALITY } = require("../utils.js/generateImage");
 exports.getResponse = async (req, res) => {
@@ -94,6 +95,17 @@ exports.getDecision = async (req, res) => {
     } catch (error) {
         response_500(res, "Error getting response", error);
     }
+}
+
+exports.getSeo= async(req,res)=>{
+   try {
+    const prompt=req.body.prompt;
+    const response=await getSeo(prompt);
+    console.log(response)
+    response_200(res,"SEO analysis completed succesfully",{data:response});
+   } catch (error) {
+    response_500(res,"Error performing SEO analysis",error);
+   }
 }
 
 
