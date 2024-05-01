@@ -12,6 +12,7 @@ const {
 const generateParaphrase = require("../utils.js/generateParaphrase");
 const getSpecialtool=require("../utils.js/generateSpecialtool");
 const getDecision=require("../utils.js/generateDecision")
+const getCodeConverter=require("../utils.js/generateCodeconverter")
 const getSeo=require("../utils.js/generateSeo")
 const sharp = require('sharp');
 const multer = require('multer');
@@ -206,3 +207,22 @@ exports.resizeImage = async (req, res) => {
         res.status(500).send('Error resizing image.');
     }
 };
+
+
+// code converter start's here
+
+exports.getCodeConverter=async(req,res)=>{
+    const { sourceCode, targetLanguage } = req.body;
+
+    try {
+        // Call getCodeConverter function to convert the code
+        const convertedCode = await getCodeConverter(sourceCode, targetLanguage);
+
+        // Send the converted code as response
+        res.status(200).json({ convertedCode });
+    } catch (error) {
+        // Handle errors
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}

@@ -1,4 +1,4 @@
-const { getResponse, getParaPhrase, getImage ,getSpecialtool,getDecision,getSeo,resizeImage} = require("../../controllers/response.controllers");
+const { getResponse, getParaPhrase, getImage ,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter} = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
 const multer = require('multer');
 
@@ -12,6 +12,7 @@ router.post("/image", checkLimit, getImage);
 router.post("/special",checkLimit, getSpecialtool);
 router.post("/decision",checkLimit, getDecision);
 router.post("/getseo",checkLimit, getSeo);
+router.post("/code", getCodeConverter);
 router.post('/resize',checkLimit, multer({ dest: 'uploads/' }).single('image'), resizeImage);
 
 
