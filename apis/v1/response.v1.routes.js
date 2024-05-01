@@ -12,7 +12,7 @@ router.post("/image", checkLimit, getImage);
 router.post("/special",checkLimit, getSpecialtool);
 router.post("/decision",checkLimit, getDecision);
 router.post("/getseo",checkLimit, getSeo);
-router.post("/code", getCodeConverter);
+router.post("/code",checkLimit, getCodeConverter);
 router.post('/resize',checkLimit, multer({ dest: 'uploads/' }).single('image'), resizeImage);
 
 
