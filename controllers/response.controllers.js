@@ -13,6 +13,8 @@ const generateParaphrase = require("../utils.js/generateParaphrase");
 const getSpecialtool=require("../utils.js/generateSpecialtool");
 const getDecision=require("../utils.js/generateDecision")
 const getSeo=require("../utils.js/generateSeo")
+const sharp = require('sharp');
+const multer = require('multer');
 
 const { generateImage, QUALITY } = require("../utils.js/generateImage");
 exports.getResponse = async (req, res) => {
@@ -127,5 +129,80 @@ exports.getImage = async (req, res) => {
         response_200(res, "Image generated successfully", response);
     } catch (error) {
         response_500(res, "Error getting image", error);
+    }
+};
+
+
+// photo resizer function controller
+const upload = multer({ dest: 'uploads/' }); // Destination folder for uploaded files
+
+// Resize options for different platforms
+const resizeOptions = {
+    facebook: {
+        profilePicture: { width: 180, height: 180 },
+        coverPhoto: { width: 820, height: 312 },
+        sharedImage: { width: 1200, height: 630 }
+    },
+    instagram: {
+        profilePicture: { width: 110, height: 110 },
+        squareImage: { width: 1080, height: 1080 },
+        landscapeImage: { width: 1080, height: 566 },
+        portraitImage: { width: 1080, height: 1350 }
+    },
+    twitter: {
+        profilePicture: { width: 400, height: 400 },
+        headerPhoto: { width: 1500, height: 500 },
+        sharedImage: { width: 1200, height: 675 }
+    },
+    linkedin: {
+        profilePicture: { width: 400, height: 400 },
+        coverPhoto: { width: 1584, height: 396 },
+        sharedImage: { width: 1200, height: 627 }
+    },
+    pinterest: {
+        profilePicture: { width: 165, height: 165 },
+        pinImage: { width: 1000, height: 1500 }
+    },
+    snapchat: {
+        geofilter: { width: 1080, height: 2340 },
+        snapAd: { width: 1080, height: 1920 }
+    },
+    youtube: {
+        channelProfilePicture: { width: 800, height: 800 },
+        channelCoverPhoto: { width: 2560, height: 1440 },
+        videoThumbnail: { width: 1280, height: 720 }
+    }
+};
+
+exports.resizeImage = async (req, res) => {
+    try {
+        // Check if file was uploaded
+        if (!req.file) {
+            return res.status(400).send('No file uploaded.');
+        }
+
+        // Get the resize options from the request body
+        const platform = req.body.platform;
+        const imageType = req.body.type;
+
+        if (!platform || !imageType || !resizeOptions[platform] || !resizeOptions[platform][imageType]) {
+            return res.status(400).send('Invalid or missing platform or image type.');
+        }
+
+        // Resize the uploaded image using Sharp
+        const { width, height } = resizeOptions[platform][imageType];
+        const resizedImage = await sharp(req.file.path)
+            .resize(width, height, { fit: 'inside' }) // Fit inside the specified dimensions without cropping
+            .toBuffer();
+
+        // Send the resized image as a response
+        res.set('Content-Type', 'image/jpeg');
+        res.send(resizedImage);
+
+        // Delete the uploaded file from the server
+        // fs.unlinkSync(req.file.path);
+    } catch (error) {
+        console.error('Error resizing image:', error);
+        res.status(500).send('Error resizing image.');
     }
 };
