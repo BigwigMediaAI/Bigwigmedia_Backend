@@ -4,6 +4,7 @@ const generatePrompt = require("../utils.js/generatePrompt.utils");
 const generateResponse = require("../utils.js/generateResponse.utils");
 const removeEmoji = require("../utils.js/removeEmoji");
 const removeHashtag = require("../utils.js/removeHashtag");
+const path = require("path");
 const {
     response_500,
     response_200,
@@ -18,6 +19,7 @@ const getMarketing=require("../utils.js/generateMarketing")
 const sharp = require('sharp');
 const fs = require('fs');
 const multer = require('multer');
+const generateQRCodeWithLogo=require("../utils.js/generateQRcode")
 const { generateImage, QUALITY } = require("../utils.js/generateImage");
 exports.getResponse = async (req, res) => {
     try {
@@ -243,4 +245,29 @@ exports.getMarketing=async(req,res)=>{
     }
 }
 
+// QR code starts here
 
+
+
+
+
+exports.generateQR = async (req, res) => {
+    const { url, color, textAboveQR, textBelowQR } = req.body;
+
+    try {
+        const logoPath = req.file ? req.file.path : null;
+        const filename = path.join(__dirname, 'response.png');
+        await generateQRCodeWithLogo(url, filename, logoPath, color, textAboveQR, textBelowQR);
+
+        // Send QR code with logo image as response
+        res.sendFile('response.png', { root: __dirname });
+
+        // Delete the uploaded logo file after sending the response
+        if (logoPath) {
+            fs.unlinkSync(logoPath);
+        }
+    } catch (error) {
+        console.error('Error generating QR code with logo:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
