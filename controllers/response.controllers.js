@@ -14,9 +14,10 @@ const getSpecialtool=require("../utils.js/generateSpecialtool");
 const getDecision=require("../utils.js/generateDecision")
 const getCodeConverter=require("../utils.js/generateCodeconverter")
 const getSeo=require("../utils.js/generateSeo")
+const getMarketing=require("../utils.js/generateMarketing")
 const sharp = require('sharp');
+const fs = require('fs');
 const multer = require('multer');
-
 const { generateImage, QUALITY } = require("../utils.js/generateImage");
 exports.getResponse = async (req, res) => {
     try {
@@ -226,3 +227,20 @@ exports.getCodeConverter=async(req,res)=>{
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
+
+
+// Marketing tool start here
+
+exports.getMarketing=async(req,res)=>{
+    try {
+        const prompt=req.body.prompt;
+        const response=await getMarketing(prompt);
+        response_200(res, "response generated successfully", response);
+        // console.log(response)
+    } catch (error) {
+        response_500(res, "Error getting response", error);
+
+    }
+}
+
+
