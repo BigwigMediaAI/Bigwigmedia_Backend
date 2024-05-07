@@ -14,6 +14,7 @@ const generateParaphrase = require("../utils.js/generateParaphrase");
 const getSpecialtool=require("../utils.js/generateSpecialtool");
 const getDecision=require("../utils.js/generateDecision")
 const getCodeConverter=require("../utils.js/generateCodeconverter")
+const generateComponent=require("../utils.js/generateComponent")
 const getSeo=require("../utils.js/generateSeo")
 const getMarketing=require("../utils.js/generateMarketing")
 const sharp = require('sharp');
@@ -270,4 +271,18 @@ exports.generateQR = async (req, res) => {
         console.error('Error generating QR code with logo:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
+}
+
+
+exports.generateComponent=async(req,res)=>{
+    const { command, structure, design } = req.body;
+
+    try {
+      // Generate code based on user's input and selected options
+      const generatedCode = await generateComponent(command, structure, design);
+      res.json({ code: generatedCode });
+    } catch (error) {
+      console.error('Error generating code:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
 }

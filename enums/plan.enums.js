@@ -1,7 +1,7 @@
 const PLAN = {
     FREE: {
         name: "FREE",
-        limit: 30,
+        limit: 100,
         expairy: 7,
         price: 0,
     },
