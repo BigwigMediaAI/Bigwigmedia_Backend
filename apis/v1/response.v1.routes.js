@@ -46,7 +46,7 @@ router.post("/marketing",checkLimit, getMarketing);
 router.post('/resize',checkLimit, multer({ dest: 'uploads/' }).single('image'), resizeImage);
 router.post("/generate",checkLimit,upload.single('logo'),generateQR)
 router.post("/component",checkLimit,generateComponent)
-router.post('/generateLetterhead', uploaddata.single('logo'), generateLetterhead);
+router.post('/generateLetterhead',checkLimit, uploaddata.single('logo'), generateLetterhead);
 
 
 
