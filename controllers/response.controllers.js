@@ -9,6 +9,13 @@ const {
     response_500,
     response_200,
 } = require("../utils.js/responseCodes.utils");
+const libreoffice=require("libreoffice-convert")
+const puppeteer = require('puppeteer');
+const { engine } = require("express-handlebars");
+const bodyParser = require('body-parser');
+
+
+
 
 const generateParaphrase = require("../utils.js/generateParaphrase");
 const getSpecialtool=require("../utils.js/generateSpecialtool");
@@ -286,3 +293,65 @@ exports.generateComponent=async(req,res)=>{
       res.status(500).json({ error: 'Internal Server Error' });
     }
 }
+
+
+
+// letterHead controller starts here
+
+
+
+
+function loadTemplate(templateName) {
+    const templatePath = path.join(__dirname, '..', 'templates', `${templateName}.handlebars`);
+    return fs.readFileSync(templatePath, 'utf8');
+  }
+  
+  // Function to convert an image to base64
+  function getBase64(file) {
+    return new Promise((resolve, reject) => {
+      fs.readFile(file, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(Buffer.from(data).toString('base64'));
+        }
+      });
+    });
+  }
+  
+  // Controller for generating JPG image
+  exports.generateLetterhead=async(req, res) =>{
+    const { companyName, email, phone, address } = req.body;
+    const logoPath = req.file ? req.file.path : null; // Get the uploaded logo path
+    const templateName = req.query.templateName;
+  
+    console.log("Logo path:", logoPath);
+  
+    const logoBase64 = logoPath ? await getBase64(logoPath) : null; // Convert logo to base64
+    const templateContent = loadTemplate(templateName);
+  
+    // Inject user input into the template
+    const customizedTemplate = templateContent
+      .replace('{{logo}}', `data:image/jpeg;base64,${logoBase64}`)
+      .replace('{{companyName}}', companyName)
+      .replace('{{email}}', email)
+      .replace('{{phone}}', phone)
+      .replace('{{address}}', address);
+  
+    // Generate JPG using Puppeteer
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setContent(customizedTemplate);
+    await page.setViewport({
+      width: 2480,
+      height: 3508,
+      deviceScaleFactor: 2,
+    });
+    const screenshotBuffer = await page.screenshot({ type: 'jpeg' });
+    await browser.close();
+  
+    // Serve JPG as a download
+    res.setHeader('Content-Type', 'image/jpeg');
+    res.setHeader('Content-Disposition', 'attachment; filename="letterhead.jpg"');
+    res.send(screenshotBuffer);
+  }

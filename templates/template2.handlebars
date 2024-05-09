@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css?family=Roboto");
+    :root {
+      --color-primary: #4CAF50;
+      --color-secondary: #2196F3;
+      --color-text: #333;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .Header {
+      background-color: var(--color-primary);
+      height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .Header h1 {
+      color: #fff;
+      font-size: 56px;
+    }
+    .Header-logo img {
+      width: 140px;
+    }
+    .Footer {
+      background-color: var(--color-secondary);
+      padding: 20px;
+      text-align: center;
+      color: #fff;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .Footer p {
+      margin: 5px 0;
+    }
+    .content {
+      padding: 20px;
+    }
+    .content p {
+      font-size: 36px;
+      margin: 5px 0;
+    }
+    .icon {
+      margin-right: 10px;
+    }
+    .middle {
+      text-align: center;
+      margin-top: 100px;
+    }
+    .middle h2 {
+      font-size: 36px;
+      color: var(--color-text);
+    }
+  </style>
+</head>
+<body>
+
+<div class="Header">
+  <div class="Header-logo">
+    <img src="{{logo}}" alt="Company Logo">
+    <h1>{{companyName}}</h1>
+  </div>
+</div>
+
+<div class="middle">
+  <h2>Letterhead</h2>
+</div>
+
+<div class="Footer">
+  <div class="content">
+    <p><span class="icon">📞</span>Phone: {{phone}}</p>
+    <p><span class="icon">✉</span>Email: {{email}}</p>
+    <p><span class="icon">🏠</span>Address: {{address}}</p>
+  </div>
+</div>
+
+</body>
+</html>
