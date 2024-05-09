@@ -35,7 +35,7 @@ app.get("/", (req, res) => {
 
 // make public a static folder
 app.use(express.static(path.join(__dirname, "public")));
-app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use("/api/v1", require("./apis/v1/index"));
 app.use("/api/v2", require("./apis/v2/index"));
