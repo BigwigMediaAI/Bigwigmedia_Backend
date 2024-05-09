@@ -1,4 +1,4 @@
-const { getResponse, getParaPhrase, getImage ,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,convertDocxToPdf,generateLetterhead} = require("../../controllers/response.controllers");
+const { getResponse, getParaPhrase, getImage ,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata} = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
 const multer = require('multer');
 const path=require("path")
@@ -24,15 +24,7 @@ const storage = multer.diskStorage({
     storage: storage,
   }).single("file");
 
-  const storagefile = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploads/') // Save uploaded files to "uploads" directory
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname); // Use original filename
-    }
-  });
-  const uploaddata = multer({ storage: storagefile });
+ 
 
 
 router.post("/", checkLimit, getResponse);
@@ -46,8 +38,7 @@ router.post("/marketing",checkLimit, getMarketing);
 router.post('/resize',checkLimit, multer({ dest: 'uploads/' }).single('image'), resizeImage);
 router.post("/generate",checkLimit,upload.single('logo'),generateQR)
 router.post("/component",checkLimit,generateComponent)
-router.post('/generateLetterhead', uploaddata.single('logo'), generateLetterhead);
-
+router.post("/rephrase",getRepharsedata);
 
 
 
