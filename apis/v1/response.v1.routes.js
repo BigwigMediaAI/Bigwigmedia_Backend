@@ -28,7 +28,7 @@ const storage = multer.diskStorage({
 
 
 router.post("/", checkLimit, getResponse);
-router.post("/paraphrase", checkLimit, getParaPhrase);
+router.post("/paraphrase", getParaPhrase);
 router.post("/image", checkLimit, getImage);
 router.post("/special",checkLimit, getSpecialtool);
 router.post("/decision",checkLimit, getDecision);

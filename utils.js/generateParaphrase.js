@@ -4,13 +4,13 @@ require("dotenv").config();
 
 const openai = new OpenAI();
 
-async function generateParaphrase(prompt) {
+async function generateParaphrase(prompt,tone) {
     const completion = await openai.chat.completions.create({
         messages: [
             {
                 role: "system",
                 content:
-                    "You are a creative paraphrasing assistant developed to rephrase and provide unique renditions of user prompts.",
+                    `You are a creative paraphrasing assistant developed to rephrase and provide unique renditions of user prompts according to ${tone} tone `,
             },
             {
                 role: "user",

@@ -76,8 +76,8 @@ exports.getResponse = async (req, res) => {
 
 exports.getParaPhrase = async (req, res) => {
     try {
-        const prompt = req.body.prompt;
-        const response = await generateParaphrase(prompt);
+        const {prompt,tone} = req.body;
+        const response = await generateParaphrase(prompt,tone);
         response_200(res, "Paraphrase generated successfully", response);
     } catch (error) {
         response_500(res, "Error getting paraphrase", error);
