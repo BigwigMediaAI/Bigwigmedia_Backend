@@ -38,8 +38,8 @@ router.post("/marketing",checkLimit, getMarketing);
 router.post('/resize',checkLimit, multer({ dest: 'uploads/' }).single('image'), resizeImage);
 router.post("/generate",checkLimit,upload.single('logo'),generateQR)
 router.post("/component",checkLimit,generateComponent)
-router.post("/rephrase",getRepharsedata);
-router.post('/upload', multer({ dest: 'uploads/' }).single('image'), uploadImage);
+router.post("/rephrase",checkLimit,getRepharsedata);
+router.post('/upload',checkLimit, multer({ dest: 'uploads/' }).single('image'), uploadImage);
 
 
 
