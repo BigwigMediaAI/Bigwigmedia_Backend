@@ -6,6 +6,7 @@ const removeEmoji = require("../utils.js/removeEmoji");
 const removeHashtag = require("../utils.js/removeHashtag");
 const getRepharse=require("../utils.js/generateRephrase")
 const path = require("path");
+const processImage=require("../utils.js/ImageToText")
 const {
     response_500,
     response_200,
@@ -309,3 +310,20 @@ exports.getRepharsedata = async (req, res) => {
 
 
 
+ exports.uploadImage=async(req, res)=> {
+    try {
+        // Check if file is provided
+        if (!req.file) {
+            return res.status(400).send('No file uploaded.');
+        }
+
+        // Process the uploaded image
+        const text = await processImage(req.file.path);
+
+        // Send the extracted text back to the client
+        res.send(text);
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        res.status(500).send('Error processing image.');
+    }
+}
