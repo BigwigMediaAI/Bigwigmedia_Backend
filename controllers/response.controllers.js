@@ -427,9 +427,22 @@ exports.mergePDF=async(req,res)=>{
 
         // Send the merged PDF as a response
         res.setHeader('Content-Type', 'application/pdf');
-        res.download(outputPath, 'merged.pdf');
-
-    
+        res.download(outputPath, 'merged.pdf', (err) => {
+            // Check for any error while sending the response
+            if (err) {
+                console.error('Error sending merged PDF:', err);
+                res.status(500).json({ error: 'An error occurred while sending the merged PDF.' });
+            } else {
+                // Delete the merged PDF file after sending it
+                fs.unlink(outputPath, (deleteErr) => {
+                    if (deleteErr) {
+                        console.error('Error deleting merged PDF file:', deleteErr);
+                    } else {
+                        // console.log(Deleted file: ${outputPath});
+                    }
+                });
+            }
+        });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'An error occurred while merging PDF files.' });
