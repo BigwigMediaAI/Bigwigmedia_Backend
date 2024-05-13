@@ -327,3 +327,71 @@ exports.getRepharsedata = async (req, res) => {
         res.status(500).send('Error processing image.');
     }
 }
+
+
+
+
+// image to pdf
+
+const fsExtra = require('fs-extra');
+  const { PDFDocument } = require('pdf-lib');
+
+  exports.jpgtopdfconverter=async (req,res)=>{
+    try {
+        const jpgFiles = req.files;
+
+        // Create a new PDF document
+        const pdfDoc = await PDFDocument.create();
+
+        for (let i = 0; i < jpgFiles.length; i++) {
+            const jpgFilePath = jpgFiles[i].path;
+
+            // Load JPG image
+            const jpgData = await fsExtra.readFile(jpgFilePath);
+
+            // Add a new page for each image
+            const page = pdfDoc.addPage([612, 792]); // Letter size page
+
+            // Embed the JPG image into the PDF
+            const jpgImage = await pdfDoc.embedJpg(jpgData);
+            const jpgDims = jpgImage.scale(1);
+
+            // Calculate dimensions to fit the entire image onto the page
+            const { width, height } = jpgDims;
+            const pdfWidth = page.getWidth();
+            const pdfHeight = page.getHeight();
+            const scaleFactor = Math.min(pdfWidth / width, pdfHeight / height);
+
+            // Calculate the scaled dimensions
+            const scaledWidth = width * scaleFactor;
+            const scaledHeight = height * scaleFactor;
+
+            // Calculate the position to center the image on the page
+            const offsetX = (pdfWidth - scaledWidth) / 2;
+            const offsetY = (pdfHeight - scaledHeight) / 2;
+
+            page.drawImage(jpgImage, {
+                x: offsetX,
+                y: offsetY,
+                width: scaledWidth,
+                height: scaledHeight,
+            });
+
+            // Delete the uploaded image file
+            await fsExtra.unlink(jpgFilePath);
+        }
+
+        // Serialize the PDF to a binary string
+        const pdfBytes = await pdfDoc.save();
+
+        // Set response headers
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename="converted.pdf"');
+
+        // Send the PDF binary data as response
+        res.send(Buffer.from(pdfBytes));
+    } catch (err) {
+        console.error('Error:', err);
+        res.status(500).send('Internal Server Error');
+    }
+  }

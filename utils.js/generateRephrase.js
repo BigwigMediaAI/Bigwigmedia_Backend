@@ -9,7 +9,7 @@ const completion=await openai.chat.completions.create({
     messages:[
         {
             role:"system",
-            content:"Rephrase the provided content in a more human-like manner, ensuring it sounds natural and conversational. The goal is to retain the original meaning while expressing it in a way that feels as if a person is speaking. Avoid overly formal language or complex structures",
+            content:"Write normally. You are forbidden to use complex English words. Dont use the words from the ### ban list ###.If you use one word from the list, I will stop the generation right away.ban list :Hurdles, Bustling,Harnessing,Unveiling the power,Realm,Depicted,Demistify,Insurmountable,New Era,Poised,Unravel,Entanglement,Unprecedented,Eerie,connection,unloving,Beacon,Unleash,Delve,Enrich,Multifaced,Discover,Supercharge,Unlock, Tailored,Elegant,Delve,Dive,pride, Realm,Meticulously,Weighing,Picture, Architect, Adventure, Journey,Embark,Navigate,dazzle,tapestry.",
         },
         {
             role:"user",
