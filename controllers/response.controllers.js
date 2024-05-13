@@ -395,3 +395,43 @@ const fsExtra = require('fs-extra');
         res.status(500).send('Internal Server Error');
     }
   }
+
+
+//merge pdf files 
+exports.mergePDF=async(req,res)=>{
+    try {
+        // Check if files were uploaded
+        if (!req.files || req.files.length < 2) {
+            return res.status(400).json({ error: 'Please upload at least two PDF files.' });
+        }
+
+        // Merge PDF files
+        const mergedPdf = await PDFDocument.create();
+        for (const file of req.files) {
+            const pdfBytes = fs.readFileSync(file.path);
+            const pdfDoc = await PDFDocument.load(pdfBytes);
+            const copiedPages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+            copiedPages.forEach(page => mergedPdf.addPage(page));
+        }
+
+        // Save merged PDF to a file
+        const outputPath = 'merged.pdf';
+        const mergedPdfBytes = await mergedPdf.save();
+        fs.writeFileSync(outputPath, mergedPdfBytes);
+
+        // Delete uploaded PDF files after merging
+        req.files.forEach(file => {
+            fs.unlinkSync(file.path);
+            // console.log(Deleted file: ${file.path});
+        });
+
+        // Send the merged PDF as a response
+        res.setHeader('Content-Type', 'application/pdf');
+        res.download(outputPath, 'merged.pdf');
+
+    
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'An error occurred while merging PDF files.' });
+    }
+  }

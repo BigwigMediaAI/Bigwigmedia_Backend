@@ -1,4 +1,4 @@
-const { getResponse, getParaPhrase, getImage ,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter} = require("../../controllers/response.controllers");
+const { getResponse, getParaPhrase, getImage ,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF} = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
 const multer = require('multer');
 const path=require("path")
@@ -8,21 +8,19 @@ const path=require("path")
 const router = require("express").Router();
 const upload = multer({ dest: 'uploads/' }); // Destination folder for uploaded files
 
+// Set up Multer for handling file uploads
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, "uploads");
-    },
-    filename: function (req, file, cb) {
-      cb(
-        null,
-        file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-      );
-    },
-  });
+  destination: function (req, file, cb) {
+      cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+      cb(null, file.originalname);
+  }
+});
+const uploadfile = multer({ storage: storage });
 
-  const uploadfile = multer({
-    storage: storage,
-  }).single("file");
+
+
 
  
 
@@ -40,8 +38,8 @@ router.post("/generate",checkLimit,upload.single('logo'),generateQR)
 router.post("/component",checkLimit,generateComponent)
 router.post("/rephrase",checkLimit,getRepharsedata);
 router.post('/upload',checkLimit, multer({ dest: 'uploads/' }).single('image'), uploadImage);
-router.post("/jpg2pdf",upload.array('images',10),jpgtopdfconverter)
-
+router.post("/jpg2pdf",checkLimit,upload.array('images',10),jpgtopdfconverter)
+router.post("/mergePDF",uploadfile.array('pdfFiles'),mergePDF)
 
 
 
