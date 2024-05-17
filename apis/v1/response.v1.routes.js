@@ -40,7 +40,7 @@ router.post("/rephrase",checkLimit,getRepharsedata);
 router.post('/upload',checkLimit, multer({ dest: 'uploads/' }).single('image'), uploadImage);
 router.post("/jpg2pdf",checkLimit,upload.array('images',10),jpgtopdfconverter)
 router.post("/mergePDF",checkLimit,uploadfile.array('pdfFiles'),mergePDF)
-router.post("/png2pdf",upload.array('images',10),pngtopdfconverter)
+router.post("/png2pdf",checkLimit,upload.array('images',10),pngtopdfconverter)
 
 
 
