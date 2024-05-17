@@ -17,8 +17,8 @@ const {
 // const bodyParser = require('body-parser');
 
 
-
-
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const ffmpeg = require('fluent-ffmpeg');
 const generateParaphrase = require("../utils.js/generateParaphrase");
 const getSpecialtool=require("../utils.js/generateSpecialtool");
 const getDecision=require("../utils.js/generateDecision")
@@ -514,3 +514,45 @@ exports.mergePDF=async(req,res)=>{
         res.status(500).json({ error: 'An error occurred while merging PDF files.' });
     }
   }
+
+
+
+// ******video to audio******
+
+ffmpeg.setFfmpegPath(ffmpegPath);
+
+exports.convertVideoToAudio = async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+      }
+  
+      const inputVideoPath = req.file.path;
+      const outputAudioPath = path.join('./converted', `${path.parse(inputVideoPath).name}.mp3`);
+  
+      ffmpeg(inputVideoPath)
+        .noVideo() // Remove video stream
+        .audioCodec('libmp3lame') // Choose audio codec
+        .save(outputAudioPath)
+        .on('end', () => {
+          // Send the converted audio file as response
+          res.download(outputAudioPath, (err) => {
+            if (err) {
+              console.error('Error sending file:', err);
+              res.status(500).json({ error: 'Internal server error' });
+            } else {
+              // Cleanup: Delete the uploaded video and converted audio files
+              fs.unlinkSync(inputVideoPath);
+              fs.unlinkSync(outputAudioPath);
+            }
+          });
+        })
+        .on('error', (err) => {
+          console.error('Error converting file:', err);
+          res.status(500).json({ error: 'Error converting file' });
+        });
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
