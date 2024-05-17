@@ -1,4 +1,4 @@
-const { getResponse, getParaPhrase, getImage ,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF} = require("../../controllers/response.controllers");
+const { getResponse, getParaPhrase, getImage ,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter} = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
 const multer = require('multer');
 const path=require("path")
@@ -39,7 +39,8 @@ router.post("/component",checkLimit,generateComponent)
 router.post("/rephrase",checkLimit,getRepharsedata);
 router.post('/upload',checkLimit, multer({ dest: 'uploads/' }).single('image'), uploadImage);
 router.post("/jpg2pdf",checkLimit,upload.array('images',10),jpgtopdfconverter)
-router.post("/mergePDF",uploadfile.array('pdfFiles'),mergePDF)
+router.post("/mergePDF",checkLimit,uploadfile.array('pdfFiles'),mergePDF)
+router.post("/png2pdf",upload.array('images',10),pngtopdfconverter)
 
 
 

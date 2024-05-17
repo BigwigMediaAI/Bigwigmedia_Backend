@@ -396,8 +396,74 @@ const fsExtra = require('fs-extra');
     }
   }
 
+// *******png to pdf ******
+exports.pngtopdfconverter = async (req, res) => {
+    try {
+        const imageFiles = req.files;
 
-//merge pdf files 
+        // Create a new PDF document
+        const pdfDoc = await PDFDocument.create();
+
+        for (let i = 0; i < imageFiles.length; i++) {
+            const imageFile = imageFiles[i];
+            const imagePath = imageFile.path;
+
+            // Determine image type (only png is supported)
+            const imageType = imageFile.mimetype.split('/')[1];
+            if (imageType !== 'png') {
+                throw new Error('Unsupported image type');
+            }
+
+            // Load image data
+            const imageData = await fs.promises.readFile(imagePath); // Use fs.promises.readFile
+
+            // Add a new page for each image
+            const page = pdfDoc.addPage([612, 792]); // Letter size page
+
+            // Embed the image into the PDF
+            const imageEmbed = await pdfDoc.embedPng(imageData);
+
+            const imageDims = imageEmbed.scale(1);
+
+            // Calculate dimensions to fit the entire image onto the page
+            const { width, height } = imageDims;
+            const pdfWidth = page.getWidth();
+            const pdfHeight = page.getHeight();
+            const scaleFactor = Math.min(pdfWidth / width, pdfHeight / height);
+
+            // Calculate the scaled dimensions
+            const scaledWidth = width * scaleFactor;
+            const scaledHeight = height * scaleFactor;
+
+            // Calculate the position to center the image on the page
+            const offsetX = (pdfWidth - scaledWidth) / 2;
+            const offsetY = (pdfHeight - scaledHeight) / 2;
+
+            page.drawImage(imageEmbed, {
+                x: offsetX,
+                y: offsetY,
+                width: scaledWidth,
+                height: scaledHeight,
+            });
+
+            // Delete the uploaded image file
+            await fs.promises.unlink(imagePath); // Use fs.promises.unlink
+        }
+
+        // Serialize the PDF to a binary string
+        const pdfBytes = await pdfDoc.save();
+
+        // Set response headers
+        res.setHeader('Content-Type', 'application/pdf');
+        res.send(Buffer.from(pdfBytes));
+    } catch (err) {
+        console.error('Error:', err);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
+//*****merge pdf files***** 
 exports.mergePDF=async(req,res)=>{
     try {
         // Check if files were uploaded
