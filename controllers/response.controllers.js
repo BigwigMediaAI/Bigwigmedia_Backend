@@ -7,8 +7,6 @@ const removeHashtag = require("../utils.js/removeHashtag");
 const getRepharse=require("../utils.js/generateRephrase")
 const path = require("path");
 const processImage=require("../utils.js/ImageToText")
-const archiver = require('archiver');
-const convertPdfToJpg=require("../utils.js/convertpdftojpg")
 
 const {
     response_500,
@@ -559,40 +557,3 @@ exports.convertVideoToAudio = async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   };
-
-
-//   ******pdf to jpg******
-
-
-  exports.pdftojpg=async(req,res)=>{
-    const pdfPath = req.file.path;
-  const outputDir = path.join(__dirname, 'output', path.basename(pdfPath, path.extname(pdfPath)));
-
-  try {
-    const jpgFiles = await convertPdfToJpg(pdfPath, outputDir);
-
-    res.setHeader('Content-Type', 'application/zip');
-    res.setHeader('Content-Disposition', 'attachment; filename=converted-images.zip');
-
-    const archive = archiver('zip', { zlib: { level: 9 } });
-    archive.pipe(res);
-
-    for (const file of jpgFiles) {
-      archive.file(file, { name: path.basename(file) });
-    }
-
-    archive.finalize();
-
-    // Cleanup: Delete files and folder after sending
-    archive.on('end', async () => {
-      for (const file of jpgFiles) {
-        await fsExtra.remove(file);
-      }
-      await fsExtra.remove(outputDir);
-      await fsExtra.remove(pdfPath);
-    });
-
-  } catch (error) {
-    res.status(500).json({ error: 'Error converting PDF to JPG.', details: error.message });
-  }
-  }
