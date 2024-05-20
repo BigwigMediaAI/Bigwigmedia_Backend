@@ -1,4 +1,4 @@
-const { getResponse, getParaPhrase, getImage ,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio} = require("../../controllers/response.controllers");
+const { getResponse, getParaPhrase, getImage ,JpgtoPngconverter,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio} = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
 const multer = require('multer');
 const path=require("path")
@@ -43,6 +43,7 @@ router.post("/mergePDF",checkLimit,uploadfile.array('pdfFiles'),mergePDF)
 router.post("/png2pdf",checkLimit,upload.array('images',10),pngtopdfconverter)
 router.post('/convert',checkLimit, upload.single('video'), convertVideoToAudio);
 router.post("/pngtojpg",upload.single("image"),pngtojpgcoverter)
+router.post("/jpgtopng",upload.single("image"),JpgtoPngconverter)
 
 
 module.exports = router;

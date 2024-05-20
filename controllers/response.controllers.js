@@ -558,7 +558,7 @@ exports.convertVideoToAudio = async (req, res) => {
     }
   };
 
-
+// png to jpg converter 
 
   exports.pngtojpgcoverter=async(req,res)=>{
     try {
@@ -593,3 +593,58 @@ exports.convertVideoToAudio = async (req, res) => {
         res.status(500).send('An error occurred while processing the file.');
       }
   }
+
+
+//   jpg to png converter
+
+
+exports.JpgtoPngconverter=async(req,res)=>{
+    try {
+        if (!req.file) {
+          return res.status(400).send('No file uploaded.');
+        }
+    
+        const filePath = req.file.path;
+        const fileExt = path.extname(req.file.originalname).toLowerCase();
+    
+        if (fileExt !== '.jpg' && fileExt !== '.jpeg') {
+          fs.unlink(filePath, (err) => {
+            if (err) {
+              console.error('Error deleting file:', err);
+            }
+          });
+          return res.status(400).send('Only JPG files are allowed.');
+        }
+    
+        const outputFilePath = filePath + '.png'; // Use .png extension
+    
+        await sharp(filePath)
+          .png()
+          .toFile(outputFilePath);
+    
+        res.download(outputFilePath, 'converted.png', (err) => {
+          if (err) {
+            console.error('Error sending file:', err);
+          }
+    
+          // Delay deletion to ensure file is not in use
+          setTimeout(() => {
+            // fs.unlink(filePath, (err) => {
+            //   if (err) {
+            //     console.error('Error deleting original file:', err);
+            //   }
+            // });
+            fs.unlink(outputFilePath, (err) => {
+              if (err) {
+                console.error('Error deleting converted file:', err);
+              }
+            });
+          }, 1000); // 1 second delay
+    
+        });
+    
+      } catch (error) {
+        console.error('An error occurred:', error);
+        res.status(500).send('An error occurred while processing the file.');
+      }
+}
