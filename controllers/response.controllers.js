@@ -557,3 +557,39 @@ exports.convertVideoToAudio = async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   };
+
+
+
+  exports.pngtojpgcoverter=async(req,res)=>{
+    try {
+        if (!req.file) {
+          return res.status(400).send('No file uploaded.');
+        }
+    
+        const filePath = req.file.path;
+        const fileExt = path.extname(req.file.originalname).toLowerCase();
+    
+        if (fileExt !== '.png') {
+          fs.unlinkSync(filePath); // Delete the file
+          return res.status(400).send('Only PNG files are allowed.');
+        }
+    
+        const outputFilePath = filePath + '.jpg'; // Use .jpg extension
+    
+        await sharp(filePath)
+          .jpeg()
+          .toFile(outputFilePath);
+    
+        res.download(outputFilePath, 'converted.jpg', (err) => {
+          if (err) {
+            console.error('Error sending file:', err);
+          }
+          fs.unlinkSync(filePath); // Delete the original PNG file
+          fs.unlinkSync(outputFilePath); // Delete the converted JPG file
+        });
+    
+      } catch (error) {
+        console.error('An error occurred:', error);
+        res.status(500).send('An error occurred while processing the file.');
+      }
+  }
