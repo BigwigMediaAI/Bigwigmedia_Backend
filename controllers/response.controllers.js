@@ -648,3 +648,85 @@ exports.JpgtoPngconverter=async(req,res)=>{
         res.status(500).send('An error occurred while processing the file.');
       }
 }
+
+
+// ******** Facebook video downloader **************
+
+const { ndown } = require('nayan-media-downloader');
+exports.fbDownloader=async(req,res)=>{
+    const url = req.body.url;
+  
+  if (!url) {
+    return res.status(400).json({ error: 'URL is required' });
+  }
+
+  try {
+    const downloadUrl = await ndown(url);
+    res.json({ downloadUrl });
+  } catch (error) {
+    res.status(500).json({ error: 'Error downloading media', details: error.message });
+  }
+}
+
+
+
+// ******** Twitter video downloader **************
+
+const { twitterdown } = require('nayan-media-downloader');
+exports.twitterDownloader=async(req,res)=>{
+    const url = req.body.url;
+  
+  if (!url) {
+    return res.status(400).json({ error: 'URL is required' });
+  }
+
+  try {
+    const downloadUrl = await twitterdown(url);
+    res.json({ downloadUrl });
+  } catch (error) {
+    res.status(500).json({ error: 'Error downloading media', details: error.message });
+  }
+}
+
+
+
+
+// ******** Text to PDF Converter **************
+
+const PDFKit = require('pdfkit');
+exports.text2Pdf=(req,res)=>{
+  const { text } = req.body;
+
+    // Check if the text is provided
+    if (!text) {
+        return res.status(400).json({ error: 'Text is required in the request body' });
+    }
+
+    // Create a new PDF document
+    const doc = new PDFKit();
+
+    // Buffer to store the PDF
+    let buffers = [];
+
+    // Write text to the PDF
+    doc.text(text);
+
+    // Save the PDF to a buffer
+    doc.on('data', buffers.push.bind(buffers));
+    doc.on('end', () => {
+        const pdfBuffer = Buffer.concat(buffers);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=output.pdf');
+        res.send(pdfBuffer);
+    });
+
+    // Error handling
+    doc.on('error', (err) => {
+        console.error('Error creating PDF:', err);
+        res.status(500).json({ error: 'An error occurred while creating PDF' });
+    });
+
+    // End the document
+    doc.end();
+
+}
