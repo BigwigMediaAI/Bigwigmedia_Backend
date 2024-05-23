@@ -7,6 +7,7 @@ const removeHashtag = require("../utils.js/removeHashtag");
 const getRepharse=require("../utils.js/generateRephrase")
 const path = require("path");
 const processImage=require("../utils.js/ImageToText")
+const Seopodcast=require("../utils.js/SeoPodcast")
 
 const {
     response_500,
@@ -729,4 +730,18 @@ exports.text2Pdf=(req,res)=>{
     // End the document
     doc.end();
 
+}
+
+
+// podcast
+
+exports.Podcast= async(req,res)=>{
+  try {
+    const { prompt,topic, guest, background, interests, tone } = req.body;
+   const response=await Seopodcast(prompt,topic, guest, background, interests, tone);
+  //  console.log(response)
+   response_200(res,"SEO analysis completed succesfully",{data:response});
+  } catch (error) {
+   response_500(res,"Error performing SEO analysis",error);
+  }
 }
