@@ -8,6 +8,8 @@ const getRepharse=require("../utils.js/generateRephrase")
 const path = require("path");
 const processImage=require("../utils.js/ImageToText")
 const Seopodcast=require("../utils.js/SeoPodcast")
+const potrace = require('potrace');
+
 
 const {
     response_500,
@@ -744,4 +746,44 @@ exports.Podcast= async(req,res)=>{
   } catch (error) {
    response_500(res,"Error performing SEO analysis",error);
   }
+}
+
+
+// image to svg
+
+// ******** Image To SVG converter *************
+
+
+exports.svgConverter=(req,res)=>{
+  if (!req.file) {
+    return res.status(400).send('No file uploaded.');
+}
+
+const inputPath = req.file.path;
+const outputPath = `uploads/${req.file.filename}.svg`;
+
+sharp(inputPath)
+    .toBuffer()
+    .then(buffer => {
+        potrace.trace(buffer, (err, svg) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('An error occurred while processing the image.');
+            }
+            fs.writeFileSync(outputPath, svg);
+            res.sendFile(path.resolve(outputPath), (err) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('An error occurred while sending the SVG file.');
+                }
+                // fs.unlinkSync(inputPath);
+                fs.unlinkSync(outputPath);
+                
+            });
+        });
+    })
+    .catch(err => {
+        console.error(err);
+        res.status(500).send('An error occurred while processing the image.');
+    });
 }

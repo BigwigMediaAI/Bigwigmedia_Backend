@@ -1,4 +1,4 @@
-const { getResponse, getParaPhrase, getImage ,JpgtoPngconverter,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio,fbDownloader,twitterDownloader,text2Pdf,Podcast} = require("../../controllers/response.controllers");
+const { getResponse, getParaPhrase, getImage ,JpgtoPngconverter,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio,fbDownloader,twitterDownloader,text2Pdf,Podcast,svgConverter} = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
 const multer = require('multer');
 const path=require("path")
@@ -49,5 +49,6 @@ router.post("/fbinstadownload",checkLimit,fbDownloader)
 router.post("/twitterdownload",checkLimit,twitterDownloader)
 router.post("/text2pdf",checkLimit,text2Pdf)
 router.post("/podcast",checkLimit,Podcast)
+router.post("/svgconvert",upload.single('image'),svgConverter)
 
 module.exports = router;
