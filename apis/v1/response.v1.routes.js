@@ -45,9 +45,9 @@ router.post('/convert',checkLimit, upload.single('video'), convertVideoToAudio);
 router.post("/pngtojpg",checkLimit,upload.single("image"),pngtojpgcoverter)
 router.post("/jpgtopng",checkLimit,upload.single("image"),JpgtoPngconverter)
 
-router.post("/fbinstadownload",fbDownloader)
-router.post("/twitterdownload",twitterDownloader)
-router.post("/text2pdf",text2Pdf)
-router.post("/podcast",Podcast)
+router.post("/fbinstadownload",checkLimit,fbDownloader)
+router.post("/twitterdownload",checkLimit,twitterDownloader)
+router.post("/text2pdf",checkLimit,text2Pdf)
+router.post("/podcast",checkLimit,Podcast)
 
 module.exports = router;
