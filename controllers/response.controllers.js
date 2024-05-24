@@ -9,6 +9,8 @@ const path = require("path");
 const processImage=require("../utils.js/ImageToText")
 const Seopodcast=require("../utils.js/SeoPodcast")
 const potrace = require('potrace');
+const archiver = require('archiver');
+
 
 
 const {
@@ -786,4 +788,37 @@ sharp(inputPath)
         console.error(err);
         res.status(500).send('An error occurred while processing the image.');
     });
+}
+
+
+
+// ************ Zip maker *************
+
+exports.zipmaker=(req,res)=>{
+    // Get the uploaded files from the request object
+  const uploadedFiles = req.files;
+
+  // Create a new archiver instance
+  const archive = archiver('zip', {
+    zlib: { level: 9 } // Sets the compression level
+  });
+
+  // Pipe the archive to the response object
+  archive.pipe(res);
+
+  // Add uploaded files to the zip
+  uploadedFiles.forEach(file => {
+    const filePath = file.path;
+    const originalName = file.originalname;
+
+    archive.file(filePath, { name: originalName }); // Add each file to the archive with its original name
+  });
+
+  // Finalize the zip and send the response
+  archive.finalize();
+
+  // Clean up uploaded files after sending the response
+  archive.on('end', () => {
+    uploadedFiles.forEach(file => fs.unlinkSync(file.path)); // Delete each uploaded file
+  });
 }
