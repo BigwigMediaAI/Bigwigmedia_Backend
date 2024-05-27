@@ -822,3 +822,59 @@ exports.zipmaker=(req,res)=>{
     uploadedFiles.forEach(file => fs.unlinkSync(file.path)); // Delete each uploaded file
   });
 }
+
+
+// ********Gif converter************
+
+
+ffmpeg.setFfmpegPath(ffmpegPath);
+
+// Helper function to convert time string (HH:MM:SS) to seconds
+const timeToSeconds = (time) => {
+  const parts = time.split(':');
+  return (+parts[0] * 3600) + (+parts[1] * 60) + (+parts[2]);
+};
+
+exports.gifConverter=(req,res)=>{
+  const { start, end } = req.body;
+  const inputPath = req.file.path;
+  const outputPath = path.join(__dirname, 'output.gif');
+
+  const startTimeInSeconds = timeToSeconds(start);
+  const endTimeInSeconds = timeToSeconds(end);
+  const duration = endTimeInSeconds - startTimeInSeconds;
+
+  ffmpeg(inputPath)
+    .setStartTime(startTimeInSeconds)
+    .duration(duration)
+    .outputOptions([
+      '-vf', 'fps=10,scale=320:-1:flags=lanczos',
+      '-c:v', 'gif'
+    ])
+    .on('end', function() {
+      res.download(outputPath, () => {
+        // Clean up files
+        fs.unlink(inputPath, (err) => {
+          if (err) {
+            console.error('Error deleting input file:', err);
+          }
+        });
+        fs.unlink(outputPath, (err) => {
+          if (err) {
+            console.error('Error deleting output file:', err);
+          }
+        });
+      });
+    })
+    .on('error', function(err) {
+      console.error('Error: ' + err.message);
+      res.status(500).send('An error occurred during the conversion process.');
+      fs.unlink(inputPath, (err) => {
+        if (err) {
+          console.error('Error deleting input file after error:', err);
+        }
+      });
+    })
+    .save(outputPath);
+
+}
