@@ -10,6 +10,7 @@ const processImage=require("../utils.js/ImageToText")
 const Seopodcast=require("../utils.js/SeoPodcast")
 const potrace = require('potrace');
 const archiver = require('archiver');
+const getSummary=require("../utils.js/getSummary");
 
 
 
@@ -878,3 +879,18 @@ exports.gifConverter=(req,res)=>{
     .save(outputPath);
 
 }
+
+// ********summary generator*******
+
+
+
+exports.getTextSummary = async (req, res) => {
+  try {
+      const { text } = req.body;
+      const summary = await getSummary(text);
+      res.status(200).json({ summary });
+  } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ error: "Error generating text summary" });
+  }
+};

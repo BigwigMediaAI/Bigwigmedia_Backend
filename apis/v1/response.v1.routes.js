@@ -1,4 +1,4 @@
-const { getResponse, getParaPhrase, getImage ,JpgtoPngconverter,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio,fbDownloader,twitterDownloader,text2Pdf,Podcast,svgConverter,zipmaker,gifConverter} = require("../../controllers/response.controllers");
+const { getResponse, getParaPhrase, getImage ,JpgtoPngconverter,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio,fbDownloader,twitterDownloader,text2Pdf,Podcast,svgConverter,zipmaker,gifConverter,getTextSummary} = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
 const multer = require('multer');
 const path=require("path")
@@ -49,8 +49,9 @@ router.post("/fbinstadownload",checkLimit,fbDownloader)
 router.post("/twitterdownload",checkLimit,twitterDownloader)
 router.post("/text2pdf",checkLimit,text2Pdf)
 router.post("/podcast",checkLimit,Podcast)
-router.post("/svgconvert",upload.single('image'),svgConverter)
-router.post("/zip",upload.array('files'),zipmaker)
-router.post("/gif",upload.single("video"),gifConverter)
+router.post("/svgconvert",checkLimit,upload.single('image'),svgConverter)
+router.post("/zip",checkLimit,upload.array('files'),zipmaker)
+router.post("/gif",checkLimit,upload.single("video"),gifConverter)
+router.post("/getSummary", getTextSummary);
 
 module.exports = router;
