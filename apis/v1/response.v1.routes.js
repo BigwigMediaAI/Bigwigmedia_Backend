@@ -1,4 +1,4 @@
-const { getResponse, getParaPhrase, getImage ,JpgtoPngconverter,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio,fbDownloader,twitterDownloader,text2Pdf,Podcast,svgConverter,zipmaker,gifConverter,getTextSummary,zipExtractor} = require("../../controllers/response.controllers");
+const { getResponse, getParaPhrase, getImage ,JpgtoPngconverter,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio,fbDownloader,twitterDownloader,text2Pdf,Podcast,svgConverter,zipmaker,gifConverter,getTextSummary,zipExtractor,getNotesSummary,pdftotext} = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
 const multer = require('multer');
 const path=require("path")
@@ -53,6 +53,8 @@ router.post("/svgconvert",checkLimit,upload.single('image'),svgConverter)
 router.post("/zip",checkLimit,upload.array('files'),zipmaker)
 router.post("/gif",checkLimit,upload.single("video"),gifConverter)
 router.post("/getSummary",checkLimit, getTextSummary);
-router.all("/files",upload.single('zipfile'),zipExtractor)
+router.all("/files",checkLimit,upload.single('zipfile'),zipExtractor)
+router.post('/getNotesSummary', getNotesSummary);
+router.post('/pdf2text',upload.single('pdf'),pdftotext)
 
 module.exports = router;

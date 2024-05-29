@@ -40,6 +40,10 @@ const fs = require('fs');
 const multer = require('multer');
 const generateQRCodeWithLogo=require("../utils.js/generateQRcode")
 const { generateImage, QUALITY } = require("../utils.js/generateImage");
+const { getNotesSummary } = require('../utils.js/notesSummary');
+const pdfParse = require('pdf-parse');
+
+
 exports.getResponse = async (req, res) => {
     try {
         const prompt = req.body.prompt;
@@ -959,3 +963,36 @@ exports.zipExtractor = (req, res) => {
     res.status(405).send('Method Not Allowed');
   }
 };
+
+
+// ********Quick Notes Summarizer**********
+
+exports.getNotesSummary = async (req, res) => {
+  try {
+      const { notes } = req.body;
+      const summary = await getNotesSummary(notes);
+      res.status(200).json({ summary });
+  } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ error: "Error generating notes summary" });
+  }
+};
+
+
+// ********PDF to Text**********
+
+
+exports.pdftotext=async(req,res)=>{
+  const filePath = req.file.path;
+
+    try {
+        const dataBuffer = fs.readFileSync(filePath);
+        const data = await pdfParse(dataBuffer);
+        res.send({ text: data.text });
+        // Optionally, delete the file after extraction
+        fs.unlinkSync(filePath);
+    } catch (error) {
+        res.status(500).send({ error: `Error extracting text from PDF: ${error.message} `});
+        fs.unlinkSync(filePath);
+    }
+}
