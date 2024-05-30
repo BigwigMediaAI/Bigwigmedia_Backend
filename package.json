@@ -28,7 +28,7 @@
         "libreoffice-convert": "^1.5.1",
         "mongoose": "^8.1.1",
         "multer": "^1.4.5-lts.1",
-        "nayan-media-downloader": "^2.2.8",
+        "nayan-media-downloader": "^2.3.3",
         "openai": "^4.26.0",
         "pdf-lib": "^1.17.1",
         "pdf-parse": "^1.1.1",

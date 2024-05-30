@@ -996,3 +996,269 @@ exports.pdftotext=async(req,res)=>{
         fs.unlinkSync(filePath);
     }
 }
+
+
+// ************Compressed video file**********
+exports.compressedVideo = async (req, res) => {
+  const filePath = req.file.path;
+    const outputFilePath = 'uploads/' + Date.now() + '.mp4';
+
+    ffmpeg(filePath)
+        .output(outputFilePath)
+        .videoCodec('libx264')
+        .size('50%')
+        .on('end', () => {
+            fs.unlinkSync(filePath); // Remove original file
+            res.download(outputFilePath, path.basename(outputFilePath), (err) => {
+                if (err) {
+                    console.error('Error:', err);
+                    res.status(500).json({
+                        success: false,
+                        message: 'An error occurred during the download.'
+                    });
+                } else {
+                    fs.unlinkSync(outputFilePath); // Remove compressed file after download
+                }
+            });
+        })
+        .on('error', (err) => {
+            console.error('Error:', err);
+            res.status(500).json({
+                success: false,
+                message: 'An error occurred during the compression process.'
+            });
+        })
+        .run();
+
+}
+
+
+// ********Extract images from pdf**********
+
+
+const {  PDFName, PDFRawStream } = require('pdf-lib');
+const { PNG } = require('pngjs');
+const pako = require('pako');
+
+
+const PngColorTypes = {
+  Grayscale: 0,
+  Rgb: 2,
+  IndexedColor: 3,
+  GrayscaleAlpha: 4,
+  RgbAlpha: 6
+};
+
+const ComponentsPerPixelOfColorType = {
+  [PngColorTypes.Grayscale]: 1,
+  [PngColorTypes.Rgb]: 3,
+  [PngColorTypes.IndexedColor]: 1,
+  [PngColorTypes.GrayscaleAlpha]: 2,
+  [PngColorTypes.RgbAlpha]: 4
+};
+
+
+function readBitAtOffsetOfArray(array, offset) {
+  const byteIndex = Math.floor(offset / 8);
+  const bitIndex = 7 - (offset % 8);
+  return (array[byteIndex] >> bitIndex) & 1;
+}
+
+
+exports.extractpdftoimages=async(req,res)=>{
+  try {
+    if (!req.file) {
+      console.error('No file uploaded.');
+      return res.status(400).send('No file uploaded.');
+    }
+
+    console.log('File uploaded:', req.file);
+
+    const pdfPath = req.file.path;
+    const pdfBytes = fs.readFileSync(pdfPath);
+    const pdfDoc = await PDFDocument.load(pdfBytes);
+
+    const imagesInDoc = [];
+    let objectIdx = 0;
+
+    for (const [ref, pdfObject] of pdfDoc.context.indirectObjects) {
+      objectIdx += 1;
+
+      if (!(pdfObject instanceof PDFRawStream)) continue;
+
+      const dict = pdfObject.dict;
+
+      const smaskRef = dict.get(PDFName.of('SMask'));
+      const colorSpace = dict.get(PDFName.of('ColorSpace'));
+      const subtype = dict.get(PDFName.of('Subtype'));
+      const width = dict.get(PDFName.of('Width'));
+      const height = dict.get(PDFName.of('Height'));
+      const name = dict.get(PDFName.of('Name'));
+      const bitsPerComponent = dict.get(PDFName.of('BitsPerComponent'));
+      const filter = dict.get(PDFName.of('Filter'));
+
+      if (subtype === PDFName.of('Image')) {
+        imagesInDoc.push({
+          ref,
+          smaskRef,
+          colorSpace,
+          name: name ? name.key : `Object${objectIdx}`,
+          width: width.value,
+          height: height.value,
+          bitsPerComponent: bitsPerComponent.value,
+          data: pdfObject.contents,
+          type: filter === PDFName.of('DCTDecode') ? 'jpg' : 'png',
+        });
+      }
+    }
+
+    imagesInDoc.forEach(image => {
+      if (image.type === 'png' && image.smaskRef) {
+        const smaskImg = imagesInDoc.find(({ ref }) => ref === image.smaskRef);
+        if (smaskImg) {
+          smaskImg.isAlphaLayer = true;
+          image.alphaLayer = smaskImg;
+        }
+      }
+    });
+
+    const savePng = image =>
+      new Promise((resolve, reject) => {
+        const isGrayscale = image.colorSpace === PDFName.of('DeviceGray');
+        const colorPixels = pako.inflate(image.data);
+        const alphaPixels = image.alphaLayer ? pako.inflate(image.alphaLayer.data) : undefined;
+
+        const colorType =
+          isGrayscale && alphaPixels ? PngColorTypes.GrayscaleAlpha
+          : !isGrayscale && alphaPixels ? PngColorTypes.RgbAlpha
+          : isGrayscale ? PngColorTypes.Grayscale
+          : PngColorTypes.Rgb;
+
+        const colorByteSize = 1;
+        const width = image.width * colorByteSize;
+        const height = image.height * colorByteSize;
+        const inputHasAlpha = [PngColorTypes.RgbAlpha, PngColorTypes.GrayscaleAlpha].includes(colorType);
+
+        const png = new PNG({
+          width,
+          height,
+          colorType,
+          inputColorType: colorType,
+          inputHasAlpha,
+        });
+
+        const componentsPerPixel = ComponentsPerPixelOfColorType[colorType];
+        png.data = new Uint8Array(width * height * componentsPerPixel);
+
+        let colorPixelIdx = 0;
+        let pixelIdx = 0;
+
+        while (pixelIdx < png.data.length) {
+          if (colorType === PngColorTypes.Rgb) {
+            png.data[pixelIdx++] = colorPixels[colorPixelIdx++];
+            png.data[pixelIdx++] = colorPixels[colorPixelIdx++];
+            png.data[pixelIdx++] = colorPixels[colorPixelIdx++];
+          } else if (colorType === PngColorTypes.RgbAlpha) {
+            png.data[pixelIdx++] = colorPixels[colorPixelIdx++];
+            png.data[pixelIdx++] = colorPixels[colorPixelIdx++];
+            png.data[pixelIdx++] = colorPixels[colorPixelIdx++];
+            png.data[pixelIdx++] = alphaPixels[colorPixelIdx - 1];
+          } else if (colorType === PngColorTypes.Grayscale) {
+            const bit = readBitAtOffsetOfArray(colorPixels, colorPixelIdx++) === 0 ? 0x00 : 0xff;
+            png.data[png.data.length - pixelIdx++] = bit;
+          } else if (colorType === PngColorTypes.GrayscaleAlpha) {
+            const bit = readBitAtOffsetOfArray(colorPixels, colorPixelIdx++) === 0 ? 0x00 : 0xff;
+            png.data[png.data.length - pixelIdx++] = bit;
+            png.data[png.data.length - pixelIdx++] = alphaPixels[colorPixelIdx - 1];
+          } else {
+            throw new Error(`Unknown colorType=${colorType}`);
+          }
+        }
+
+        const buffer = [];
+        png
+          .pack()
+          .on('data', data => buffer.push(...data))
+          .on('end', () => resolve(Buffer.from(buffer)))
+          .on('error', err => reject(err));
+      });
+
+    fs.rm('./images', { recursive: true, force: true }, async err => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+        return;
+      }
+
+      fs.mkdirSync('./images', { recursive: true });
+
+      const imageFiles = [];
+
+      for (const img of imagesInDoc) {
+        if (!img.isAlphaLayer) {
+          const imageData = img.type === 'jpg' ? img.data : await savePng(img);
+          const fileName = `out${imageFiles.length + 1}.png`;
+          fs.writeFileSync(path.join('./images', fileName), imageData);
+          imageFiles.push(fileName);
+        }
+      }
+
+      fs.unlink(pdfPath, err => {
+        if (err) {
+          console.error('Error deleting PDF file:', err);
+        } else {
+          console.log('PDF file deleted successfully');
+        }
+      });
+
+      const zipFileName = 'images.zip';
+      const zipFilePath = path.join(__dirname, zipFileName);
+      const output = fs.createWriteStream(zipFilePath);
+      const archive = archiver('zip', { zlib: { level: 9 } });
+
+      output.on('close', () => {
+        console.log(`${archive.pointer()} total bytes`);
+        console.log('Archiver has been finalized and the output file descriptor has closed.');
+        res.download(zipFilePath, zipFileName, err => {
+          if (err) {
+            console.error('Error downloading zip file:', err);
+            res.status(500).send('Internal Server Error');
+          } else {
+            fs.unlink(zipFilePath, err => {
+              if (err) {
+                console.error('Error deleting zip file:', err);
+              } else {
+                console.log('Zip file deleted successfully');
+              }
+            });
+          }
+        });
+      });
+
+      output.on('end', () => {
+        console.log('Data has been drained');
+      });
+
+      archive.on('warning', err => {
+        if (err.code !== 'ENOENT') {
+          throw err;
+        }
+      });
+
+      archive.on('error', err => {
+        throw err;
+      });
+
+      archive.pipe(output);
+
+      imageFiles.forEach(file => {
+        archive.file(path.join('./images', file), { name: file });
+      });
+
+      archive.finalize();
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+}
