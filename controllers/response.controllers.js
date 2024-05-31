@@ -42,7 +42,9 @@ const generateQRCodeWithLogo=require("../utils.js/generateQRcode")
 const { generateImage, QUALITY } = require("../utils.js/generateImage");
 const { getNotesSummary } = require('../utils.js/notesSummary');
 const pdfParse = require('pdf-parse');
-
+const getCompanyNames=require("../utils.js/GenerateBusinessName")
+const  translateText =require("../utils.js/translatePdf")
+const generateDomainNames=require("../utils.js/domianNameGenerator")
 
 exports.getResponse = async (req, res) => {
     try {
@@ -1262,3 +1264,68 @@ exports.extractpdftoimages=async(req,res)=>{
     res.status(500).send('Internal Server Error');
   }
 }
+
+
+// Business name generator
+
+exports.getCompany= async(req,res)=>{
+  try {
+    const {companyType, companyMission, targetAudience, namingStyle, competitor, languagePreference } = req.body;
+   const response=await getCompanyNames(companyType, companyMission, targetAudience, namingStyle, competitor, languagePreference);
+  //  console.log(response)
+   response_200(res,"Response completed succesfully",{data:response});
+  } catch (error) {
+   response_500(res,"Error performing SEO analysis",error);
+  }
+}
+
+
+// *********PDF Translator**********
+
+exports.pdfTranslate=async(req,res)=>{
+  try {
+    const file = req.file;
+    const targetLanguage = req.body.language;
+    
+    if (!targetLanguage) {
+        return res.status(400).json({ error: 'Target language is required' });
+    }
+    // Read the PDF file
+    const dataBuffer = fs.readFileSync(file.path);
+
+    // Extract text from the PDF
+    const data = await pdfParse(dataBuffer);
+    const extractedText = data.text;
+
+    // Translate the extracted text
+    const translation = await translateText(extractedText, targetLanguage);
+
+    // Respond with the translated text
+    res.json({ translatedText: translation });
+
+    // Clean up the uploaded file
+    fs.unlinkSync(file.path);
+} catch (error) {
+    res.status(500).json({ error: error.message });
+}
+}
+
+
+// ************Domain Name Generator****************
+
+
+exports.getDomainNames = async (req, res) => {
+  try {
+      const {companyName, companyType,length, count } = req.body; // You can adjust the request body fields as needed
+      
+      // Call the domain name generator function
+      const domainNames = await generateDomainNames(companyName,companyType,length, count);
+      
+      // Send the generated domain names as a response
+      res.status(200).json({ success: true, data: domainNames });
+  } catch (error) {
+      // Handle errors
+      console.error('Error generating domain names:', error);
+      res.status(500).json({ success: false, error: 'Error generating domain names' });
+  }
+};
