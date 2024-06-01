@@ -1359,3 +1359,19 @@ exports.video_Text_converter=async(req,res)=>{
     }
   }
 }
+
+// ********Current Topic Generation*********
+
+const generateCurrentTopicsContent = require("../utils.js/currentTopicGenerator");
+
+exports.generateCurrentTopics = async (req, res) => {
+  try {
+    const { category, keywords, numTopics } = req.body;
+    const topics = await generateCurrentTopicsContent(category, keywords, numTopics);
+
+    response_200(res, "Current topics generated successfully", { topics });
+  } catch (error) {
+    console.error("Error generating current topics:", error);
+    response_500(res, "Error generating current topics", error);
+  }
+};
