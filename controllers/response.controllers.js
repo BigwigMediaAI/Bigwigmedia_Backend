@@ -1329,3 +1329,33 @@ exports.getDomainNames = async (req, res) => {
       res.status(500).json({ success: false, error: 'Error generating domain names' });
   }
 };
+
+
+
+// *********Video to Text***********
+
+const { extractAndConvertToMP3, transcribeAudio, MAX_SIZE } = require('../utils.js/video2text');
+
+exports.video_Text_converter=async(req,res)=>{
+  const videoPath = req.file.path;
+  const audioPath = `uploads/${Date.now()}_audio.mp3`;
+
+  try {
+    await extractAndConvertToMP3(videoPath, audioPath);
+
+    // Transcribe the audio
+    const transcription = await transcribeAudio(audioPath);
+
+    res.json({ transcription: transcription.text });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    // Clean up files
+    if (fs.existsSync(videoPath)) {
+      fs.unlinkSync(videoPath);
+    }
+    if (fs.existsSync(audioPath)) {
+      fs.unlinkSync(audioPath);
+    }
+  }
+}
