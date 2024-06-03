@@ -1375,3 +1375,75 @@ exports.generateCurrentTopics = async (req, res) => {
     response_500(res, "Error generating current topics", error);
   }
 };
+
+
+// *******Trim Video*****
+
+function parseTime(timeString) {
+  const parts = timeString.split(':').map(parseFloat);
+  return parts[0] * 3600 + parts[1] * 60 + parts[2];
+}
+
+
+exports.trimvideo=(req,res)=>{
+  const { startTime, endTime } = req.body;
+  const inputPath = req.file.path;
+  const outputPath = `output-${Date.now()}.mp4`;
+
+  // Calculate duration from start and end times
+  const duration = parseTime(endTime) - parseTime(startTime);
+
+  // Use ffmpeg to cut the video
+  ffmpeg(inputPath)
+      .setStartTime(startTime)
+      .setDuration(duration)
+      .output(outputPath)
+      .on('end', () => {
+          console.log('Video cutting completed');
+          // Delete the uploaded file
+          fs.unlinkSync(inputPath);
+          res.download(outputPath, () => {
+              // Cleanup: delete the output file after download
+              fs.unlinkSync(outputPath);
+          });
+      })
+      .on('error', (err) => {
+          console.error('Error cutting video:', err);
+          res.status(500).send('Error cutting video');
+      })
+      .run();
+
+}
+
+
+// *************Trim Audio************
+
+exports.trimaudio=(req,res)=>{
+  const { startTime, endTime } = req.body;
+    const inputPath = req.file.path;
+    const outputPath = `output-${Date.now()}.mp3`;
+
+    // Calculate duration from start and end times
+    const duration = parseTime(endTime) - parseTime(startTime);
+
+    // Use ffmpeg to cut the audio
+    ffmpeg(inputPath)
+        .setStartTime(startTime)
+        .setDuration(duration)
+        .output(outputPath)
+        .on('end', () => {
+            console.log('Audio cutting completed');
+            // Delete the uploaded file
+            fs.unlinkSync(inputPath);
+            res.download(outputPath, () => {
+                // Cleanup: delete the output file after download
+                fs.unlinkSync(outputPath);
+            });
+        })
+        .on('error', (err) => {
+            console.error('Error cutting audio:', err);
+            res.status(500).send('Error cutting audio');
+        })
+        .run();
+
+}
