@@ -45,6 +45,7 @@ const pdfParse = require('pdf-parse');
 const getCompanyNames=require("../utils.js/GenerateBusinessName")
 const  translateText =require("../utils.js/translatePdf")
 const generateDomainNames=require("../utils.js/domianNameGenerator")
+const generateNDA=require("../utils.js/generateNDA")
 
 exports.getResponse = async (req, res) => {
     try {
@@ -1446,4 +1447,67 @@ exports.trimaudio=(req,res)=>{
         })
         .run();
 
+}
+
+// *****NDA aggrement ****
+
+exports.NDA_Agreement= async (req,res)=>{
+  const { disclosingParty, receivingParty } = req.body;
+
+    if (!disclosingParty || !receivingParty) {
+        return res.status(400).json({ error: 'Disclosing Party and Receiving Party are required.' });
+    }
+
+    try {
+        const nda = await generateNDA(disclosingParty, receivingParty);
+        res.status(200).json({ nda });
+    } catch (error) {
+        console.error('Error generating NDA:', error);
+        res.status(500).json({ error: 'An error occurred while generating the NDA.' });
+    }
+}
+
+
+// ***********Pdf page delete***********
+
+exports.deletepdf=async(req,res)=>{
+  try {
+    const pagesToDelete = req.body.pagesToDelete.split(',').map(Number);
+    const pdfPath = req.file.path;
+
+    // Load the existing PDF
+    const existingPdfBytes = fs.readFileSync(pdfPath);
+    const pdfDoc = await PDFDocument.load(existingPdfBytes);
+
+    // Create a new PDF document
+    const newPdfDoc = await PDFDocument.create();
+
+    // Copy the pages, excluding the ones to delete
+    const totalPages = pdfDoc.getPageCount();
+    for (let i = 0; i < totalPages; i++) {
+        if (!pagesToDelete.includes(i + 1)) { // Pages are 1-indexed
+            const [copiedPage] = await newPdfDoc.copyPages(pdfDoc, [i]);
+            newPdfDoc.addPage(copiedPage);
+        }
+    }
+
+    // Serialize the PDF document to bytes
+    const newPdfBytes = await newPdfDoc.save();
+
+    // Write the new PDF document to a file
+    const outputPath = path.join(__dirname, 'output', `modified-${Date.now()}.pdf`);
+    fs.writeFileSync(outputPath, newPdfBytes);
+
+    // Send the new PDF document as a response
+    res.download(outputPath, 'modified.pdf', (err) => {
+        if (err) {
+            console.error(err);
+        }
+        fs.unlinkSync(outputPath); // Clean up the output file
+        fs.unlinkSync(pdfPath);    // Clean up the uploaded file
+    });
+} catch (err) {
+    console.error(err);
+    res.status(500).send('An error occurred while processing the PDF.');
+}
 }
