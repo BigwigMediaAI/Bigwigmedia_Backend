@@ -58,7 +58,7 @@ router.post('/getNotesSummary',checkLimit, getNotesSummary);
 router.post('/pdf2text',checkLimit,upload.single('pdf'),pdftotext)
 router.post("/compressedVideo",checkLimit,upload.single('video'),compressedVideo)
 router.post('/extract',checkLimit, upload.single('pdf'),extractpdftoimages)
-router.post('/company',checkLimit,getCompany)
+router.post('/companyName',getCompany)
 router.post('/translate',checkLimit,upload.single("pdf"),pdfTranslate)
 router.post('/domain',checkLimit, getDomainNames);
 router.post('/video2text',checkLimit,upload.single('video'),video_Text_converter)
