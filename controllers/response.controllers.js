@@ -46,6 +46,9 @@ const getCompanyNames=require("../utils.js/GenerateBusinessName")
 const  translateText =require("../utils.js/translatePdf")
 const generateDomainNames=require("../utils.js/domianNameGenerator")
 const generateNDA=require("../utils.js/generateNDA")
+const generateBusinessSlogan=require("../utils.js/generateBusinessSlogan")
+const generateNCA=require("../utils.js/generateNCA")
+const generateYoutubeScript=require("../utils.js/generateYoutubeScript")
 
 exports.getResponse = async (req, res) => {
     try {
@@ -1511,3 +1514,53 @@ exports.deletepdf=async(req,res)=>{
     res.status(500).send('An error occurred while processing the PDF.');
 }
 }
+
+// **********Business generator**********
+
+exports.Business_Slogan= async (req,res)=>{
+  const { businessName, whatItDoes,numberOfSlogans } = req.body;
+
+    if (!businessName || !whatItDoes||!numberOfSlogans) {
+        return res.status(400).json({ error: 'businessName and whatItDoes are required.' });
+    }
+
+    try {
+        const slogan = await generateBusinessSlogan(businessName, whatItDoes,numberOfSlogans);
+        res.status(200).json({ slogan });
+    } catch (error) {
+        console.error('Error generating NDA:', error);
+        res.status(500).json({ error: 'An error occurred while generating the slogan.' });
+    }
+}
+
+// ********NCA Agreement********
+
+exports.NCA_Agreement= async (req,res)=>{
+  const {employer, employee, restrictedActivities, restrictedDuration, restrictedTerritory } = req.body;
+
+    if (!employer || !employee||!restrictedActivities||!restrictedDuration||!restrictedTerritory) {
+        return res.status(400).json({ error: 'Disclosing Party and Receiving Party are required.' });
+    }
+
+    try {
+        const nda = await generateNCA(employer, employee, restrictedActivities, restrictedDuration, restrictedTerritory);
+        res.status(200).json({ nda });
+    } catch (error) {
+        console.error('Error generating NDA:', error);
+        res.status(500).json({ error: 'An error occurred while generating the NDA.' });
+    }
+}
+
+// *************Youtube Script Generator************
+const generateScript=require("../utils.js/generateYoutubeScript")
+
+exports.generateYouTubeScript = async (req, res) => {
+  try {
+    const { topic,tone,length } = req.body;
+    const script = await generateYoutubeScript(topic,tone, length);
+    res.status(200).json({ script });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Error generating YouTube script" });
+  }
+};
