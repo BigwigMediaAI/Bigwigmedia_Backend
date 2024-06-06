@@ -49,7 +49,8 @@ const generateNDA=require("../utils.js/generateNDA")
 const generateBusinessSlogan=require("../utils.js/generateBusinessSlogan")
 const generateNCA=require("../utils.js/generateNCA")
 const generateYoutubeScript=require("../utils.js/generateYoutubeScript")
-
+const generateTrivia=require("../utils.js/TriviaGenerator")
+const improveContent=require("../utils.js/ContentImprover")
 exports.getResponse = async (req, res) => {
     try {
         const prompt = req.body.prompt;
@@ -1552,8 +1553,6 @@ exports.NCA_Agreement= async (req,res)=>{
 }
 
 // *************Youtube Script Generator************
-const generateScript=require("../utils.js/generateYoutubeScript")
-
 exports.generateYouTubeScript = async (req, res) => {
   try {
     const { topic,tone,length } = req.body;
@@ -1564,3 +1563,58 @@ exports.generateYouTubeScript = async (req, res) => {
     res.status(500).json({ error: "Error generating YouTube script" });
   }
 };
+
+
+// *********Trivia Generator*******
+
+exports.TriviaGenerate = async (req, res) => {
+  try {
+    const { topic, numberOfQuestions, numberOfAnswers, difficultyLevel } = req.body;
+    const script = await generateTrivia(topic, numberOfQuestions, numberOfAnswers, difficultyLevel);
+    res.status(200).json({ script });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Error generating YouTube script" });
+  }
+};
+
+// ********Content improver********
+exports.improveContent = async (req, res) => {
+  try {
+    const { content,tone } = req.body;
+    const improvedContent = await improveContent(content,tone);
+
+    response_200(res, "Content improved successfully", { improvedContent });
+  } catch (error) {
+    console.error("Error improving content:", error);
+    response_500(res, "Error improving content", error);
+  }
+};
+
+
+
+// ********Remove Audio*******
+
+exports.removeAudio=async(req,res)=>{
+  const videoPath = req.file.path;
+    const outputPath = path.join('uploads', `no-audio-${req.file.originalname}`);
+
+    ffmpeg(videoPath)
+        .noAudio()
+        .output(outputPath)
+        .on('end', () => {
+            res.download(outputPath, (err) => {
+                if (err) {
+                    console.error('Error sending file:', err);
+                }
+                // Clean up files
+                fs.unlinkSync(videoPath);
+                fs.unlinkSync(outputPath);
+            });
+        })
+        .on('error', (err) => {
+            console.error('Error processing video:', err);
+            res.status(500).send('Error processing video');
+        })
+        .run();
+}

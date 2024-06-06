@@ -1,4 +1,4 @@
-const { getResponse, getParaPhrase, getImage ,JpgtoPngconverter,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio,fbDownloader,twitterDownloader,text2Pdf,Podcast,svgConverter,zipmaker,gifConverter,getTextSummary,zipExtractor,getNotesSummary,pdftotext,compressedVideo,extractpdftoimages ,getCompany,pdfTranslate,getDomainNames,video_Text_converter,generateCurrentTopics,trimvideo,trimaudio,NDA_Agreement,deletepdf,Business_Slogan,NCA_Agreement,generateYouTubeScript} = require("../../controllers/response.controllers");
+const { getResponse, getParaPhrase, getImage ,JpgtoPngconverter,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio,fbDownloader,twitterDownloader,text2Pdf,Podcast,svgConverter,zipmaker,gifConverter,getTextSummary,zipExtractor,getNotesSummary,pdftotext,compressedVideo,extractpdftoimages ,getCompany,pdfTranslate,getDomainNames,video_Text_converter,generateCurrentTopics,trimvideo,trimaudio,NDA_Agreement,deletepdf,Business_Slogan,NCA_Agreement,generateYouTubeScript,TriviaGenerate,improveContent,removeAudio} = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
 const multer = require('multer');
 const path=require("path")
@@ -58,7 +58,7 @@ router.post('/getNotesSummary',checkLimit, getNotesSummary);
 router.post('/pdf2text',checkLimit,upload.single('pdf'),pdftotext)
 router.post("/compressedVideo",checkLimit,upload.single('video'),compressedVideo)
 router.post('/extract',checkLimit, upload.single('pdf'),extractpdftoimages)
-router.post('/companyName',getCompany)
+router.post('/companyName',checkLimit,getCompany)
 router.post('/translate',checkLimit,upload.single("pdf"),pdfTranslate)
 router.post('/domain',checkLimit, getDomainNames);
 router.post('/video2text',checkLimit,upload.single('video'),video_Text_converter)
@@ -67,8 +67,11 @@ router.post('/trim-video',checkLimit,upload.single('video'),trimvideo)
 router.post('/trim-audio',checkLimit,upload.single('audio'),trimaudio)
 router.post('/nda',checkLimit,NDA_Agreement)
 router.post('/delete-pages',checkLimit,upload.single('pdf'),deletepdf)
-router.post('/slogan',Business_Slogan)
-router.post('/nca',NCA_Agreement)
-router.post('/youtubescript',generateYouTubeScript)
+router.post('/slogan',checkLimit,Business_Slogan)
+router.post('/nca',checkLimit,NCA_Agreement)
+router.post('/youtubescript',checkLimit,generateYouTubeScript)
+router.post('/trivia',TriviaGenerate)
+router.post('/improve', improveContent);
+router.post('/remove-audio',upload.single('video'),removeAudio)
 
 module.exports = router;
