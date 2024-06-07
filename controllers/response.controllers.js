@@ -51,6 +51,8 @@ const generateNCA=require("../utils.js/generateNCA")
 const generateYoutubeScript=require("../utils.js/generateYoutubeScript")
 const generateTrivia=require("../utils.js/TriviaGenerator")
 const improveContent=require("../utils.js/ContentImprover")
+const generatePrivacyPolicy=require("../utils.js/generatePrivacyPolicy")
+const generateBusinessPlan=require("../utils.js/generateBusinessPlan")
 exports.getResponse = async (req, res) => {
     try {
         const prompt = req.body.prompt;
@@ -1618,3 +1620,54 @@ exports.removeAudio=async(req,res)=>{
         })
         .run();
 }
+
+
+// *******Privacy Policy Generator*******
+exports.genratedPolicy = async (req, res) => {
+  try {
+    const { companyName, address, websiteURL } = req.body;
+    const improvedContent = await generatePrivacyPolicy(companyName, address, websiteURL);
+
+    response_200(res, "Privacy Policy generated successfully", { improvedContent });
+  } catch (error) {
+    console.error("Error improving content:", error);
+    response_500(res, "Error improving content", error);
+  }
+};
+
+
+
+
+// ********Poll Generator********
+
+const generatePoll=require("../utils.js/pollGenerator")
+exports.generatePoll = async (req, res) => {
+  try {
+    const { question, options } = req.body;
+    if (!question || !options || !Array.isArray(options) || options.length === 0) {
+      return response_400(res, "Invalid input data");
+    }
+
+    const poll = await generatePoll(question, options);
+
+    response_200(res, "Poll generated successfully", { poll });
+  } catch (error) {
+    console.error("Error generating poll:", error);
+    response_500(res, "Error generating poll", error);
+  }
+};
+
+
+
+// *******Business Plan Generator***********
+
+exports.generateBusinessPlan = async (req, res) => {
+  try {
+    const { businessType, industry, targetMarket } = req.body;
+    const plan = await generateBusinessPlan(businessType, industry, targetMarket);
+    res.status(200).json({ businessPlan: plan });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Error generating business plan" });
+  }
+};
