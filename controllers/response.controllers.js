@@ -1671,3 +1671,77 @@ exports.generateBusinessPlan = async (req, res) => {
     res.status(500).json({ error: "Error generating business plan" });
   }
 };
+
+
+// *********Add audio into video*******
+
+exports.addAudio=async(req,res)=>{
+  const videoFile = req.files.video[0];
+    const audioFile = req.files.audio[0];
+    const { videoStart, videoEnd, audioStart, audioEnd } = req.body;
+
+    const trimmedVideoPath = `uploads/trimmed_video_${Date.now()}.mp4`;
+    const trimmedAudioPath = `uploads/trimmed_audio_${Date.now()}.mp3`;
+    const outputVideoPath = `uploads/output_${Date.now()}.mp4`;
+
+    // Step 1: Trim video and remove audio
+    ffmpeg(videoFile.path)
+        .setStartTime(videoStart)
+        .setDuration(videoEnd - videoStart)
+        .noAudio()
+        .output(trimmedVideoPath)
+        .on('end', () => {
+            // Step 2: Trim audio
+            ffmpeg(audioFile.path)
+                .setStartTime(audioStart)
+                .setDuration(audioEnd - audioStart)
+                .output(trimmedAudioPath)
+                .on('end', () => {
+                    // Step 3: Combine trimmed video and audio
+                    ffmpeg(trimmedVideoPath)
+                        .addInput(trimmedAudioPath)
+                        .output(outputVideoPath)
+                        .on('end', () => {
+                            // Send the final video file to the client
+                            res.sendFile(path.resolve(outputVideoPath), err => {
+                                if (err) {
+                                    console.error('Error sending video file:', err);
+                                    res.status(500).send('Error sending video file');
+                                }
+
+                                // Delete temporary files
+                                fs.unlink(videoFile.path, err => {
+                                    if (err) console.error('Error deleting video file:', err);
+                                });
+                                fs.unlink(audioFile.path, err => {
+                                    if (err) console.error('Error deleting audio file:', err);
+                                });
+                                fs.unlink(trimmedVideoPath, err => {
+                                    if (err) console.error('Error deleting trimmed video file:', err);
+                                });
+                                fs.unlink(trimmedAudioPath, err => {
+                                    if (err) console.error('Error deleting trimmed audio file:', err);
+                                });
+                                fs.unlink(outputVideoPath, err => {
+                                    if (err) console.error('Error deleting output video file:', err);
+                                });
+                            });
+                        })
+                        .on('error', (err) => {
+                            console.error('Error combining video and audio:', err);
+                            res.status(500).send('Error combining video and audio');
+                        })
+                        .run();
+                })
+                .on('error', (err) => {
+                    console.error('Error trimming audio:', err);
+                    res.status(500).send('Error trimming audio');
+                })
+                .run();
+        })
+        .on('error', (err) => {
+            console.error('Error trimming video:', err);
+            res.status(500).send('Error trimming video');
+        })
+        .run();
+}
