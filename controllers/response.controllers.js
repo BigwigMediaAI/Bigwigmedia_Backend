@@ -1745,3 +1745,52 @@ exports.addAudio=async(req,res)=>{
         })
         .run();
 }
+
+// *********PDF Summarizer*********
+
+const summarizeText=require("../utils.js/summarizePdf")
+exports.uploadAndSummarize = async (req, res) => {
+  const filePath = req.file.path;
+
+  try {
+    const dataBuffer = fs.readFileSync(filePath);
+    const data = await pdfParse(dataBuffer);
+    const text = data.text;
+
+    const summary = await summarizeText(text);
+
+    res.send({ summary });
+
+    // Optionally, delete the file after extraction
+    fs.unlinkSync(filePath);
+  } catch (error) {
+    fs.unlinkSync(filePath);
+    res.status(500).send({ error: `Error processing the PDF: ${error.message} `});
+  }
+};
+
+// *******Chat with PDF***********
+
+const chatWithPdf=require("../utils.js/chatPdf")
+exports.chatWithPdf = async (req, res) => {
+  const filePath = req.file.path;
+
+  try {
+      const dataBuffer = fs.readFileSync(filePath);
+      const { text } = await pdfParse(dataBuffer);
+
+      const userQuestion = req.body.question;
+      const answer = await chatWithPdf(text, userQuestion);
+
+      res.send({ answer });
+
+      // Optionally, delete the uploaded file after processing
+      fs.unlinkSync(filePath);
+  } catch (error) {
+      console.error(error);
+      fs.unlinkSync(filePath);
+      res.status(500).send({ error: 'Error processing the PDF and answering the question.' });
+  }
+};
+
+
