@@ -1794,3 +1794,92 @@ exports.chatWithPdf = async (req, res) => {
 };
 
 
+// ******video to audio translation******
+
+const {convertToMP3, transcribe, translate, textToSpeech}=require("../utils.js/languageTranslation")
+
+exports.languageTranslation=async(req,res)=>{
+  const videoPath = req.file.path;
+  const audioPath = `uploads/${Date.now()}_audio.mp3`;
+  const targetLanguage = req.body.targetLanguage || 'en'; // Default to English if not provided
+  const voiceTone = req.body.voiceTone || 'shimmer'; // Default voice tone
+
+  try {
+    await convertToMP3(videoPath, audioPath);
+
+    // Transcribe the audio
+    const transcription = await transcribe(audioPath);
+
+    // Translate the transcribed text
+    const translatedText = await translate(transcription.text, targetLanguage);
+
+    // Convert text to audio using TTS-1
+    const audioFilePath = await textToSpeech(translatedText, voiceTone);
+
+    // Provide download link to the user
+    res.download(audioFilePath, 'generated_audio.mp3', (err) => {
+      if (err) {
+        throw new Error(`Download failed: ${err.message}`);
+      }
+
+      // Clean up files
+      if (fs.existsSync(videoPath)) {
+        fs.unlinkSync(videoPath);
+      }
+      if (fs.existsSync(audioPath)) {
+        fs.unlinkSync(audioPath);
+      }
+      if (fs.existsSync(audioFilePath)) {
+        fs.unlinkSync(audioFilePath);
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+
+// ********Translate Audio into other Language*********
+
+const {convertMP3, transcribeaudio, translatetext, textTospeech }=require("../utils.js/audioTranslate")
+
+exports.audioTranslate=async(req,res)=>{
+  const audioPath = req.file.path;
+  const mp3Path = `uploads/${Date.now()}_audio.mp3`;
+  const targetLanguage = req.body.targetLanguage || 'en'; // Default to English if not provided
+  const voiceTone = req.body.voiceTone || 'en_us_male'; // Default voice tone
+
+  try {
+    // Convert uploaded audio to MP3
+    await convertMP3(audioPath, mp3Path);
+
+    // Transcribe the MP3 audio
+    const transcription = await transcribeaudio(mp3Path);
+
+    // Translate the transcribed text
+    const translatedText = await translatetext(transcription.text, targetLanguage);
+
+    // Convert text to audio using TTS-1
+    const audioFilePath = await textTospeech(translatedText, voiceTone);
+
+    // Provide download link to the user
+    res.download(audioFilePath, 'translated_audio.mp3', (err) => {
+      if (err) {
+        throw new Error(`Download failed: ${err.message}`);
+      }
+
+      // Clean up files
+      if (fs.existsSync(audioPath)) {
+        fs.unlinkSync(audioPath);
+      }
+      if (fs.existsSync(mp3Path)) {
+        fs.unlinkSync(mp3Path);
+      }
+      if (fs.existsSync(audioFilePath)) {
+        fs.unlinkSync(audioFilePath);
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
