@@ -1883,3 +1883,36 @@ exports.audioTranslate=async(req,res)=>{
     res.status(500).json({ error: error.message });
   }
 }
+
+// **********Video Translation ************
+const {extractConvertToMP3,transcribe_Audio,translateTheText,text_To_Speech,merge_Audio_With_Video}=require("../utils.js/videoTranslator")
+exports.videoTranlator=async(req,res)=>{
+  const videoPath = req.file.path;
+  const audioPath = `uploads/${Date.now()}_audio.mp3`;
+  const finalVideoPath = `uploads/${Date.now()}_final_video.mp4`;
+  const targetLanguage = req.body.targetLanguage || 'en';
+  const voiceTone = req.body.voiceTone || 'shimmer';
+
+  try {
+    await extractConvertToMP3(videoPath, audioPath);
+
+    const transcription = await transcribe_Audio(audioPath);
+    const translatedText = await translateTheText(transcription.text, targetLanguage);
+    const generatedAudioPath = await text_To_Speech(translatedText, voiceTone);
+
+    await merge_Audio_With_Video(videoPath, generatedAudioPath, finalVideoPath);
+
+    res.download(finalVideoPath, 'translated_video.mp4', (err) => {
+      if (err) {
+        throw new Error(`Download failed: ${err.message}`);
+      }
+
+      if (fs.existsSync(videoPath)) fs.unlinkSync(videoPath);
+      if (fs.existsSync(audioPath)) fs.unlinkSync(audioPath);
+      if (fs.existsSync(generatedAudioPath)) fs.unlinkSync(generatedAudioPath);
+      if (fs.existsSync(finalVideoPath)) fs.unlinkSync(finalVideoPath);
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}

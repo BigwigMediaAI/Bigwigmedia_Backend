@@ -1,4 +1,4 @@
-const { getResponse, getParaPhrase, getImage ,JpgtoPngconverter,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio,fbDownloader,twitterDownloader,text2Pdf,Podcast,svgConverter,zipmaker,gifConverter,getTextSummary,zipExtractor,getNotesSummary,pdftotext,compressedVideo,extractpdftoimages ,getCompany,pdfTranslate,getDomainNames,video_Text_converter,generateCurrentTopics,trimvideo,trimaudio,NDA_Agreement,deletepdf,Business_Slogan,NCA_Agreement,generateYouTubeScript,TriviaGenerate,improveContent,removeAudio,genratedPolicy,generatePoll,generateBusinessPlan,addAudio,uploadAndSummarize,chatWithPdf,languageTranslation,audioTranslate} = require("../../controllers/response.controllers");
+const { getResponse, getParaPhrase, getImage ,JpgtoPngconverter,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio,fbDownloader,twitterDownloader,text2Pdf,Podcast,svgConverter,zipmaker,gifConverter,getTextSummary,zipExtractor,getNotesSummary,pdftotext,compressedVideo,extractpdftoimages ,getCompany,pdfTranslate,getDomainNames,video_Text_converter,generateCurrentTopics,trimvideo,trimaudio,NDA_Agreement,deletepdf,Business_Slogan,NCA_Agreement,generateYouTubeScript,TriviaGenerate,improveContent,removeAudio,genratedPolicy,generatePoll,generateBusinessPlan,addAudio,uploadAndSummarize,chatWithPdf,languageTranslation,audioTranslate,videoTranlator} = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
 const multer = require('multer');
 const path=require("path")
@@ -77,8 +77,9 @@ router.post('/generatePolicy',checkLimit, genratedPolicy)
 router.post('/generatePoll',checkLimit, generatePoll);
 router.post('/businessPlan',checkLimit, generateBusinessPlan);
 router.post('/addAudio',checkLimit,upload.fields([{ name: 'video' }, { name: 'audio' }]),addAudio)
-router.post('/pdf-summarize', upload.single('pdf'), uploadAndSummarize);
-router.post('/pdf-chat', upload.single('pdf'), chatWithPdf);
-router.post("/translateLanguage",upload.single('video'),languageTranslation)
-router.post("/audio-translate",upload.single('audio'),audioTranslate)
+router.post('/pdf-summarize',checkLimit, upload.single('pdf'), uploadAndSummarize);
+router.post('/pdf-chat',checkLimit, upload.single('pdf'), chatWithPdf);
+router.post("/translateLanguage",checkLimit,upload.single('video'),languageTranslation)
+router.post("/audio-translate",checkLimit,upload.single('audio'),audioTranslate)
+router.post("/video-translate",upload.single('video'),videoTranlator)
 module.exports = router;
