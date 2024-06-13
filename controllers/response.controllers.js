@@ -1916,3 +1916,49 @@ exports.videoTranlator=async(req,res)=>{
     res.status(500).json({ error: error.message });
   }
 }
+
+
+// ********Youtube Translator******
+
+const {ytdldownloadAndMerge,ytdlextractAndConvertToMP3,ytdltranscribeAudio,ytdltranslateText,ytdltextToSpeech,ytdlmergeAudioWithVideo}=require("../utils.js/youtubeTranslator")
+const uploadDir = path.resolve(__dirname, 'uploads');
+// Ensure the upload directory exists
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
+exports.youtubeTranslator=async(req,res)=>{
+  const { url, targetLanguage, voiceTone } = req.body;
+    const videoOutputPath = uploadDir;
+    const audioPath = path.resolve(uploadDir, `${Date.now()}_audio.mp3`);
+    const finalVideoPath = path.resolve(uploadDir, `${Date.now()}_final_video.mp4`);
+
+    try {
+        console.log('Starting download and translation process...');
+        const downloadedVideoPath = await ytdldownloadAndMerge(url, videoOutputPath);
+
+        await ytdlextractAndConvertToMP3(downloadedVideoPath, audioPath);
+
+        const transcription = await ytdltranscribeAudio(audioPath);
+        const translatedText = await ytdltranslateText(transcription.text, targetLanguage);
+        const generatedAudioPath = await ytdltextToSpeech(translatedText, voiceTone);
+
+        await ytdlmergeAudioWithVideo(downloadedVideoPath, generatedAudioPath, finalVideoPath);
+
+        console.log('Sending translated video to client...');
+        res.download(finalVideoPath, 'translated_video.mp4', (err) => {
+            if (err) {
+                throw new Error(`Download failed: ${err.message}`);
+            }
+
+            // Clean up files after download
+            if (fs.existsSync(downloadedVideoPath)) fs.unlinkSync(downloadedVideoPath);
+            if (fs.existsSync(audioPath)) fs.unlinkSync(audioPath);
+            if (fs.existsSync(generatedAudioPath)) fs.unlinkSync(generatedAudioPath);
+            if (fs.existsSync(finalVideoPath)) fs.unlinkSync(finalVideoPath);
+        });
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+}
