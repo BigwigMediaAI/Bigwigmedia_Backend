@@ -1962,3 +1962,18 @@ exports.youtubeTranslator=async(req,res)=>{
         res.status(500).json({ error: error.message });
     }
 }
+
+
+
+// ***********Finance Advisor***************
+const getFinancialAdvice=require("../utils.js/financeAdvisor")
+exports.financeadvisor = async (req, res) => {
+  const { description, amount } = req.body;
+
+    try {
+        const advice = await getFinancialAdvice(description, amount);
+        res.json({ advice });
+    } catch (error) {
+        res.status(500).json({ error: 'An error occurred while generating advice.' });
+    }
+};
