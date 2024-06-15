@@ -53,6 +53,7 @@ const generateTrivia=require("../utils.js/TriviaGenerator")
 const improveContent=require("../utils.js/ContentImprover")
 const generatePrivacyPolicy=require("../utils.js/generatePrivacyPolicy")
 const generateBusinessPlan=require("../utils.js/generateBusinessPlan")
+const detectAIContent=require("../utils.js/aiDetector")
 exports.getResponse = async (req, res) => {
     try {
         const prompt = req.body.prompt;
@@ -1975,5 +1976,53 @@ exports.financeadvisor = async (req, res) => {
         res.json({ advice });
     } catch (error) {
         res.status(500).json({ error: 'An error occurred while generating advice.' });
+    }
+};
+
+
+// ************Ai Detector**************
+
+exports.AiDetector = async(req,res)=>{
+  const { text } = req.body;
+  try {
+    const result = await detectAIContent(text);
+    res.send({ result });
+} catch (error) {
+    res.status(500).send({ error: error.message });
+}
+
+}
+
+
+// news summerizer
+
+const summarizeNewsArticle=require("../utils.js/newsSummary")
+exports.newsSummerizer= async(req,res)=>{
+  const articleText =req.body
+  try {
+    const summary = await summarizeNewsArticle(articleText);
+    // console.log('Summarized Article:');
+    // console.log(summary);
+    res.send(summary)
+} catch (error) {
+    console.error('Error:', error);
+}
+}
+
+
+// ***Text InfoGraphic*****
+
+const { generateInfographicText } = require("../utils.js/textInfographicGenerator");
+
+exports.generateTextInfographic = async (req, res) => {
+    const { topic, sections } = req.body;
+
+    try {
+        const infographicText = await generateInfographicText(topic, sections);
+        
+        res.status(200).json({ infographicText });
+    } catch (error) {
+        console.error('Error generating infographic text:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 };
