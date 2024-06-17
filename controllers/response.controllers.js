@@ -2026,3 +2026,78 @@ exports.generateTextInfographic = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+
+// ************Avatar creation************
+const axios = require('axios');
+
+function generateCustomAvatar(options) {
+  const baseUrl = 'https://avataaars.io/';
+  const params = new URLSearchParams(options).toString();
+  return `${baseUrl}?${params}`;
+}
+
+exports.createAvatar = async (req, res) => {
+  try {
+    const options = {
+      avatarStyle: req.query.avatarStyle || 'Circle',
+      topType: req.query.topType || 'ShortHairShortFlat',
+      accessoriesType: req.query.accessoriesType || 'Blank',
+      hairColor: req.query.hairColor || 'BrownDark',
+      facialHairType: req.query.facialHairType || 'Blank',
+      facialHairColor: req.query.facialHairColor || 'BrownDark',
+      clotheType: req.query.clotheType || 'BlazerShirt',
+      clotheColor: req.query.clotheColor || 'Red',
+      eyeType: req.query.eyeType || 'Default',
+      eyebrowType: req.query.eyebrowType || 'Default',
+      mouthType: req.query.mouthType || 'Default',
+      skinColor: req.query.skinColor || 'Light',
+      hatColor: req.query.hatColor || 'White'
+    };
+    const avatarUrl = generateCustomAvatar(options);
+    // console.log(avatarUrl)
+    const imageResponse = await axios.get(avatarUrl, { responseType: 'arraybuffer' });
+
+    const buffer = Buffer.from(imageResponse.data);
+    const jpegBuffer = await sharp(buffer).jpeg().toBuffer();
+
+    res.set('Content-Type', 'image/jpeg');
+    res.send(jpegBuffer);
+  } catch (error) {
+    console.error('Error downloading avatar:', error);
+    res.status(500).send('Error downloading avatar. Please try again later.');
+  }
+};
+
+
+
+// *******Image Compressor********
+
+const fsPromises = require('fs').promises; 
+
+exports.compressImage = async (req, res) => {
+    try {
+        const filePath = req.file.path;
+
+        // Read the file from disk into a buffer using the promise-based API
+        const fileBuffer = await fsPromises.readFile(filePath);
+
+        // Compress the image using Sharp
+        const compressedImage = await sharp(fileBuffer)
+            .resize({ width: 800 })  // Adjust the width as needed
+            .jpeg({ quality: 70 })  // Adjust the quality as needed
+            .toBuffer();
+
+        console.log('Image compressed successfully');
+
+        // Delete the original file to save space using the promise-based API
+        await fsPromises.unlink(filePath);
+
+        // Send the compressed image as a response
+        res.set('Content-Type', 'image/jpeg');
+        res.send(compressedImage);
+    } catch (error) {
+        console.error('Error compressing the image:', error);
+        res.status(500).json({ error: 'Error compressing the image.' });
+    }
+};
