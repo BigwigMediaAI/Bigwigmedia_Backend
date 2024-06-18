@@ -2101,3 +2101,46 @@ exports.compressImage = async (req, res) => {
         res.status(500).json({ error: 'Error compressing the image.' });
     }
 };
+
+
+// **********SWOT Analysis Generator**********
+
+
+// controllers/swotController.js
+
+const { generateSWOTAnalysis } = require('../utils.js/swotAnalysis');
+
+exports.generateSWOT = async (req, res) => {
+    try {
+        const { topic } = req.body;
+
+        if (!topic) {
+            return res.status(400).json({ error: 'Please provide a topic for SWOT analysis' });
+        }
+
+        const swotAnalysis = await generateSWOTAnalysis(topic);
+
+        res.status(200).json({ swotAnalysis });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating SWOT analysis' });
+    }
+};
+
+
+
+// *************Cover Letter*********
+
+
+const getCoverLetter = require('../utils.js/getCoverLetter');
+
+exports.generateCoverLetter = async (req, res) => {
+  try {
+    const { jobDescription, userDetails, highlights } = req.body;
+    const coverLetter = await getCoverLetter(jobDescription, userDetails, highlights);
+    res.status(200).json({ coverLetter });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Error generating cover letter" });
+  }
+};
