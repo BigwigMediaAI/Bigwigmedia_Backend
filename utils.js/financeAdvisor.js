@@ -3,9 +3,9 @@ require("dotenv").config();
 
 const openai = new openAI.OpenAI(process.env.OPENAI_API_KEY);
 
-async function getFinancialAdvice(description, amount) {
+async function getFinancialAdvice(description, amount,language) {
     try {
-        const prompt = `Provide detailed financial advice for the following financial situation: 
+        const prompt = `Provide detailed financial advice in ${language} language for the following financial situation: 
         - Description: ${description}
         - Amount: $${amount}`;
 

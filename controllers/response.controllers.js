@@ -1626,8 +1626,8 @@ exports.removeAudio=async(req,res)=>{
 // *******Privacy Policy Generator*******
 exports.genratedPolicy = async (req, res) => {
   try {
-    const { companyName, address, websiteURL } = req.body;
-    const improvedContent = await generatePrivacyPolicy(companyName, address, websiteURL);
+    const { companyName, address, websiteURL,language } = req.body;
+    const improvedContent = await generatePrivacyPolicy(companyName, address, websiteURL,language);
 
     response_200(res, "Privacy Policy generated successfully", { improvedContent });
   } catch (error) {
@@ -1664,8 +1664,8 @@ exports.generatePoll = async (req, res) => {
 
 exports.generateBusinessPlan = async (req, res) => {
   try {
-    const { businessType, industry, targetMarket } = req.body;
-    const plan = await generateBusinessPlan(businessType, industry, targetMarket);
+    const { businessType, industry, targetMarket,language } = req.body;
+    const plan = await generateBusinessPlan(businessType, industry, targetMarket,language);
     res.status(200).json({ businessPlan: plan });
   } catch (error) {
     console.error("Error:", error);
@@ -1969,10 +1969,10 @@ exports.youtubeTranslator=async(req,res)=>{
 // ***********Finance Advisor***************
 const getFinancialAdvice=require("../utils.js/financeAdvisor")
 exports.financeadvisor = async (req, res) => {
-  const { description, amount } = req.body;
+  const { description, amount,language } = req.body;
 
     try {
-        const advice = await getFinancialAdvice(description, amount);
+        const advice = await getFinancialAdvice(description, amount,language);
         res.json({ advice });
     } catch (error) {
         res.status(500).json({ error: 'An error occurred while generating advice.' });
@@ -1998,9 +1998,9 @@ exports.AiDetector = async(req,res)=>{
 
 const summarizeNewsArticle=require("../utils.js/newsSummary")
 exports.newsSummerizer= async(req,res)=>{
-  const articleText =req.body
+  const {articleText,languageCode,output} =req.body
   try {
-    const summary = await summarizeNewsArticle(articleText);
+    const summary = await summarizeNewsArticle(articleText,languageCode,output);
     // console.log('Summarized Article:');
     // console.log(summary);
     res.send(summary)
@@ -2015,10 +2015,10 @@ exports.newsSummerizer= async(req,res)=>{
 const { generateInfographicText } = require("../utils.js/textInfographicGenerator");
 
 exports.generateTextInfographic = async (req, res) => {
-    const { topic, sections } = req.body;
+    const { topic, sections,tone,nOutputs,language } = req.body;
 
     try {
-        const infographicText = await generateInfographicText(topic, sections);
+        const infographicText = await generateInfographicText(topic, sections,tone,nOutputs,language );
         
         res.status(200).json({ infographicText });
     } catch (error) {
@@ -2112,13 +2112,13 @@ const { generateSWOTAnalysis } = require('../utils.js/swotAnalysis');
 
 exports.generateSWOT = async (req, res) => {
     try {
-        const { topic } = req.body;
+        const { topic,tone,numOutputs,language } = req.body;
 
         if (!topic) {
             return res.status(400).json({ error: 'Please provide a topic for SWOT analysis' });
         }
 
-        const swotAnalysis = await generateSWOTAnalysis(topic);
+        const swotAnalysis = await generateSWOTAnalysis(topic,tone,numOutputs, language);
 
         res.status(200).json({ swotAnalysis });
     } catch (error) {
@@ -2142,5 +2142,30 @@ exports.generateCoverLetter = async (req, res) => {
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Error generating cover letter" });
+  }
+};
+
+
+const { generateLogoImage, Quality }=require("../utils.js/generateLogo")
+exports.generateLogo = async (req, res) => {
+  try {
+      const companyName = req.body.companyName;
+      const companyType = req.body.companyType;
+      const design = req.body.design || "";
+      
+      const quality = req.body.quality || Quality.STANDARD;
+      // check quality is valid
+      if (!Object.values(Quality).includes(quality)) {
+          response_500(res, "Invalid quality", null);
+          return;
+      }
+
+      const prompt = `Create a logo for a ${companyType} company named "${companyName}". The logo must prominently feature the company name "${companyName}". ${design ? `Please incorporate the following design elements: ${design}.` : ''}`;
+
+      
+      const response = await generateLogoImage(prompt, quality);
+      response_200(res, "Logo generated successfully", response.url);
+  } catch (error) {
+      response_500(res, "Error generating logo", error);
   }
 };

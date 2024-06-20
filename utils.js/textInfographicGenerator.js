@@ -4,39 +4,39 @@ require('dotenv').config();
 const apiKey = process.env.OPENAI_API_KEY;
 const openaiInstance = new openai(apiKey);
 
-async function generateInfographicText(topic, sections) {
+async function generateInfographicText(topic, sections, tone = 'neutral', nOutputs = 1, language = 'en') {
     try {
         const sectionTextPromises = sections.map(async (section) => {
             const completion = await openaiInstance.chat.completions.create({
                 messages: [
                     {
                         role: 'system',
-                        content: `Please provide information about ${section}:`,
+                        content: `Please provide information about ${section} in a ${tone} tone.`,
                     },
                     {
                         role: 'user',
-                        content: topic,
+                        content: `Topic: ${topic}. Language: ${language}.`,
                     },
                 ],
-                model: 'gpt-4', // Adjust model based on availability and suitability
-                max_tokens: 150, // Adjust to control the length of the generated text
-                temperature: 0.3, // Adjust temperature for creativity vs. conservativeness
-                top_p: 1.0, // Adjust top_p for diversity of outputs
-                n: 1, // Number of completions to generate
-                stop: ['\n'], // Stop generating text at a new line
+                model: 'gpt-4',
+                max_tokens: 150,
+                temperature: 0.3,
+                top_p: 1.0,
+                n: nOutputs,
+                stop: ['\n'],
             });
 
-            if (!completion || !completion.choices || !completion.choices[0] || !completion.choices[0].message || !completion.choices[0].message.content) {
+            if (!completion || !completion.choices) {
                 throw new Error('Invalid completion response');
             }
 
-            const sectionContent = completion.choices[0].message.content.trim();
-            return `${section}:\n${sectionContent}`;
+            const sectionContents = completion.choices.map(choice => choice.message.content.trim());
+            return sectionContents.map(content => `${section}:\n${content}`).join('\n\n');
         });
 
         const sectionTexts = await Promise.all(sectionTextPromises);
 
-        const infographicText = `Topic: ${topic}\nSections:\n${sectionTexts.join('\n')}`;
+        const infographicText = `Topic: ${topic}\nSections:\n${sectionTexts.join('\n\n')}`;
         return infographicText;
     } catch (error) {
         console.error('Error generating infographic text:', error);
@@ -44,4 +44,4 @@ async function generateInfographicText(topic, sections) {
     }
 }
 
-module.exports = { generateInfographicText };
+module.exports = { generateInfographicText };

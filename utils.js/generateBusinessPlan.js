@@ -5,9 +5,9 @@ const openai = new openAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-async function generateBusinessPlan(businessType, industry, targetMarket) {
+async function generateBusinessPlan(businessType, industry, targetMarket,language) {
   const prompt = `
-  Create a detailed business plan for a ${businessType} in the ${industry} industry targeting ${targetMarket}. Include sections on:
+  Create a detailed business plan in ${language} for a ${businessType} in the ${industry} industry targeting ${targetMarket}. Include sections on:
   1. Executive Summary
   2. Company Description
   3. Market Analysis

@@ -1,21 +1,20 @@
-// from openai import OpenAI
 const { OpenAI } = require("openai");
 require("dotenv").config();
 const openai = new OpenAI();
 
-const QUALITY = {
+const Quality = {
     HD: "hd",
     STANDARD: "standard",
 };
-async function generateImage(prompt, n, quality, style) {
+
+async function generateLogoImage(prompt, quality) {
     const response = await openai.images.generate({
         model: "dall-e-3",
-        prompt: prompt + "With style: " + style,
-        n: n,
+        prompt: prompt,
         size: "1024x1024",
         quality: quality,
     });
-    return response.data;
+    return response.data[0];
 }
 
-module.exports = { generateImage, QUALITY };
+module.exports = { generateLogoImage, Quality };
