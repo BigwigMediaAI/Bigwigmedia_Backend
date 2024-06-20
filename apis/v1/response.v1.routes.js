@@ -50,9 +50,9 @@ router.post("/podcast",checkLimit,Podcast)
 router.post("/svgconvert",checkLimit,upload.single('image'),svgConverter)
 router.post("/zip",checkLimit,upload.array('files'),zipmaker)
 router.post("/gif",checkLimit,upload.single("video"),gifConverter)
-router.post("/getSummary",checkLimit, getTextSummary);
+router.post("/getSummary", getTextSummary);
 router.all("/files",checkLimit,upload.single('zipfile'),zipExtractor)
-router.post('/getNotesSummary',checkLimit, getNotesSummary);
+router.post('/getNotesSummary',checkLimit,getNotesSummary);
 router.post('/pdf2text',checkLimit,upload.single('pdf'),pdftotext)
 router.post("/compressedVideo",checkLimit,upload.single('video'),compressedVideo)
 router.post('/extract',checkLimit, upload.single('pdf'),extractpdftoimages)
@@ -69,7 +69,7 @@ router.post('/slogan',checkLimit,Business_Slogan)
 router.post('/nca',checkLimit,NCA_Agreement)
 router.post('/youtubescript',checkLimit,generateYouTubeScript)
 router.post('/trivia',checkLimit,TriviaGenerate)
-router.post('/improve',checkLimit, improveContent);
+router.post('/improve',checkLimit,improveContent);
 router.post('/remove-audio',checkLimit,upload.single('video'),removeAudio)
 router.post('/generatePolicy',checkLimit, genratedPolicy)
 router.post('/generatePoll',checkLimit, generatePoll);

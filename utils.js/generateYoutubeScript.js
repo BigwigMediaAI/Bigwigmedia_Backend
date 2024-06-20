@@ -3,13 +3,13 @@ require("dotenv").config();
 
 const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
-async function generateYoutubeScript(topic, tone, length) {
+async function generateYoutubeScript(topic, tone, length,language) {
   try {
     const completion = await openai.chat.completions.create({
       messages: [
         {
           role: "system",
-          content: `Generate a YouTube script on the topic of:\n\n${topic}\n\nTone: ${tone}\n\nLength: ${length}\n\nScript:`
+          content: `Generate a YouTube script in ${language} language on the topic of:\n\n${topic}\n\nTone: ${tone}\n\nLength: ${length}\n\nScript:`
         },
         {
           role: "user",

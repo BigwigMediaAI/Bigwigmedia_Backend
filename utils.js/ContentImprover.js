@@ -3,9 +3,9 @@ require("dotenv").config();
 
 const openai = new OpenAI();
 
-async function improveContent(content, tone) {
+async function improveContent(content, tone,language,output) {
   try {
-    let prompt = `Improve the following content: "${content}". Make it more engaging and error-free.`;
+    let prompt = `Improve the following content: "${content}" in ${language} language. Make it more engaging and error-free and generate ${output} output and each different from other and in new line`;
     if (tone) {
       prompt += ` Adjust the tone to be ${tone}.`;
     }

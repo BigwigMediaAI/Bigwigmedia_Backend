@@ -3,8 +3,8 @@ require("dotenv").config();
 
 const openai = new openAI.OpenAI(process.env.OPENAI_API_KEY);
 
-async function generateNCA(employer, employee, restrictedActivities, restrictedDuration, restrictedTerritory) {
-    const prompt = `Create a Non-Compete Agreement (NCA) between the Employer and the Employee with the following details:
+async function generateNCA(employer, employee, restrictedActivities, restrictedDuration, restrictedTerritory,language) {
+    const prompt = `Create a Non-Compete Agreement (NCA) in ${language} language between the Employer and the Employee with the following details:
     - Employer: ${employer}
     - Employee: ${employee}
     - Restricted Activities: ${restrictedActivities}

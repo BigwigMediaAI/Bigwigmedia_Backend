@@ -3,9 +3,9 @@ require("dotenv").config();
 
 const openai = new OpenAI();
 
-async function generateCurrentTopicsContent(category, keywords, numTopics) {
+async function generateCurrentTopicsContent(category, keywords, numTopics,language) {
   try {
-    let prompt = `Generate ${numTopics} current topics on the category "${category}". also provide some details on these category`;
+    let prompt = `Generate ${numTopics} current topics in ${language} language on the category "${category}". also provide some details on these category`;
     if (keywords) {
       prompt += ` Include keywords: ${keywords}.`;
     }

@@ -3,13 +3,13 @@ require("dotenv").config();
 
 const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
-async function getSummary(text) {
+async function getSummary(text,language,output) {
     try {
         const completion = await openai.chat.completions.create({
             messages: [
                 {
                     role: "system",
-                    content: "Generate a summary of the following text in simple and humanized language:\n\n" + text + "\n\nSummary:"
+                    content: `Generate a summary of the following text in ${language} language  in simple and humanized language and provide ${output} output:\n\n" + text + "\n\nSummary:`
                 },
                 {
                     role: "user",

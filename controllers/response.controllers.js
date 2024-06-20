@@ -902,8 +902,8 @@ exports.gifConverter=(req,res)=>{
 
 exports.getTextSummary = async (req, res) => {
   try {
-      const { text } = req.body;
-      const summary = await getSummary(text);
+      const { text,language ,output} = req.body;
+      const summary = await getSummary(text,language,output);
       res.status(200).json({ summary });
   } catch (error) {
       console.error("Error:", error);
@@ -979,8 +979,8 @@ exports.zipExtractor = (req, res) => {
 
 exports.getNotesSummary = async (req, res) => {
   try {
-      const { notes } = req.body;
-      const summary = await getNotesSummary(notes);
+      const { notes,language } = req.body;
+      const summary = await getNotesSummary(notes,language);
       res.status(200).json({ summary });
   } catch (error) {
       console.error("Error:", error);
@@ -1374,8 +1374,8 @@ const generateCurrentTopicsContent = require("../utils.js/currentTopicGenerator"
 
 exports.generateCurrentTopics = async (req, res) => {
   try {
-    const { category, keywords, numTopics } = req.body;
-    const topics = await generateCurrentTopicsContent(category, keywords, numTopics);
+    const { category, keywords, numTopics,language } = req.body;
+    const topics = await generateCurrentTopicsContent(category, keywords, numTopics,language);
 
     response_200(res, "Current topics generated successfully", { topics });
   } catch (error) {
@@ -1459,14 +1459,14 @@ exports.trimaudio=(req,res)=>{
 // *****NDA aggrement ****
 
 exports.NDA_Agreement= async (req,res)=>{
-  const { disclosingParty, receivingParty } = req.body;
+  const { disclosingParty, receivingParty,language,DateAgreement } = req.body;
 
     if (!disclosingParty || !receivingParty) {
         return res.status(400).json({ error: 'Disclosing Party and Receiving Party are required.' });
     }
 
     try {
-        const nda = await generateNDA(disclosingParty, receivingParty);
+        const nda = await generateNDA(disclosingParty, receivingParty,language,DateAgreement);
         res.status(200).json({ nda });
     } catch (error) {
         console.error('Error generating NDA:', error);
@@ -1522,14 +1522,14 @@ exports.deletepdf=async(req,res)=>{
 // **********Business generator**********
 
 exports.Business_Slogan= async (req,res)=>{
-  const { businessName, whatItDoes,numberOfSlogans } = req.body;
+  const { businessName, whatItDoes,numberOfSlogans,language } = req.body;
 
-    if (!businessName || !whatItDoes||!numberOfSlogans) {
+    if (!businessName || !whatItDoes||!numberOfSlogans ||!language) {
         return res.status(400).json({ error: 'businessName and whatItDoes are required.' });
     }
 
     try {
-        const slogan = await generateBusinessSlogan(businessName, whatItDoes,numberOfSlogans);
+        const slogan = await generateBusinessSlogan(businessName, whatItDoes,numberOfSlogans,language);
         res.status(200).json({ slogan });
     } catch (error) {
         console.error('Error generating NDA:', error);
@@ -1540,14 +1540,14 @@ exports.Business_Slogan= async (req,res)=>{
 // ********NCA Agreement********
 
 exports.NCA_Agreement= async (req,res)=>{
-  const {employer, employee, restrictedActivities, restrictedDuration, restrictedTerritory } = req.body;
+  const {employer, employee, restrictedActivities, restrictedDuration, restrictedTerritory,language } = req.body;
 
     if (!employer || !employee||!restrictedActivities||!restrictedDuration||!restrictedTerritory) {
         return res.status(400).json({ error: 'Disclosing Party and Receiving Party are required.' });
     }
 
     try {
-        const nda = await generateNCA(employer, employee, restrictedActivities, restrictedDuration, restrictedTerritory);
+        const nda = await generateNCA(employer, employee, restrictedActivities, restrictedDuration, restrictedTerritory,language);
         res.status(200).json({ nda });
     } catch (error) {
         console.error('Error generating NDA:', error);
@@ -1558,8 +1558,8 @@ exports.NCA_Agreement= async (req,res)=>{
 // *************Youtube Script Generator************
 exports.generateYouTubeScript = async (req, res) => {
   try {
-    const { topic,tone,length } = req.body;
-    const script = await generateYoutubeScript(topic,tone, length);
+    const { topic,tone,length,language } = req.body;
+    const script = await generateYoutubeScript(topic,tone, length,language);
     res.status(200).json({ script });
   } catch (error) {
     console.error("Error:", error);
@@ -1572,8 +1572,8 @@ exports.generateYouTubeScript = async (req, res) => {
 
 exports.TriviaGenerate = async (req, res) => {
   try {
-    const { topic, numberOfQuestions, numberOfAnswers, difficultyLevel } = req.body;
-    const script = await generateTrivia(topic, numberOfQuestions, numberOfAnswers, difficultyLevel);
+    const { topic, numberOfQuestions, numberOfAnswers, difficultyLevel,language } = req.body;
+    const script = await generateTrivia(topic, numberOfQuestions, numberOfAnswers, difficultyLevel,language);
     res.status(200).json({ script });
   } catch (error) {
     console.error("Error:", error);
@@ -1584,8 +1584,8 @@ exports.TriviaGenerate = async (req, res) => {
 // ********Content improver********
 exports.improveContent = async (req, res) => {
   try {
-    const { content,tone } = req.body;
-    const improvedContent = await improveContent(content,tone);
+    const { content, tone,language,output} = req.body;
+    const improvedContent = await improveContent(content, tone,language,output);
 
     response_200(res, "Content improved successfully", { improvedContent });
   } catch (error) {

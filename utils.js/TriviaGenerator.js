@@ -5,8 +5,8 @@ const openai = new openAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-async function generateTrivia(topic, numberOfQuestions, numberOfAnswers, difficultyLevel) {
-    const prompt = `Topic: ${topic}\nDifficulty Level: ${difficultyLevel}\nGenerate ${numberOfQuestions} trivia questions each with ${numberOfAnswers} answer choices. Provide the correct answer for each question. Format the output as JSON array with fields: question, answers, correctAnswer.`;
+async function generateTrivia(topic, numberOfQuestions, numberOfAnswers, difficultyLevel,language) {
+    const prompt = `Topic: ${topic}\nDifficulty Level: ${difficultyLevel}\nGenerate ${numberOfQuestions} trivia questions each with ${numberOfAnswers} answer choices in ${language} language. Provide the correct answer for each question. Format the output as JSON array with fields: question, answers, correctAnswer.`;
 
     const completion = await openai.chat.completions.create({
         messages: [

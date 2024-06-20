@@ -3,20 +3,20 @@ require("dotenv").config();
 
 const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
-async function getNotesSummary(notes) {
+async function getNotesSummary(notes,language) {
     try {
         const completion = await openai.chat.completions.create({
             messages: [
                 {
                     role: "system",
-                    content: "You are a summarizer that categorizes key points from a meeting based on specific sections. Please provide a summary of the meeting with section headers followed by key points. Example:\n\nMarketing Strategy:\n- Digital marketing plan discussed.\n- Budget allocated: $50,000.\n\nProduct Development Update:\n- Prototype nearing completion.\n- Testing scheduled for next week.\n\nCustomer Support Preparation:\n- Plan to hire additional staff.\n\nFinance Department Insights:\n- Revenue projections discussed.\n- Break-even expected within six months.\n\nSummary:" 
+                    content: `You are a summarizer that categorizes key points from a meeting based on specific sections. Please provide a summary of the meeting with section headers followed by key points in ${language} language . Example:\n\nMarketing Strategy:\n- Digital marketing plan discussed.\n- Budget allocated: $50,000.\n\nProduct Development Update:\n- Prototype nearing completion.\n- Testing scheduled for next week.\n\nCustomer Support Preparation:\n- Plan to hire additional staff.\n\nFinance Department Insights:\n- Revenue projections discussed.\n- Break-even expected within six months.\n\nSummary:`
                 },
                 {
                     role: "user",
                     content: notes
                 }
             ],
-            model: "gpt-3.5-turbo"
+            model: "gpt-4"
         });
 
         if (!completion || !completion.choices || completion.choices.length === 0) {

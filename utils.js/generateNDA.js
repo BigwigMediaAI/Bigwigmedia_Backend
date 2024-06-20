@@ -3,10 +3,11 @@ require("dotenv").config();
 
 const openai = new openAI.OpenAI(process.env.OPENAI_API_KEY);
 
-async function generateNDA(disclosingParty, receivingParty) {
-    const prompt = `Create a Non-Disclosure Agreement (NDA) between the Disclosing Party and the Receiving Party with the following details:
+async function generateNDA(disclosingParty, receivingParty,language,DateAgreement) {
+    const prompt = `Create a Non-Disclosure Agreement (NDA) in ${language} language between the Disclosing Party and the Receiving Party with the following details:
     - Disclosing Party: ${disclosingParty}
     - Receiving Party: ${receivingParty}
+    - Date : ${DateAgreement}
 
     The NDA should include the following sections:
     1. Definitions
