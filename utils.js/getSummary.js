@@ -3,13 +3,17 @@ require("dotenv").config();
 
 const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
-async function getSummary(text,language,output) {
+async function getSummary(text,language,outputCount) {
+    let responses = [];
+
     try {
+        for (let i = 0; i < outputCount; i++) {
+
         const completion = await openai.chat.completions.create({
             messages: [
                 {
                     role: "system",
-                    content: `Generate a summary of the following text in ${language} language  in simple and humanized language and provide ${output} output:\n\n" + text + "\n\nSummary:`
+                    content: `Generate a summary of the following text in ${language} language  in simple and humanized language\n\n" + text + "\n\nSummary:`
                 },
                 {
                     role: "user",
@@ -23,8 +27,9 @@ async function getSummary(text,language,output) {
             throw new Error("Invalid completion response");
         }
 
-        const summary = completion.choices[0].message.content.trim();
-        return summary;
+        responses.push(completion.choices[0].message.content.trim());
+    }
+        return responses;
     } catch (error) {
         console.error("Error:", error);
         return "Failed to generate text summary";

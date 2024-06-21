@@ -4,12 +4,12 @@ require("dotenv").config()
 const OPENAI=new openAI()
 
 
-async function Seopodcast(prompt,topic, guest, background, interests, tone){
+async function Seopodcast(prompt,topic, guest, background, interests, tone,language){
     const completion=await OPENAI.chat.completions.create({
         messages:[
             {
                 role:"system",
-                content:`Generate podcast questions and answers based on the following details:
+                content:`Generate podcast questions and answers based in ${language} language on the following details:
         
                 Topic: ${topic}
                 Guest: ${guest}

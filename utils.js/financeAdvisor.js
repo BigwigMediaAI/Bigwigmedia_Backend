@@ -3,8 +3,12 @@ require("dotenv").config();
 
 const openai = new openAI.OpenAI(process.env.OPENAI_API_KEY);
 
-async function getFinancialAdvice(description, amount,language) {
+async function getFinancialAdvice(description, amount,language,outputCount) {
+    let responses = [];
+
     try {
+        for (let i = 0; i < outputCount; i++) {
+
         const prompt = `Provide detailed financial advice in ${language} language for the following financial situation: 
         - Description: ${description}
         - Amount: $${amount}`;
@@ -24,8 +28,9 @@ async function getFinancialAdvice(description, amount,language) {
         }
 
         // Return the generated financial advice
-        const financialAdvice = completion.choices[0].message.content.trim();
-        return financialAdvice;
+        responses.push(completion.choices[0].message.content.trim());
+    }
+        return responses;
     } catch (error) {
         throw error;
     }

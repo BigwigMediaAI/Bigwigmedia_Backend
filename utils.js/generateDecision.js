@@ -3,20 +3,20 @@ require("dotenv").config();
 
 const openai = new openAI();
 
-async function getDecisionTool(prompt) {
+async function getDecisionTool(prompt,language) {
     try {
         const completion = await openai.chat.completions.create({
             messages: [
                 {
                     role: "system",
-                    content: "Can you list the pros and cons of [decision] in points? Please include factors such as [factors of decision]."
+                    content: `Can you list the pros and cons of [decision] in ${language} language in points? Please include factors such as [factors of decision].`
                 },
                 {
                     role: "user",
                     content: prompt,
                 }
             ],
-            model: "gpt-4-turbo"
+            model: "gpt-4"
         });
 
         // Check if completion response is valid

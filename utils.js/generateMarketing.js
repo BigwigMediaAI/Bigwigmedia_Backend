@@ -3,13 +3,13 @@ require("dotenv").config();
 
 const openai = new openAI();
 
-async function getMarketingCampaign(prompt) {
+async function getMarketingCampaign(prompt,language) {
     try {
         const completion = await openai.chat.completions.create({
             messages: [
                 {
                     role: "system",
-                    content: `Generate a marketing campaign strategy for a product launch. Provide detailed information about the product, its target market, and key features. Based on this input, outline a comprehensive campaign strategy covering the following aspects:
+                    content: `Generate a marketing campaign strategy in ${language} language for a product launch. Provide detailed information about the product, its target market, and key features. Based on this input, outline a comprehensive campaign strategy covering the following aspects:
 
 ### Product Introduction:
 Introduce the product and its unique selling points.
@@ -49,7 +49,7 @@ Explain how data analytics and personalization will be utilized to optimize the 
                     content: prompt
                 }
             ],
-            model: "gpt-4-turbo"
+            model: "gpt-4"
         });
 
         // Extracting text content from response

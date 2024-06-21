@@ -4,13 +4,17 @@ require("dotenv").config();
 
 const openai = new OpenAI();
 
-async function generateParaphrase(prompt,tone) {
+async function generateParaphrase(prompt,tone,language,outputCount) {
+    let responses = [];
+   
+    for (let i = 0; i < outputCount; i++) {
+
     const completion = await openai.chat.completions.create({
         messages: [
             {
                 role: "system",
                 content:
-                    `You are a creative paraphrasing assistant developed to rephrase and provide unique renditions of user prompts according to ${tone} tone `,
+                    `You are a creative paraphrasing assistant developed to rephrase and provide unique renditions of user prompts according to ${tone} tone and ${language} language `,
             },
             {
                 role: "user",
@@ -20,7 +24,9 @@ async function generateParaphrase(prompt,tone) {
         model: "gpt-3.5-turbo-1106",
         // response_format: { type: "json_object" },
     });
-    return completion.choices[0].message.content;
+    responses.push(completion.choices[0].message.content);
+}
+return responses
 }
 
 module.exports = generateParaphrase;

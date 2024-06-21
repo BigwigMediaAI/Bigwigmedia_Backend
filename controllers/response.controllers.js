@@ -100,8 +100,8 @@ exports.getResponse = async (req, res) => {
 
 exports.getParaPhrase = async (req, res) => {
     try {
-        const {prompt,tone} = req.body;
-        const response = await generateParaphrase(prompt,tone);
+        const {prompt,tone,language,outputCount} = req.body;
+        const response = await generateParaphrase(prompt,tone,language,outputCount);
         response_200(res, "Paraphrase generated successfully", response);
     } catch (error) {
         response_500(res, "Error getting paraphrase", error);
@@ -110,8 +110,8 @@ exports.getParaPhrase = async (req, res) => {
 
 exports.getSpecialtool=async(req,res)=>{
     try {
-        const prompt=req.body.prompt;
-        const response=await getSpecialtool(prompt);
+        const {prompt,language,outputCount}=req.body;
+        const response=await getSpecialtool(prompt,language,outputCount);
         response_200(res, "response generated successfully", response);
     } catch (error) {
         response_500(res, "Error getting response", error);
@@ -121,8 +121,8 @@ exports.getSpecialtool=async(req,res)=>{
 
 exports.getDecision = async (req, res) => {
     try {
-        const prompt = req.body.prompt;
-        const response = await getDecision(prompt);
+        const {prompt,language}=req.body
+        const response = await getDecision(prompt,language);
 
         // Check if pros and cons are present in the response
         if (response.pros.length === 0 || response.cons.length === 0) {
@@ -268,8 +268,8 @@ exports.getCodeConverter=async(req,res)=>{
 
 exports.getMarketing=async(req,res)=>{
     try {
-        const prompt=req.body.prompt;
-        const response=await getMarketing(prompt);
+        const {prompt,language}=req.body;
+        const response=await getMarketing(prompt,language);
         response_200(res, "response generated successfully", response);
         // console.log(response)
     } catch (error) {
@@ -278,11 +278,11 @@ exports.getMarketing=async(req,res)=>{
     }
 }
 
-// QR code starts here
 
 
 
 
+// *************QR Code Generator**************
 
 exports.generateQR = async (req, res) => {
     const { url, color, textAboveQR, textBelowQR } = req.body;
@@ -305,7 +305,7 @@ exports.generateQR = async (req, res) => {
     }
 }
 
-
+// *************Web Component Generator***********
 exports.generateComponent=async(req,res)=>{
     const { command, structure, design } = req.body;
 
@@ -319,10 +319,12 @@ exports.generateComponent=async(req,res)=>{
     }
 }
 
+// ******text rephrase******
+
 exports.getRepharsedata = async (req, res) => {
     try {
-        const prompt = req.body.prompt;
-        const response = await getRepharse(prompt);
+        const {prompt,language,tone,outputCount}=req.body
+        const response = await getRepharse(prompt,language,tone,outputCount);
 
 
         response_200(res, "Pros and cons generated successfully", { data: response });
@@ -758,8 +760,8 @@ exports.text2Pdf=(req,res)=>{
 
 exports.Podcast= async(req,res)=>{
   try {
-    const { prompt,topic, guest, background, interests, tone } = req.body;
-   const response=await Seopodcast(prompt,topic, guest, background, interests, tone);
+    const { prompt,topic, guest, background, interests, tone,language } = req.body;
+   const response=await Seopodcast(prompt,topic, guest, background, interests, tone,language);
   //  console.log(response)
    response_200(res,"SEO analysis completed succesfully",{data:response});
   } catch (error) {
@@ -902,9 +904,9 @@ exports.gifConverter=(req,res)=>{
 
 exports.getTextSummary = async (req, res) => {
   try {
-      const { text,language ,output} = req.body;
-      const summary = await getSummary(text,language,output);
-      res.status(200).json({ summary });
+      const { text,language,outputCount} = req.body;
+      const summary = await getSummary(text,language,outputCount);
+      res.status(200).json(summary );
   } catch (error) {
       console.error("Error:", error);
       res.status(500).json({ error: "Error generating text summary" });
@@ -1969,10 +1971,10 @@ exports.youtubeTranslator=async(req,res)=>{
 // ***********Finance Advisor***************
 const getFinancialAdvice=require("../utils.js/financeAdvisor")
 exports.financeadvisor = async (req, res) => {
-  const { description, amount,language } = req.body;
+  const { description, amount,language,outputCount } = req.body;
 
     try {
-        const advice = await getFinancialAdvice(description, amount,language);
+        const advice = await getFinancialAdvice(description, amount,language,outputCount);
         res.json({ advice });
     } catch (error) {
         res.status(500).json({ error: 'An error occurred while generating advice.' });
@@ -2112,15 +2114,15 @@ const { generateSWOTAnalysis } = require('../utils.js/swotAnalysis');
 
 exports.generateSWOT = async (req, res) => {
     try {
-        const { topic,tone,numOutputs,language } = req.body;
+        const { topic,language,outputCount } = req.body;
 
         if (!topic) {
             return res.status(400).json({ error: 'Please provide a topic for SWOT analysis' });
         }
 
-        const swotAnalysis = await generateSWOTAnalysis(topic,tone,numOutputs, language);
+        const swotAnalysis = await generateSWOTAnalysis(topic,language,outputCount);
 
-        res.status(200).json({ swotAnalysis });
+        res.status(200).json( swotAnalysis );
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Error generating SWOT analysis' });
@@ -2136,15 +2138,16 @@ const getCoverLetter = require('../utils.js/getCoverLetter');
 
 exports.generateCoverLetter = async (req, res) => {
   try {
-    const { jobDescription, userDetails, highlights } = req.body;
-    const coverLetter = await getCoverLetter(jobDescription, userDetails, highlights);
-    res.status(200).json({ coverLetter });
+    const { jobDescription, userDetails, highlights,language,outputCount } = req.body;
+    const coverLetter = await getCoverLetter(jobDescription, userDetails, highlights,language,outputCount);
+    res.status(200).json( coverLetter );
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Error generating cover letter" });
   }
 };
 
+// ***************Logo Generator***************
 
 const { generateLogoImage, Quality }=require("../utils.js/generateLogo")
 exports.generateLogo = async (req, res) => {

@@ -25,7 +25,7 @@ const uploadfile = multer({ storage: storage });
 
 router.post("/", checkLimit, getResponse);
 router.post("/paraphrase",checkLimit, getParaPhrase);
-router.post("/image", getImage);
+router.post("/image",checkLimit, getImage);
 router.post("/special",checkLimit, getSpecialtool);
 router.post("/decision",checkLimit, getDecision);
 router.post("/getseo",checkLimit, getSeo);
@@ -50,7 +50,7 @@ router.post("/podcast",checkLimit,Podcast)
 router.post("/svgconvert",checkLimit,upload.single('image'),svgConverter)
 router.post("/zip",checkLimit,upload.array('files'),zipmaker)
 router.post("/gif",checkLimit,upload.single("video"),gifConverter)
-router.post("/getSummary", getTextSummary);
+router.post("/getSummary",checkLimit, getTextSummary);
 router.all("/files",checkLimit,upload.single('zipfile'),zipExtractor)
 router.post('/getNotesSummary',checkLimit,getNotesSummary);
 router.post('/pdf2text',checkLimit,upload.single('pdf'),pdftotext)
@@ -88,7 +88,7 @@ router.post('/infographic',checkLimit, generateTextInfographic);
 router.get('/avatar',checkLimit,createAvatar)
 router.post('/compressImage',checkLimit,upload.single('image'),compressImage)
 router.post('/generateSWOT',checkLimit, generateSWOT);
-router.post('/generateCoverLetter',checkLimit, generateCoverLetter);
+router.post('/generateCoverLetter',checkLimit,generateCoverLetter);
 router.post("/logo",checkLimit, generateLogo);
 
 module.exports = router;
