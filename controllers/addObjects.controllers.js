@@ -154,12 +154,11 @@ exports.getObject = async (req, res) => {
 
 exports.getObjectByLabel = async (req, res) => {
     try {
-        // console.log(req.user)
         const objects = await Objects.find({
             labels: {
                 $in: [req.params.label],
             },
-        }).select("name logo description tagLine labels").sort({ _id: -1 });
+        }).select("name logo description tagLine labels");
 
         const objectArray = objects.map((object) => {
             return {
@@ -180,11 +179,16 @@ exports.getObjectByLabel = async (req, res) => {
                 }
             });
         }
-        response_200(res, objectArray);
+
+        // Reverse the objectArray
+        const reversedObjectArray = objectArray.reverse();
+
+        response_200(res, reversedObjectArray);
     } catch (error) {
         response_500(res, "Error getting objects by label", error);
     }
 };
+
 
 exports.getResponseOfObject = async (req, res) => {
     try {
