@@ -144,3 +144,51 @@ exports.searchBlogsByTags = async (req, res) => {
     }
   };
   
+
+
+
+  // Controller for posting a comment
+  exports.postComment = async (req, res) => {
+    const { slug } = req.params;
+    const { username, text, userImage } = req.body;
+  
+    try {
+      const blogPost = await BlogPost.findOne({ slug });
+  
+      if (!blogPost) {
+        return res.status(404).json({ msg: 'Blog post not found' });
+      }
+  
+      const newComment = {
+        username,
+        text,
+        userImage,
+        date: new Date()
+      };
+  
+      blogPost.comments.push(newComment);
+      await blogPost.save();
+  
+      res.status(201).json({ msg: 'Comment added', comments: blogPost.comments });
+    } catch (error) {
+      res.status(500).json({ msg: 'Server error', error: error.message });
+    }
+  };
+  
+  // Controller for getting comments of a specific blog post
+  exports.getComments = async (req, res) => {
+    const { slug } = req.params;
+  
+    try {
+      const blogPost = await BlogPost.findOne({ slug });
+  
+      if (!blogPost) {
+        return res.status(404).json({ msg: 'Blog post not found' });
+      }
+  
+      res.status(200).json(blogPost.comments);
+    } catch (error) {
+      res.status(500).json({ msg: 'Server error', error: error.message });
+    }
+  };
+  
