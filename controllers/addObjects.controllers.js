@@ -183,7 +183,7 @@ exports.getObjectByLabel = async (req, res) => {
         // Reverse the objectArray
         const reversedObjectArray = objectArray.reverse();
 
-        response_200(res, reversedObjectArray);
+        response_200(res, objectArray);
     } catch (error) {
         response_500(res, "Error getting objects by label", error);
     }
