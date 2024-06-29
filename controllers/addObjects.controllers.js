@@ -154,6 +154,7 @@ exports.getObject = async (req, res) => {
 
 exports.getObjectByLabel = async (req, res) => {
     try {
+        // console.log(req.user)
         const objects = await Objects.find({
             labels: {
                 $in: [req.params.label],
@@ -179,14 +180,10 @@ exports.getObjectByLabel = async (req, res) => {
                 }
             });
         }
-
-        // Reverse the objectArray
-        const reversedObjectArray = objectArray.reverse();
-
         response_200(res, objectArray);
     } catch (error) {
         response_500(res, "Error getting objects by label", error);
-    }
+    }
 };
 
 
