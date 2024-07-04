@@ -21,7 +21,7 @@ async function downloadAndMerge(url, outputPath) {
     const outputPathFinal = path.resolve(outputPath, `${sanitizedTitle}.mp4`);
 
     // Download video
-    const videoStream = ytdl(url, { filter: 'videoonly', quality: '136' });
+    const videoStream = ytdl(url, { filter: 'videoonly', quality: '248' });
     const audioStream = ytdl(url, { filter: 'audioonly', quality: 'highest' });
 
     // Save video and audio to files
