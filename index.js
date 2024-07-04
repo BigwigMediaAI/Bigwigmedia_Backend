@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser=require("body-parser")
 const app = express();
 const cors = require("cors");
-
+const fs=require("fs")
 const db = require("./config/db.config");
 db.connect();
 
@@ -14,7 +14,10 @@ app.use(cors());
 app.use("/api/v2/webhook", express.raw({ type: "*/*" }),webhookController);
 app.use(express.json());
 
+const DOWNLOAD_FOLDER = path.resolve(__dirname, 'downloads');
 
+// Serve the downloaded files
+app.use('/downloads', express.static(DOWNLOAD_FOLDER));
 
 const PORT = 4000 || process.env.PORT;
 
