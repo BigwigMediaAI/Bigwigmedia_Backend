@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser=require("body-parser")
 const app = express();
 const cors = require("cors");
+
 const db = require("./config/db.config");
 db.connect();
 
@@ -12,6 +13,7 @@ require("dotenv").config();
 app.use(cors());
 app.use("/api/v2/webhook", express.raw({ type: "*/*" }),webhookController);
 app.use(express.json());
+
 
 
 const PORT = 4000 || process.env.PORT;

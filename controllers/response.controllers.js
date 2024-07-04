@@ -54,6 +54,7 @@ const improveContent=require("../utils.js/ContentImprover")
 const generatePrivacyPolicy=require("../utils.js/generatePrivacyPolicy")
 const generateBusinessPlan=require("../utils.js/generateBusinessPlan")
 const detectAIContent=require("../utils.js/aiDetector")
+const downloadAndMerge=require("../utils.js/youtubeVideoDownload")
 exports.getResponse = async (req, res) => {
     try {
         const prompt = req.body.prompt;
@@ -2172,3 +2173,35 @@ exports.generateLogo = async (req, res) => {
       response_500(res, "Error generating logo", error);
   }
 };
+
+
+// youtube video download using ytdl
+
+
+const DOWNLOAD_FOLDER = path.resolve(__dirname, '../downloads');
+const FILE_EXPIRATION_TIME = 60000;
+
+exports.downloadytdl=async(req,res)=>{
+  const { url } = req.body;
+    try {
+        const convertedFilePath = await downloadAndMerge(url, DOWNLOAD_FOLDER);
+        const fileName = path.basename(convertedFilePath);
+        const downloadUrl = `${req.protocol}://${req.get('host')}/downloads/${fileName}`;
+
+        // Set a timer to delete the file after a certain period
+        setTimeout(() => {
+            fs.unlink(convertedFilePath, (err) => {
+                if (err) {
+                    console.error(`Failed to delete file: ${convertedFilePath}`, err);
+                } else {
+                    console.log(`File deleted: ${convertedFilePath}`);
+                }
+            });
+        }, FILE_EXPIRATION_TIME);
+
+        res.status(200).send({ downloadUrl });
+    } catch (error) {
+        console.error('Error during the download process:', error);
+        res.status(400).send({ error: error.message });
+    }
+}
