@@ -6,7 +6,7 @@ const PLAN = {
         price: 0,
     },
     MONTHLY: {
-        name: "MONTLY",
+        name: "MONTHLY",
         limit: 300,
         expairy: 30,
         price: 10,
