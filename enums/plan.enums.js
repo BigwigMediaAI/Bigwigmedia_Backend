@@ -7,17 +7,17 @@ const PLAN = {
     },
     MONTHLY: {
         name: "MONTHLY",
-        limit: 300,
+        limit: 1000,
         expairy: 30,
-        price: 10,
-        Displayamount:1000
+        price: 499,
+        Displayamount:499
     },
     YEARLY: {
         name: "YEARLY",
-        limit: 4000,
+        limit: 14000,
         expairy: 365,
-        price: 100,
-        Displayamount:10000
+        price: 5999,
+        Displayamount:5999
 
     },
     TOPUP: {
