@@ -15,7 +15,7 @@ async function GetSeo(prompt) {
                     content: prompt,
                 },
             ],
-            model: "gpt-4o",
+            model: "gpt-4-turbo",
         });
 
         if (!completion || !completion.choices || completion.choices.length === 0) {
