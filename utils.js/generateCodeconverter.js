@@ -19,7 +19,7 @@ async function getCodeConverter(sourceCode, targetLanguage) {
                 content: sourceCode
             }
         ],
-        model: "gpt-4-turbo"
+        model: "gpt-4o"
     });
 
     const response = completion.choices[0].message.content;

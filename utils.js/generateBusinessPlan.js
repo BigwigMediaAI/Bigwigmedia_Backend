@@ -30,7 +30,7 @@ async function generateBusinessPlan(businessType, industry, targetMarket,languag
         content: prompt
       }
     ],
-    model: "gpt-4"
+    model: "gpt-4o"
   });
 
   const businessPlan = completion.choices[0].message.content.trim();

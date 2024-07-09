@@ -18,7 +18,7 @@ async function getRepharse(prompt, language, tone, outputCount) {
                     content: prompt
                 }
             ],
-            model: "gpt-4-turbo"
+            model: "gpt-4o"
         });
 
         responses.push(completion.choices[0].message.content.replace(/(\|\r\n|\n|\r)/gm, ""));

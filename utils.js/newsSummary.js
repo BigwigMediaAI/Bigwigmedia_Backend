@@ -20,7 +20,7 @@ async function summarizeNewsArticle(articleText, languageCode, output) {
                     content: articleText,
                 },
             ],
-            model: 'gpt-4', // Adjust model based on availability and suitability
+            model: 'gpt-4o', // Adjust model based on availability and suitability
             max_tokens: 150, // Adjust to control the length of each summary
             temperature: 0.3, // Adjust temperature for creativity vs. conservativeness
             top_p: 1.0, // Adjust top_p for diversity of outputs

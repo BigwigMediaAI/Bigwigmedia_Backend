@@ -16,7 +16,7 @@ async function getNotesSummary(notes,language) {
                     content: notes
                 }
             ],
-            model: "gpt-4"
+            model: "gpt-4o"
         });
 
         if (!completion || !completion.choices || completion.choices.length === 0) {

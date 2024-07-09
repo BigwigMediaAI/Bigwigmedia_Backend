@@ -17,7 +17,7 @@ async function generateCurrentTopicsContent(category, keywords, numTopics,langua
           content: prompt,
         },
       ],
-      model: "gpt-4",
+      model: "gpt-4o",
     });
 
     const topicsResponse = completion.choices[0].message.content.trim().split('\n');

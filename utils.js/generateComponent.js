@@ -18,7 +18,7 @@ async function getCodeConverter(command, structure, design) {
         content: `Convert the above code to ${structure} and apply ${design} design and show only prettier format without any additional explanatory text and Backslash`,
       },
     ],
-    model: "gpt-4-turbo",
+    model: "gpt-4o",
   });
 
   const response = completion.choices[0].message.content;

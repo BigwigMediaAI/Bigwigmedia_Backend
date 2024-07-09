@@ -16,7 +16,7 @@ async function generateYoutubeScript(topic, tone, length,language) {
           content: topic
         }
       ],
-      model: "gpt-4-turbo"
+      model: "gpt-4o"
     });
 
     if (!completion || !completion.choices || completion.choices.length === 0) {

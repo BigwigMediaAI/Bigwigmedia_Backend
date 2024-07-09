@@ -14,7 +14,7 @@ async function generatePrivacyPolicy(companyName, address, websiteURL,language) 
                     content: prompt,
                 }
             ],
-            model: "gpt-4",
+            model: "gpt-4o",
         });
 
         const privacyPolicy = completion.choices[0].message.content.trim();

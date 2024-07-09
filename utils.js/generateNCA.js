@@ -35,7 +35,7 @@ async function generateNCA(employer, employee, restrictedActivities, restrictedD
                 content: prompt
             }
         ],
-        model: "gpt-4"
+        model: "gpt-4o"
     });
 
     let ncaContent = completion.choices[0].message.content;

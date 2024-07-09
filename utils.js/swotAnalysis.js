@@ -20,7 +20,7 @@ async function generateSWOTAnalysis(topic,language,outputCount) {
                     content: `Strengths:\n\n- \n\nWeaknesses:\n\n- \n\nOpportunities:\n\n- \n\nThreats:\n\n- `
                 }
             ],
-            model: 'gpt-4'
+            model: 'gpt-4o'
         });
 
         if (!completion || !completion.choices || completion.choices.length === 0) {

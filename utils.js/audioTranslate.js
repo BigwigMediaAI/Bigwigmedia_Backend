@@ -46,7 +46,7 @@ function convertMP3(audioPath, outputPath) {
   async function translatetext(text, targetLanguage) {
     try {
       const response = await openaiClient.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4o",
         messages: [
           {
             role: "system",

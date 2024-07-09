@@ -18,7 +18,7 @@ async function generateInfographicText(topic, sections, tone = 'neutral', nOutpu
                         content: `Topic: ${topic}. Language: ${language}.`,
                     },
                 ],
-                model: 'gpt-4',
+                model: 'gpt-4o',
                 max_tokens: 150,
                 temperature: 0.3,
                 top_p: 1.0,

@@ -32,7 +32,7 @@ async function generateNDA(disclosingParty, receivingParty,language,DateAgreemen
                 content: prompt
             }
         ],
-        model: "gpt-4"
+        model: "gpt-4o"
     });
 
     let ndaContent = completion.choices[0].message.content;

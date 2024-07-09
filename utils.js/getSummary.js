@@ -20,7 +20,7 @@ async function getSummary(text,language,outputCount) {
                     content: text
                 }
             ],
-            model: "gpt-4-turbo" // Specify the model parameter
+            model: "gpt-4o" // Specify the model parameter
         });
 
         if (!completion || !completion.choices || completion.choices.length === 0) {

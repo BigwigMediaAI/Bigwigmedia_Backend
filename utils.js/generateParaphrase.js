@@ -21,7 +21,7 @@ async function generateParaphrase(prompt,tone,language,outputCount) {
                 content: prompt,
             },
         ],
-        model: "gpt-3.5-turbo-1106",
+        model: "gpt-4o",
         // response_format: { type: "json_object" },
     });
     responses.push(completion.choices[0].message.content);

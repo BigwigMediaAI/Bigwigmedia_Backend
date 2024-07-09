@@ -47,7 +47,7 @@ async function extractConvertToMP3(videoPath, outputPath) {
   async function translateTheText(text, targetLanguage) {
     try {
       const response = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4o",
         messages: [
           {
             role: "system",

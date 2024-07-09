@@ -49,7 +49,7 @@ Explain how data analytics and personalization will be utilized to optimize the 
                     content: prompt
                 }
             ],
-            model: "gpt-4"
+            model: "gpt-4o"
         });
 
         // Extracting text content from response

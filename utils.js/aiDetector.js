@@ -15,7 +15,7 @@ async function detectAIContent(text) {
                     content: prompt,
                 },
             ],
-            model: "gpt-4",
+            model: "gpt-4o",
         });
 
         if (!completion.choices || !completion.choices[0] || !completion.choices[0].message) {

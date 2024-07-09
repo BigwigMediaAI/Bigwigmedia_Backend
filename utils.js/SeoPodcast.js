@@ -25,7 +25,7 @@ async function Seopodcast(prompt,topic, guest, background, interests, tone,langu
                 content:prompt
             }
         ],
-        model:"gpt-3.5-turbo"
+        model:"gpt-4o"
 
     })
     // return completion.choices[0].message.content.replace(/(\|\r\n|\n|\r)/gm, "");

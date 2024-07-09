@@ -16,7 +16,7 @@ async function getDecisionTool(prompt,language) {
                     content: prompt,
                 }
             ],
-            model: "gpt-4"
+            model: "gpt-4o"
         });
 
         // Check if completion response is valid

@@ -14,7 +14,7 @@ async function generateDomainNames(companyName, companyType,length, count) {
                     content: prompt,
                 },
             ],
-            model: "gpt-4-turbo",
+            model: "gpt-4o",
         });
 
         if (!completion.choices || !completion.choices[0] || !completion.choices[0].message) {

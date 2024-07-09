@@ -46,7 +46,7 @@ async function transcribe(audioPath) {
 async function translate(text, targetLanguage) {
   try {
     const response = await openaiClient.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-4o',
       messages: [
         {
           role: 'system',

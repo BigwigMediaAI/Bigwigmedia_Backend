@@ -17,7 +17,7 @@ async function improveContent(content, tone,language,output) {
           content: prompt,
         },
       ],
-      model: "gpt-4",
+      model: "gpt-4o",
     });
 
     const improvedContentResponse = completion.choices[0].message.content.trim();

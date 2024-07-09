@@ -19,7 +19,7 @@ async function getCoverLetter(jobDescription, userDetails, highlights,language,o
           content: `Job Description: ${jobDescription}\n\nUser Details: ${JSON.stringify(userDetails)}\n\nHighlights: ${highlights}\n\nCover Letter:`
         }
       ],
-      model: "gpt-4" // Specify the model parameter
+      model: "gpt-4o" // Specify the model parameter
     });
 
     if (!completion || !completion.choices || completion.choices.length === 0) {

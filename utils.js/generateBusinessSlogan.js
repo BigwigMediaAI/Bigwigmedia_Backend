@@ -20,7 +20,7 @@ async function generateBusinessSlogans(businessName, whatItDoes, numberOfSlogans
                     content: prompt
                 }
             ],
-            model: "gpt-4"
+            model: "gpt-4o"
         });
 
         const slogan = completion.choices[0].message.content.replace(/(\|\r\n|\n|\r)/gm, "");

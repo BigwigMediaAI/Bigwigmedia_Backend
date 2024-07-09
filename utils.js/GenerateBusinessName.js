@@ -14,7 +14,7 @@ async function getCompanyNames(companyType, companyMission, targetAudience, nami
                     content: prompt,
                 }
             ],
-            model: "gpt-4",
+            model: "gpt-4o",
         });
 
         const companyNameResponse = completion.choices[0].message.content.replace(/(\|\r\n|\n|\r)/gm, "");
