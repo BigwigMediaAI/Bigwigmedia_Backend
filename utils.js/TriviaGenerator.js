@@ -19,7 +19,7 @@ async function generateTrivia(topic, numberOfQuestions, numberOfAnswers, difficu
                 content: prompt
             }
         ],
-        model: "gpt-4o"
+        model: "gpt-4"
     });
 
     const triviaQuestions = JSON.parse(completion.choices[0].message.content);
