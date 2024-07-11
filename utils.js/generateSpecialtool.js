@@ -19,10 +19,10 @@ const completion=await openai.chat.completions.create({
             content:prompt
         }
     ],
-    model:"gpt-4o"
+    model:"gpt-4"
 
 })
-responses.push(completion.choices[0].message.content.replace(/(\|\r\n|\n|\r)/gm, "")) ;
+responses.push(completion.choices[0].message.content) ;
     }
     return responses
 }
