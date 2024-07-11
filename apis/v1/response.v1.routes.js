@@ -90,6 +90,6 @@ router.post('/compressImage',checkLimit,upload.single('image'),compressImage)
 router.post('/generateSWOT',checkLimit, generateSWOT);
 router.post('/generateCoverLetter',checkLimit,generateCoverLetter);
 router.post("/logo",checkLimit, generateLogo);
-router.post("/ytdl", downloadytdl);
+router.post("/ytdl",checkLimit, downloadytdl);
 
 module.exports = router;
