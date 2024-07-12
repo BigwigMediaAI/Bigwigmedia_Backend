@@ -214,7 +214,7 @@ exports.getResponseOfObject = async (req, res) => {
 
         const response = await generateResponse(prompt);
         // const response = { test: "test" };
-        await user.descreseLimit();
+        // await user.descreseLimit();
         res.status(200).json({
             status: "success",
             message: "Response generated successfully",
