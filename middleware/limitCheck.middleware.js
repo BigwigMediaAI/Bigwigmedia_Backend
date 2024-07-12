@@ -13,6 +13,7 @@ exports.checkLimit = async (req, res, next) => {
         }
         next();
     } catch (error) {
-        response_500(res, "Error getting limits", error);
+        response_500(res, "Credit Limit Exceeded Please purchase a plan", error);
+        
     }
 }
