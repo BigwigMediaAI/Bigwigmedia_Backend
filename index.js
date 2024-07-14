@@ -3,6 +3,7 @@ const bodyParser=require("body-parser")
 const app = express();
 const cors = require("cors");
 const fs=require("fs")
+const nodemailer=require("nodemailer")
 const db = require("./config/db.config");
 db.connect();
 
@@ -23,6 +24,68 @@ const PORT = 4000 || process.env.PORT;
 
 app.get("/", (req, res) => {
     res.send("API LIVE!");
+});
+
+// Email send 
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.SENT_EMAIL,
+        pass: process.env.EMAIL_PASS
+    }
+});
+
+app.post('/clerk-webhook', (req, res) => {
+    const event = req.body;
+
+    if (event.type === 'user.created') {
+        const user = event.data;
+        if (user.email_addresses && user.email_addresses.length > 0) {
+            userEmail = user.email_addresses[0].email_address;
+        }
+        console.log(`New user created: ${userEmail}`);
+
+        const mailOptions = {
+            from:process.env.SENT_EMAIL,
+            to: userEmail,
+            subject: 'Welcome to Our Website!',
+            
+            text: 'Thank you for signing up!'
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+    }
+
+    res.sendStatus(200);
+});
+
+
+app.post('/send-email', (req, res) => {
+    const { email } = req.body;
+
+    const mailOptions = {
+        from:'shubham.rajveer19@gmail.com' ,
+        to: email,
+        subject: 'Credit Limit Warning',
+        text: 'Your credit balance is about to end. Please top up your credits.'
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log(error);
+            res.status(500).send('Error sending email');
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.status(200).send('Email sent');
+        }
+    });
 });
 
 // make public a static folder
