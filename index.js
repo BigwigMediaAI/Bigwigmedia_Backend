@@ -49,9 +49,19 @@ app.post('/clerk-webhook', (req, res) => {
         const mailOptions = {
             from:process.env.SENT_EMAIL,
             to: userEmail,
-            subject: 'Welcome to Our Website!',
-            
-            text: 'Thank you for signing up!'
+            subject: 'Welcome to Bigwigmedia.ai',
+            html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                <h1>Welcome to Bigwigmedia.ai</h1>
+                <img src="https://bigwigmedia.ai/assets/bigwig-img-pvLFkfcL.jpg" alt="Welcome Image" style="max-width: 25%; height: auto;" />
+                <p>Dear ${user.first_name || 'User'},</p><br/>
+                <p>Thank you for signing up! We're excited to have you on board.</p>
+                <p>Our website offers a variety of tools and resources designed to help you achieve your goals. Here’s a brief overview of what you can find:</p><br/>
+                <p>We hope you enjoy exploring our site and making use of all the features we have to offer.</p><br/>
+                <p>Best regards,</p><br/>
+                <p>Team Bigwigmedia</p><br/>
+            </div>
+        `
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
@@ -71,7 +81,7 @@ app.post('/send-email', (req, res) => {
     const { email } = req.body;
 
     const mailOptions = {
-        from:'shubham.rajveer19@gmail.com' ,
+        from:process.env.SENT_EMAIL ,
         to: email,
         subject: 'Credit Limit Warning',
         text: 'Your credit balance is about to end. Please top up your credits.'
