@@ -5,6 +5,7 @@ const cors = require("cors");
 const fs=require("fs")
 const nodemailer=require("nodemailer")
 const db = require("./config/db.config");
+const User = require("./models/users.models")
 db.connect();
 
 const path = require("path");
@@ -26,7 +27,7 @@ app.get("/", (req, res) => {
     res.send("API LIVE!");
 });
 
-// Email send 
+// Onboard Email send 
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -77,25 +78,61 @@ app.post('/clerk-webhook', (req, res) => {
 });
 
 
-app.post('/send-email', (req, res) => {
-    const { email } = req.body;
+app.post('/send-email', async (req, res) => {
+    const { email, clerkId } = req.body;
 
-    const mailOptions = {
-        from:process.env.SENT_EMAIL ,
-        to: email,
-        subject: 'Credit Limit Warning',
-        text: 'Your credit balance is about to end. Please top up your credits.'
-    };
+    try {
+        // Fetch the user document
+        const user = await User.findOne({ clerkId });
+        // Check if emailSent is false
+        if (!user.emailSent) {
+            const mailOptions = {
+                from: process.env.SENT_EMAIL,
+                to: email,
+                subject: 'Credit Limit Warning',
+                text: 'Your credit balance is about to end. Please top up your credits.'
+            };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.log(error);
-            res.status(500).send('Error sending email');
+            transporter.sendMail(mailOptions, async (error, info) => {
+                if (error) {
+                    console.log(error);
+                    return res.status(500).send('Error sending email');
+                }
+
+                // Update the emailSent flag in the user's document
+                user.emailSent = true;
+                console.log(user.emailSent)
+                await user.save();
+
+                res.status(200).send('Email sent');
+            });
         } else {
-            console.log('Email sent: ' + info.response);
-            res.status(200).send('Email sent');
-        }
-    });
+            console.log('Email already sent, not sending again.');
+            res.status(200).send('Email already sent, not sending again.');
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Error sending email');
+    }
+});
+
+app.put('/reset-email-sent', async (req, res) => {
+    const { clerkId } = req.body;
+
+    try {
+        const user = await User.findOne({ clerkId });
+
+        if (user) {
+            user.emailSent = false;
+            await user.save();
+            res.status(200).send(user.emailSent);
+        } else {
+            res.status(404).send('User not found');
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Error processing request');
+    }
 });
 
 // make public a static folder

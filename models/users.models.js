@@ -61,6 +61,10 @@ const usersSchema = new Schema({
         type: Date,
         default: Date.now,
     },
+    emailSent:{
+        type: Boolean,
+        default: false
+    }
 });
 
 usersSchema.methods.descreseLimit = async function () {
