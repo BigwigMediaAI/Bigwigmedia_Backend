@@ -49,17 +49,17 @@ app.post('/clerk-webhook', (req, res) => {
         const mailOptions = {
             from:process.env.SENT_EMAIL,
             to: userEmail,
-            subject: 'Welcome to Bigwigmedia.ai',
+            subject: 'Welcome to BigwigMedia.AI!',
             html: `
             <div style="font-family: Arial, sans-serif; line-height: 1.6;">
                 <h1>Welcome to Bigwigmedia.ai</h1>
                 <img src="https://bigwigmedia.ai/assets/bigwig-img-pvLFkfcL.jpg" alt="Welcome Image" style="max-width: 25%; height: auto;" />
-                <p>Dear ${user.first_name || 'User'},</p><br/>
-                <p>Thank you for signing up! We're excited to have you on board.</p>
-                <p>Our website offers a variety of tools and resources designed to help you achieve your goals. Here’s a brief overview of what you can find:</p><br/>
-                <p>We hope you enjoy exploring our site and making use of all the features we have to offer.</p><br/>
-                <p>Best regards,</p><br/>
-                <p>Team Bigwigmedia</p><br/>
+                <p>Dear ${user.first_name || 'User'},</p>
+                <p>We're thrilled to have you join our community! At BigwigMedia.AI, we offer a variety of daily-use AI tools designed to make your life easier and more efficient. Whether you're looking to enhance your productivity, streamline your tasks, or simply explore the fascinating world of AI, we've got you covered.</p>
+                <p>Dive in and start exploring all that BigwigMedia.AI has to offer. We're here to support you every step of the way, and we can't wait to see what you'll achieve with our tools.</p>
+                <p>Thank you for choosing us, and welcome aboard!</p>
+                <p>Warm regards,</p>
+                <p>The BigwigMedia.AI Team</p>
             </div>
         `
         };
