@@ -94,7 +94,7 @@ app.post('/send-email', async (req, res) => {
                 html: `
             <div style="font-family: Arial, sans-serif; line-height: 1.6;">
                 <img src="https://bigwigmedia.ai/assets/bigwig-img-pvLFkfcL.jpg" alt="Welcome Image" style="max-width: 25%; height: auto;" />
-                <<p>Dear ${user.name || 'User'},</p>
+                <p>Dear ${user.name || 'User'},</p>
                 <p>We regret to inform you that your credits at BigwigMedia.AI have been exhausted. To continue enjoying uninterrupted access to all our features, you will need to add more credits to your account.</p>
                 <p>To top up your credits, please log into your account and visit the profile section or <a href="https://bigwigmedia.ai/plan">click here</a>. If you have any questions or need assistance, our support team is ready to help.</p>
                 <p>Thank you for being a valued member of BigwigMedia.AI. We appreciate your continued support.</p>
