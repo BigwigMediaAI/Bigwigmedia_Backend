@@ -77,6 +77,7 @@ app.post('/clerk-webhook', (req, res) => {
     res.sendStatus(200);
 });
 
+// Credit Exhausted email sent
 
 app.post('/send-email', async (req, res) => {
     const { email, clerkId } = req.body;
@@ -89,8 +90,17 @@ app.post('/send-email', async (req, res) => {
             const mailOptions = {
                 from: process.env.SENT_EMAIL,
                 to: email,
-                subject: 'Credit Limit Warning',
-                text: 'Your credit balance is about to end. Please top up your credits.'
+                subject: `Urgent: Your BigwigMedia.AI Credits Have Been Exhausted`,
+                html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                <<p>Dear ${user.first_name || 'User'},</p>
+                <p>We regret to inform you that your credits at BigwigMedia.AI have been exhausted. To continue enjoying uninterrupted access to all our features, you will need to add more credits to your account.</p>
+                <p>To top up your credits, please log into your account and visit the profile section or <a href="https://bigwigmedia.ai/plan">click here</a>. If you have any questions or need assistance, our support team is ready to help.</p>
+                <p>Thank you for being a valued member of BigwigMedia.AI. We appreciate your continued support.</p>
+                <p>Best regards,</p>
+                <p>The BigwigMedia.AI Team</p>
+            </div>
+            `
             };
 
             transporter.sendMail(mailOptions, async (error, info) => {

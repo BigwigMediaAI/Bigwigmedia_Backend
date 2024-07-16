@@ -5,6 +5,9 @@ require("dotenv").config();
 const openai = new OpenAI();
 
 async function generateResponse(prompt) {
+    let responses = [];
+
+    for (let i = 0; i < 3; i++) {
     const completion = await openai.chat.completions.create({
         messages: [
             {
@@ -20,7 +23,8 @@ async function generateResponse(prompt) {
         model: "gpt-4o",
         // response_format: { type: "json_object" },
     });
-    return completion.choices[0].message.content.replace(/(\r\n|\n|\r)/gm, "");
+    responses.push(completion.choices[0].message.content.replace(/(\r\n|\n|\r)/gm, ""));
 }
-
+return responses
+}
 module.exports = generateResponse;

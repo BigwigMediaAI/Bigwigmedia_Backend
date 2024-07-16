@@ -191,7 +191,7 @@ exports.getResponseOfObject = async (req, res) => {
     try {
         const object = await Objects.findById(req.params.id);
         const groups = req.body.groups;
-        console.log(groups);
+        // console.log(groups);
         let prompt = "";
         for (let i = 0; i < object.groups.length; i++) {
             for (let j = 0; j < object.groups[i].length; j++) {
@@ -199,11 +199,11 @@ exports.getResponseOfObject = async (req, res) => {
                     object.groups[i][j].gpt.replace("{%%}", groups[i][j]) + " ";
             }
         }
-        console.log("prompt", prompt);
+        // console.log("prompt", prompt);
 
         try {
             prompt += ` generate entire output as json string, like this eg: {output:"<div><p>line 1<br/>line2 and so on ... </div>"}, including all texts also.`;
-            console.log(prompt);
+            // console.log(prompt);
         } catch (error) {
             console.log(error);
         }
@@ -221,6 +221,7 @@ exports.getResponseOfObject = async (req, res) => {
             data: response,
             prompt: prompt,
         });
+        // console.log(response)
         // response_200(res, response);
     } catch (error) {
         response_500(res, "Error getting response of object", error);
