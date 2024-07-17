@@ -2205,3 +2205,112 @@ exports.downloadytdl=async(req,res)=>{
         res.status(400).send({ error: error.message });
     }
 }
+
+
+// -----------LinkedinPost Generator-------------
+const { generateLinkedInPostContent } = require('../utils.js/linkedinPostGenerator');
+
+exports.generateLinkedInPost = async (req, res) => {
+    try {
+        const { topic, content, tone, language, outputCount } = req.body;
+
+        if (!topic || !content) {
+            return res.status(400).json({ error: 'Please provide a topic and content for LinkedIn post' });
+        }
+
+        const linkedinPosts = await generateLinkedInPostContent(topic, content, tone, language, outputCount);
+
+        res.status(200).json(linkedinPosts);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating LinkedIn post' });
+    }
+};
+
+
+// -----------Linkedin Bio Generator------------
+
+const { generateLinkedInBioContent } = require('../utils.js/linkedinBioGenerator');
+
+exports.generateLinkedInBio = async (req, res) => {
+    try {
+        const { name, profession, experience, tone, language, outputCount } = req.body;
+
+        if (!name || !profession || !experience) {
+            return res.status(400).json({ error: 'Please provide name, profession, and experience for LinkedIn bio' });
+        }
+
+        const linkedinBios = await generateLinkedInBioContent(name, profession, experience, tone, language, outputCount);
+
+        res.status(200).json(linkedinBios);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating LinkedIn bio' });
+    }
+};
+
+
+// ----------------Linkedin Recommedation Generator---------
+
+const { generateLinkedInRecommendationContent } = require('../utils.js//linkedinRecommedation');
+
+exports.generateLinkedInRecommendation = async (req, res) => {
+    try {
+        const { name, relationship, skills, accomplishments, tone, language, outputCount } = req.body;
+
+        if (!name || !relationship || !skills || !accomplishments) {
+            return res.status(400).json({ error: 'Please provide name, relationship, skills, and accomplishments for LinkedIn recommendation' });
+        }
+
+        const linkedinRecommendations = await generateLinkedInRecommendationContent(name, relationship, skills, accomplishments, tone, language, outputCount);
+
+        res.status(200).json(linkedinRecommendations);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating LinkedIn recommendation' });
+    }
+};
+
+// -------Linkedin Connection Request Message Generator---------
+
+const { generateConnectionRequestContent } = require('../utils.js/linkedinConnectionRequest');
+
+exports.generateConnectionRequest = async (req, res) => {
+    try {
+        const { name, reason, tone, language, outputCount } = req.body;
+
+        if (!name || !reason) {
+            return res.status(400).json({ error: 'Please provide name and reason for connection request' });
+        }
+
+        const connectionRequests = await generateConnectionRequestContent(name, reason, tone, language, outputCount);
+
+        res.status(200).json(connectionRequests);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating connection request message' });
+    }
+};
+
+
+// ---------Youtube Downloader-----------
+
+const { ytdown } = require('nayan-media-downloader');
+exports.youtubeDownloader=async(req,res)=>{
+  try {
+    const videoUrl = req.query.url; // Assuming the URL is passed as a query parameter
+    const result = await ytdown(videoUrl);
+
+    res.json({
+        status: true,
+        data: result
+    });
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({
+          status: false,
+          message: 'Failed to download video'
+      });
+  }
+
+}
