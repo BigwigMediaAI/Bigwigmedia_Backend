@@ -1,4 +1,4 @@
-const { getResponse, getParaPhrase, getImage,generateLogo ,JpgtoPngconverter,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio,fbDownloader,twitterDownloader,text2Pdf,Podcast,svgConverter,zipmaker,gifConverter,getTextSummary,zipExtractor,getNotesSummary,pdftotext,compressedVideo,extractpdftoimages ,getCompany,pdfTranslate,getDomainNames,video_Text_converter,generateCurrentTopics,trimvideo,trimaudio,NDA_Agreement,deletepdf,Business_Slogan,NCA_Agreement,generateYouTubeScript,TriviaGenerate,improveContent,removeAudio,genratedPolicy,generatePoll,generateBusinessPlan,addAudio,uploadAndSummarize,chatWithPdf,languageTranslation,audioTranslate,videoTranlator,youtubeTranslator,financeadvisor,AiDetector,newsSummerizer,generateTextInfographic,createAvatar,compressImage,generateSWOT,generateCoverLetter,downloadytdl,generateLinkedInPost,generateLinkedInBio,generateLinkedInRecommendation,generateConnectionRequest,youtubeDownloader} = require("../../controllers/response.controllers");
+const { getResponse, getParaPhrase, getImage,generateLogo ,JpgtoPngconverter,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio,fbDownloader,twitterDownloader,text2Pdf,Podcast,svgConverter,zipmaker,gifConverter,getTextSummary,zipExtractor,getNotesSummary,pdftotext,compressedVideo,extractpdftoimages ,getCompany,pdfTranslate,getDomainNames,video_Text_converter,generateCurrentTopics,trimvideo,trimaudio,NDA_Agreement,deletepdf,Business_Slogan,NCA_Agreement,generateYouTubeScript,TriviaGenerate,improveContent,removeAudio,genratedPolicy,generatePoll,generateBusinessPlan,addAudio,uploadAndSummarize,chatWithPdf,languageTranslation,audioTranslate,videoTranlator,youtubeTranslator,financeadvisor,AiDetector,newsSummerizer,generateTextInfographic,createAvatar,compressImage,generateSWOT,generateCoverLetter,downloadytdl,generateLinkedInPost,generateLinkedInBio,generateLinkedInRecommendation,generateConnectionRequest,youtubeDownloader,aboutMe,tiktokCaptionGenerate,generateTitle,generateVideoTitle,generateVideoIdeas,generateScriptOutline} = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
 const multer = require('multer');
 const path=require("path")
@@ -90,9 +90,15 @@ router.post('/compressImage',checkLimit,upload.single('image'),compressImage)
 router.post('/generateSWOT',checkLimit, generateSWOT);
 router.post('/generateCoverLetter',checkLimit,generateCoverLetter);
 router.post("/logo",checkLimit, generateLogo);
-router.post('/generateLinkedInPost', generateLinkedInPost);
-router.post('/generateLinkedInBio', generateLinkedInBio);
-router.post('/generateLinkedInRecommendation', generateLinkedInRecommendation);
-router.post('/generateConnectionRequest', generateConnectionRequest);
-router.get("/ytdl",youtubeDownloader)
+router.post('/generateLinkedInPost',checkLimit, generateLinkedInPost);
+router.post('/generateLinkedInBio',checkLimit, generateLinkedInBio);
+router.post('/generateLinkedInRecommendation',checkLimit, generateLinkedInRecommendation);
+router.post('/generateConnectionRequest',checkLimit, generateConnectionRequest);
+router.get("/ytdl",checkLimit,youtubeDownloader)
+router.post("/aboutme",aboutMe)
+router.post("/tiktokcaption",tiktokCaptionGenerate)
+router.post('/generateTitle', generateTitle);
+router.post('/generateYtTitle', generateVideoTitle);
+router.post('/generateVideoIdeas', generateVideoIdeas);
+router.post('/generateYoutubeScriptOutline', generateScriptOutline);
 module.exports = router;

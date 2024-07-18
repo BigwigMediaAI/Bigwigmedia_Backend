@@ -2314,3 +2314,123 @@ exports.youtubeDownloader=async(req,res)=>{
   }
 
 }
+
+// ------------About me generator-----------------
+
+const aboutMeGenerator=require("../utils.js/aboutMeGenerator")
+
+exports.aboutMe=async(req,res)=>{
+try {
+const {personalInfo, outputLength, tone, language, outputCount} = req.body;
+if (!personalInfo || !outputLength || !tone || !language ||!outputCount) {
+return res.status(400).json({ error: 'Please provide infomation for connection request' });
+}
+const connectionRequests = await aboutMeGenerator(personalInfo, outputLength, tone, language, outputCount);
+res.status(200).json(connectionRequests);
+} catch (error) {
+  console.error('Error generating connection request content:', error);
+  return 'Failed to generate connection request content';
+}
+}
+
+// -------------------tiktok video caption generator
+const tiktokCaptionGenerator=require("../utils.js/tiktokVideoCaptionGenerator")
+
+exports.tiktokCaptionGenerate=async(req,res)=>{
+  try {
+    const {videoDescription, tone, language, outputCount}=req.body;
+    if (!videoDescription || !tone || !language ||!outputCount) {
+      return res.status(400).json({ error: 'Please provide infomation for connection request' });
+      }
+  const connectionRequests = await tiktokCaptionGenerator(videoDescription, tone, language, outputCount);
+  res.status(200).json(connectionRequests);
+
+
+  } catch (error) {
+  console.error('Error generating About Me content:', error);
+  res.status(500).send('Failed to generate About Me content');
+  }
+}
+
+
+// -------Title Generator-----
+const { generateAttentionGrabbingTitle } = require('../utils.js/AtentionTitleGenerator');
+
+exports.generateTitle = async (req, res) => {
+    try {
+        const { topic, keywords, targetAudience, tone, language, outputCount } = req.body;
+
+        if (!topic || !keywords || !targetAudience) {
+            return res.status(400).json({ error: 'Please provide topic, keywords, and target audience for title generation' });
+        }
+
+        const titles = await generateAttentionGrabbingTitle(topic, keywords, targetAudience, tone, language, outputCount);
+
+        res.status(200).json(titles);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating titles' });
+    }
+};
+
+// --------Youtube Video Title Generator-------
+
+const { generateYouTubeVideoTitle } = require('../utils.js/youtubeVideoTitle');
+
+exports.generateVideoTitle = async (req, res) => {
+    try {
+        const { topic, keywords, targetAudience, tone, language, outputCount } = req.body;
+
+        if (!topic || !keywords || !targetAudience) {
+            return res.status(400).json({ error: 'Please provide topic, keywords, and target audience for title generation' });
+        }
+
+        const titles = await generateYouTubeVideoTitle(topic, keywords, targetAudience, tone, language, outputCount);
+
+        res.status(200).json(titles);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating titles' });
+    }
+};
+
+// ------Youtube Videos ideas------
+
+const { generateYouTubeVideoIdeas } = require('../utils.js/youtubeVideoIdeas');
+
+exports.generateVideoIdeas = async (req, res) => {
+    try {
+        const { topic, tone, language, outputCount } = req.body;
+
+        if (!topic || !tone || !language || !outputCount) {
+            return res.status(400).json({ error: 'Please provide all required fields: topic, tone, language, outputCount' });
+        }
+
+        const videoIdeas = await generateYouTubeVideoIdeas(topic, tone, language, outputCount);
+
+        res.status(200).json(videoIdeas);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating YouTube video ideas' });
+    }
+};
+
+// --------Youtube script outline generator--------
+const { generateScriptOutline } = require('../utils.js/youtubeOutline');
+
+exports.generateScriptOutline = async (req, res) => {
+    try {
+        const { topic, tone, language, outputCount } = req.body;
+
+        if (!topic) {
+            return res.status(400).json({ error: 'Please provide a topic for the script outline' });
+        }
+
+        const scriptOutlines = await generateScriptOutline(topic, tone, language, outputCount);
+
+        res.status(200).json(scriptOutlines);
+    } catch (error) {
+        console.error('Error generating script outline:', error);
+        res.status(500).json({ error: 'Error generating script outline' });
+    }
+};
