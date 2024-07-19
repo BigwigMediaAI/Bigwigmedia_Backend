@@ -2434,3 +2434,136 @@ exports.generateScriptOutline = async (req, res) => {
         res.status(500).json({ error: 'Error generating script outline' });
     }
 };
+
+// ---------------Content Content generator
+
+const contentCalendarGenerator=require("../utils.js/ContentCalenderGenerator")
+
+exports.CalenderContentGenerator=async(req,res)=>{
+  try {
+    const {topic, tone, language, outputCount}=req.body;
+    if(!topic){
+      return res.status(400).json({error:"Please provide a topic for generate resposne"})
+    }
+    const data=await contentCalendarGenerator(topic, tone, language, outputCount)
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('Error content Calendar Generator:', error);
+        res.status(500).json({ error: 'Error generating content' });
+  }
+}
+
+const tiktokHashtagsGenerator=require("../utils.js/tiktokHastagGenerator")
+exports.tiktokhastag=async(req,res)=>{
+  try {
+    const {videoDescription, tone, language, outputCount}=req.body
+    if(!videoDescription){
+      return res.status(400).json({error:"Please provide a video description for generate respose"})
+    }
+    const data=await tiktokHashtagsGenerator(videoDescription, tone, language, outputCount)
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('Error Generating tiktok hastag:', error);
+    res.status(500).json({ error: 'Error generating hastag' });
+  }
+}
+
+// --------Reel Script Generator-------
+const { generateReelScript } = require('../utils.js/reelScriptGenerator');
+
+exports.generateReelScript = async (req, res) => {
+    try {
+        const { topic, tone, language, outputCount } = req.body;
+
+        if (!topic) {
+            return res.status(400).json({ error: 'Please provide a topic for the reel script' });
+        }
+
+        const reelScripts = await generateReelScript(topic, tone, language, outputCount);
+
+        res.status(200).json(reelScripts);
+    } catch (error) {
+        console.error('Error generating reel script:', error);
+        res.status(500).json({ error: 'Error generating reel script' });
+    }
+};
+
+// ------Reel Ideas Generator----------
+const { generateReelIdeas } = require('../utils.js/reelIdeasGenerator');
+
+exports.generateReelIdeas = async (req, res) => {
+    try {
+        const { topic, tone, language, outputCount } = req.body;
+
+        if (!topic) {
+            return res.status(400).json({ error: 'Please provide a topic for reel ideas' });
+        }
+
+        const reelIdeas = await generateReelIdeas(topic, tone, language, outputCount);
+
+        res.status(200).json(reelIdeas);
+    } catch (error) {
+        console.error('Error generating reel ideas:', error);
+        res.status(500).json({ error: 'Error generating reel ideas' });
+    }
+};
+
+// --------About Company Page Generator---------
+const { generateAboutCompany } = require('../utils.js/aboutCompany');
+
+exports.generateAboutCompanyPage = async (req, res) => {
+    try {
+        const { companyName, industry, mission, values, tone, language, outputCount } = req.body;
+
+        if (!companyName || !industry || !mission || !values) {
+            return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        const aboutCompanyPages = await generateAboutCompany(companyName, industry, mission, values, tone, language, outputCount);
+
+        res.status(200).json(aboutCompanyPages);
+    } catch (error) {
+        console.error('Error generating About Company page:', error);
+        res.status(500).json({ error: 'Error generating About Company page' });
+    }
+};
+
+// ---------Tweet Reply Generator-------
+const { generateReply } = require('../utils.js/tweetReplyGenerator');
+
+exports.generateTweetReply = async (req, res) => {
+    try {
+        const { tweetContent, userHandle, tone, language, outputCount } = req.body;
+
+        if (!tweetContent || !userHandle || !tone || !language || !outputCount) {
+            return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        const tweetReplies = await generateReply(tweetContent, userHandle, tone, language, outputCount);
+
+        res.status(200).json(tweetReplies);
+    } catch (error) {
+        console.error('Error generating tweet reply:', error);
+        res.status(500).json({ error: 'Error generating tweet reply' });
+    }
+};
+
+// ------------Social Media Post Generator---------
+const { generatePost } = require('../utils.js/socialMediaPostGenerator');
+
+exports.generateSocialMediaPost = async (req, res) => {
+    try {
+        const { platform, topic, keywords, tone, language, outputCount } = req.body;
+
+        if (!platform || !topic || !keywords || !tone || !language || !outputCount) {
+            return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        const socialMediaPosts = await generatePost(platform, topic, keywords, tone, language, outputCount);
+
+        res.status(200).json(socialMediaPosts);
+    } catch (error) {
+        console.error('Error generating social media post:', error);
+        res.status(500).json({ error: 'Error generating social media post' });
+    }
+};

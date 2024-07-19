@@ -1,4 +1,4 @@
-const { getResponse, getParaPhrase, getImage,generateLogo ,JpgtoPngconverter,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio,fbDownloader,twitterDownloader,text2Pdf,Podcast,svgConverter,zipmaker,gifConverter,getTextSummary,zipExtractor,getNotesSummary,pdftotext,compressedVideo,extractpdftoimages ,getCompany,pdfTranslate,getDomainNames,video_Text_converter,generateCurrentTopics,trimvideo,trimaudio,NDA_Agreement,deletepdf,Business_Slogan,NCA_Agreement,generateYouTubeScript,TriviaGenerate,improveContent,removeAudio,genratedPolicy,generatePoll,generateBusinessPlan,addAudio,uploadAndSummarize,chatWithPdf,languageTranslation,audioTranslate,videoTranlator,youtubeTranslator,financeadvisor,AiDetector,newsSummerizer,generateTextInfographic,createAvatar,compressImage,generateSWOT,generateCoverLetter,downloadytdl,generateLinkedInPost,generateLinkedInBio,generateLinkedInRecommendation,generateConnectionRequest,youtubeDownloader,aboutMe,tiktokCaptionGenerate,generateTitle,generateVideoTitle,generateVideoIdeas,generateScriptOutline} = require("../../controllers/response.controllers");
+const { getResponse, getParaPhrase, getImage,generateLogo ,JpgtoPngconverter,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio,fbDownloader,twitterDownloader,text2Pdf,Podcast,svgConverter,zipmaker,gifConverter,getTextSummary,zipExtractor,getNotesSummary,pdftotext,compressedVideo,extractpdftoimages ,getCompany,pdfTranslate,getDomainNames,video_Text_converter,generateCurrentTopics,trimvideo,trimaudio,NDA_Agreement,deletepdf,Business_Slogan,NCA_Agreement,generateYouTubeScript,TriviaGenerate,improveContent,removeAudio,genratedPolicy,generatePoll,generateBusinessPlan,addAudio,uploadAndSummarize,chatWithPdf,languageTranslation,audioTranslate,videoTranlator,youtubeTranslator,financeadvisor,AiDetector,newsSummerizer,generateTextInfographic,createAvatar,compressImage,generateSWOT,generateCoverLetter,downloadytdl,generateLinkedInPost,generateLinkedInBio,generateLinkedInRecommendation,generateConnectionRequest,youtubeDownloader,aboutMe,tiktokCaptionGenerate,generateTitle,generateVideoTitle,generateVideoIdeas,generateScriptOutline,CalenderContentGenerator,tiktokhastag,generateReelScript,generateReelIdeas,generateAboutCompanyPage,generateTweetReply,generateSocialMediaPost} = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
 const multer = require('multer');
 const path=require("path")
@@ -95,10 +95,17 @@ router.post('/generateLinkedInBio',checkLimit, generateLinkedInBio);
 router.post('/generateLinkedInRecommendation',checkLimit, generateLinkedInRecommendation);
 router.post('/generateConnectionRequest',checkLimit, generateConnectionRequest);
 router.get("/ytdl",checkLimit,youtubeDownloader)
-router.post("/aboutme",aboutMe)
-router.post("/tiktokcaption",tiktokCaptionGenerate)
-router.post('/generateTitle', generateTitle);
-router.post('/generateYtTitle', generateVideoTitle);
-router.post('/generateVideoIdeas', generateVideoIdeas);
-router.post('/generateYoutubeScriptOutline', generateScriptOutline);
+router.post("/aboutme",checkLimit,aboutMe)
+router.post("/tiktokcaption",checkLimit,tiktokCaptionGenerate)
+router.post('/generateTitle',checkLimit, generateTitle);
+router.post('/generateYtTitle',checkLimit, generateVideoTitle);
+router.post('/generateVideoIdeas',checkLimit, generateVideoIdeas);
+router.post('/generateYoutubeScriptOutline',checkLimit, generateScriptOutline);
+router.post('/generatecalender', CalenderContentGenerator);
+router.post('/tiktokhastag', tiktokhastag);
+router.post('/generateReelScript', generateReelScript);
+router.post('/generateReelIdeas', generateReelIdeas);
+router.post('/generateAboutCompanyPage', generateAboutCompanyPage);
+router.post('/generateTweetReply', generateTweetReply);
+router.post('/generateSocialMediaPost', generateSocialMediaPost);
 module.exports = router;
