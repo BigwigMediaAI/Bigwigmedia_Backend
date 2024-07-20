@@ -2688,3 +2688,46 @@ exports.generateEventInvitationEmail = async (req, res) => {
         res.status(500).json({ error: 'Error generating event invitation email' });
     }
 };
+
+// ------------Tinder bio generator
+
+const { generateTinderBioUtil } = require('../utils.js/tinderBioGenerator');
+
+exports.generateTinderBio = async (req, res) => {
+    try {
+        const { personalityTraits, interests, tone, language, outputCount } = req.body;
+
+        if (!personalityTraits || !interests || !tone || !language || !outputCount) {
+            return res.status(400).json({ error: 'Please provide all required fields: personalityTraits, interests, tone, language, outputCount' });
+        }
+
+        const bios = await generateTinderBioUtil(personalityTraits, interests, tone, language, outputCount);
+
+        res.status(200).json(bios);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating Tinder bios' });
+    }
+};
+
+
+// -----Event Remainder email
+
+const { generateEventReminderEmailUtil } = require('../utils.js/eventReminderEmail');
+
+exports.generateEventReminderEmail = async (req, res) => {
+    try {
+        const { eventName, eventDate, recipientName, tone, language, outputCount } = req.body;
+
+        if (!eventName || !eventDate || !recipientName || !tone || !language || !outputCount) {
+            return res.status(400).json({ error: 'Please provide all required fields: eventName, eventDate, recipientName, tone, language, outputCount' });
+        }
+
+        const emails = await generateEventReminderEmailUtil(eventName, eventDate, recipientName, tone, language, outputCount);
+
+        res.status(200).json(emails);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating event reminder emails' });
+    }
+};
