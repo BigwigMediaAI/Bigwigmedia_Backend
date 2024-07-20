@@ -2567,3 +2567,124 @@ exports.generateSocialMediaPost = async (req, res) => {
         res.status(500).json({ error: 'Error generating social media post' });
     }
 };
+
+
+// ------Bullet points generatro----
+const { generateBulletPointsContent } = require('../utils.js/bulletPointsUtils');
+
+exports.generateBulletPoints = async (req, res) => {
+    try {
+        const { topic, language, tone, outputCount } = req.body;
+
+        if (!topic) {
+            return res.status(400).json({ error: 'Please provide a topic for generating bullet points.' });
+        }
+
+        const bulletPoints = await generateBulletPointsContent(topic, language, tone, outputCount);
+
+        res.status(200).json(bulletPoints);
+    } catch (error) {
+        console.error('Error generating bullet points:', error);
+        res.status(500).json({ error: 'Error generating bullet points' });
+    }
+};
+
+// ---------Event Name Generator--------
+const { generateEventNameUtil } = require('../utils.js/eventName');
+
+exports.generateEventName = async (req, res) => {
+    try {
+        const { topic, language, outputCount } = req.body;
+
+        if (!topic) {
+            return res.status(400).json({ error: 'Please provide a topic for the event name' });
+        }
+
+        const eventNames = await generateEventNameUtil(topic, language, outputCount);
+
+        res.status(200).json(eventNames);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating event names' });
+    }
+};
+
+// -------Professional Bio Generator----------
+const { generateBioUtil } = require('../utils.js/professionalBioGenerator');
+
+exports.generateProfessionalBio = async (req, res) => {
+    try {
+        const { name, profession, achievements, tone, language, outputCount } = req.body;
+
+        if (!name || !profession) {
+            return res.status(400).json({ error: 'Please provide a name and profession' });
+        }
+
+        const bios = await generateBioUtil(name, profession, achievements, tone, language, outputCount);
+
+        res.status(200).json(bios);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating bio' });
+    }
+};
+
+// --------SEO Content Brief-------
+const { generateSeoBriefUtil } = require('../utils.js/seoBriefGenerator');
+
+exports.generateSeoBrief = async (req, res) => {
+    try {
+        const { topic, keywords, targetAudience, language, tone, outputCount } = req.body;
+
+        if (!topic || !keywords || !targetAudience) {
+            return res.status(400).json({ error: 'Please provide a topic, keywords, and target audience' });
+        }
+
+        const seoBriefs = await generateSeoBriefUtil(topic, keywords, targetAudience, language, tone, outputCount);
+
+        res.status(200).json(seoBriefs);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating SEO content brief' });
+    }
+};
+
+// -------Company Profile Generator-------
+const { generateCompanyProfileUtil } = require('../utils.js/companyProfile');
+
+exports.generateCompanyProfile = async (req, res) => {
+    try {
+        const { companyName, industry, services, mission, vision, targetAudience, language, tone, outputCount } = req.body;
+
+        if (!companyName || !industry || !services || !mission || !vision || !targetAudience) {
+            return res.status(400).json({ error: 'Please provide all required fields: companyName, industry, services, mission, vision, targetAudience' });
+        }
+
+        const companyProfiles = await generateCompanyProfileUtil(companyName, industry, services, mission, vision, targetAudience, language, tone, outputCount);
+
+        res.status(200).json(companyProfiles);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating company profile' });
+    }
+};
+
+// ---------Invitation Email--------
+const { generateEventInvitationEmailUtil } = require('../utils.js/eventInvitation');
+
+exports.generateEventInvitationEmail = async (req, res) => {
+    try {
+        const { eventName, eventDate, eventLocation, eventDescription, recipientName, senderName, language, tone, outputCount } = req.body;
+
+        if (!eventName || !eventDate || !eventLocation || !eventDescription || !recipientName || !senderName || !outputCount) {
+            return res.status(400).json({ error: 'Please provide all required fields: eventName, eventDate, eventLocation, eventDescription, recipientName, senderName, outputCount' });
+        }
+
+        const eventInvitationEmails = await generateEventInvitationEmailUtil(eventName, eventDate, eventLocation, eventDescription, recipientName, senderName, language, tone, outputCount);
+
+        res.status(200).json(eventInvitationEmails);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating event invitation email' });
+    }
+};
