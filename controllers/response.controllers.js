@@ -2731,3 +2731,43 @@ exports.generateEventReminderEmail = async (req, res) => {
         res.status(500).json({ error: 'Error generating event reminder emails' });
     }
 };
+
+// ---------Instagram Hashtag generator-----------
+const { generateInstagramHashtagsUtil } = require('../utils.js/instagramHashtag');
+
+exports.generateInstagramHashtags = async (req, res) => {
+    try {
+        const { topic, language, outputCount } = req.body;
+
+        if (!topic || !language || !outputCount) {
+            return res.status(400).json({ error: 'Please provide all required fields: topic, language, outputCount' });
+        }
+
+        const hashtags = await generateInstagramHashtagsUtil(topic, language, outputCount);
+
+        res.status(200).json(hashtags);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating Instagram hashtags' });
+    }
+};
+
+// ------Follow up Email Generator--------
+const { generateFollowUpEmailUtil } = require('../utils.js/followUpEmail');
+
+exports.generateFollowUpEmail = async (req, res) => {
+    try {
+        const { mailReceived, purposeOfFollowUpEmail, tone, language, outputCount } = req.body;
+
+        if (!mailReceived || !purposeOfFollowUpEmail || !tone || !language || !outputCount) {
+            return res.status(400).json({ error: 'Please provide all required fields: mailReceived, purposeOfFollowUpEmail, tone, language, outputCount' });
+        }
+
+        const followUpEmails = await generateFollowUpEmailUtil(mailReceived, purposeOfFollowUpEmail, tone, language, outputCount);
+
+        res.status(200).json(followUpEmails);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating follow-up emails' });
+    }
+};
