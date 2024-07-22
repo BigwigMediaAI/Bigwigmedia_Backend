@@ -1,4 +1,14 @@
-const { getResponse, getParaPhrase, getImage,generateLogo ,JpgtoPngconverter,pngtojpgcoverter,getSpecialtool,getDecision,getSeo,resizeImage,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio,fbDownloader,twitterDownloader,text2Pdf,Podcast,svgConverter,zipmaker,gifConverter,getTextSummary,zipExtractor,getNotesSummary,pdftotext,compressedVideo,extractpdftoimages ,getCompany,pdfTranslate,getDomainNames,video_Text_converter,generateCurrentTopics,trimvideo,trimaudio,NDA_Agreement,deletepdf,Business_Slogan,NCA_Agreement,generateYouTubeScript,TriviaGenerate,improveContent,removeAudio,genratedPolicy,generatePoll,generateBusinessPlan,addAudio,uploadAndSummarize,chatWithPdf,languageTranslation,audioTranslate,videoTranlator,youtubeTranslator,financeadvisor,AiDetector,newsSummerizer,generateTextInfographic,createAvatar,compressImage,generateSWOT,generateCoverLetter,downloadytdl,generateLinkedInPost,generateLinkedInBio,generateLinkedInRecommendation,generateConnectionRequest,youtubeDownloader,aboutMe,tiktokCaptionGenerate,generateTitle,generateVideoTitle,generateVideoIdeas,generateScriptOutline,CalenderContentGenerator,tiktokhastag,generateReelScript,generateReelIdeas,generateAboutCompanyPage,generateTweetReply,generateSocialMediaPost,generateBulletPoints,generateEventName,generateProfessionalBio,generateSeoBrief,generateCompanyProfile,generateEventInvitationEmail,generateTinderBio,generateEventReminderEmail,generateInstagramHashtags,generateFollowUpEmail} = require("../../controllers/response.controllers");
+const { getResponse,
+   getParaPhrase,
+    getImage,
+    generateLogo 
+,JpgtoPngconverter
+,pngtojpgcoverter
+,getSpecialtool
+,getDecision
+,getSeo
+,resizeImage
+,getCodeConverter,getMarketing,generateQR,generateComponent,getRepharsedata,uploadImage,jpgtopdfconverter,mergePDF,pngtopdfconverter,convertVideoToAudio,fbDownloader,twitterDownloader,text2Pdf,Podcast,svgConverter,zipmaker,gifConverter,getTextSummary,zipExtractor,getNotesSummary,pdftotext,compressedVideo,extractpdftoimages ,getCompany,pdfTranslate,getDomainNames,video_Text_converter,generateCurrentTopics,trimvideo,trimaudio,NDA_Agreement,deletepdf,Business_Slogan,NCA_Agreement,generateYouTubeScript,TriviaGenerate,improveContent,removeAudio,genratedPolicy,generatePoll,generateBusinessPlan,addAudio,uploadAndSummarize,chatWithPdf,languageTranslation,audioTranslate,videoTranlator,youtubeTranslator,financeadvisor,AiDetector,newsSummerizer,generateTextInfographic,createAvatar,compressImage,generateSWOT,generateCoverLetter,downloadytdl,generateLinkedInPost,generateLinkedInBio,generateLinkedInRecommendation,generateConnectionRequest,youtubeDownloader,aboutMe,tiktokCaptionGenerate,generateTitle,generateVideoTitle,generateVideoIdeas,generateScriptOutline,CalenderContentGenerator,tiktokhastag,generateReelScript,generateReelIdeas,generateAboutCompanyPage,generateTweetReply,generateSocialMediaPost,generateBulletPoints,generateEventName,generateProfessionalBio,generateSeoBrief,generateCompanyProfile,generateEventInvitationEmail,generateTinderBio,generateEventReminderEmail,generateInstagramHashtags,generateFollowUpEmail,generateJobOfferLetter,generateResumeSkills,generateElevatorPitch,generateEmailSubjectLine,generateReviewResponse,generateJobDescription,generateResignationLetter,generatePerformanceReview} = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
 const multer = require('multer');
 const path=require("path")
@@ -101,22 +111,32 @@ router.post('/generateTitle',checkLimit, generateTitle);
 router.post('/generateYtTitle',checkLimit, generateVideoTitle);
 router.post('/generateVideoIdeas',checkLimit, generateVideoIdeas);
 router.post('/generateYoutubeScriptOutline',checkLimit, generateScriptOutline);
-router.post('/generatecalender', CalenderContentGenerator);
-router.post('/tiktokhastag', tiktokhastag);
-router.post('/generateReelScript', generateReelScript);
-router.post('/generateReelIdeas', generateReelIdeas);
-router.post('/generateAboutCompanyPage', generateAboutCompanyPage);
-router.post('/generateTweetReply', generateTweetReply);
-router.post('/generateSocialMediaPost', generateSocialMediaPost);
-router.post('/generateBulletPoints', generateBulletPoints);
-router.post('/generateBulletPoints', generateBulletPoints);
-router.post('/generateEventName', generateEventName);
-router.post('/generateProfessionalBio', generateProfessionalBio);
-router.post('/generateSeoBrief', generateSeoBrief);
-router.post('/generateCompanyProfile', generateCompanyProfile);
-router.post('/generateEventInvitationEmail', generateEventInvitationEmail);
-router.post('/generateTinderBio', generateTinderBio);
-router.post('/generateEventReminderEmail', generateEventReminderEmail);
-router.post('/generateInstagramHashtags', generateInstagramHashtags);
-router.post('/generateFollowUpEmail', generateFollowUpEmail);
+router.post('/generatecalender',checkLimit, CalenderContentGenerator);
+router.post('/tiktokhastag',checkLimit, tiktokhastag);
+router.post('/generateReelScript',checkLimit, generateReelScript);
+router.post('/generateReelIdeas',checkLimit, generateReelIdeas);
+router.post('/generateAboutCompanyPage',checkLimit, generateAboutCompanyPage);
+router.post('/generateTweetReply',checkLimit, generateTweetReply);
+router.post('/generateSocialMediaPost',checkLimit, generateSocialMediaPost);
+router.post('/generateBulletPoints',checkLimit, generateBulletPoints);
+router.post('/generateBulletPoints',checkLimit, generateBulletPoints);
+router.post('/generateEventName',checkLimit, generateEventName);
+router.post('/generateProfessionalBio',checkLimit, generateProfessionalBio);
+router.post('/generateSeoBrief',checkLimit, generateSeoBrief);
+router.post('/generateCompanyProfile',checkLimit, generateCompanyProfile);
+router.post('/generateEventInvitationEmail',checkLimit, generateEventInvitationEmail);
+router.post('/generateTinderBio',checkLimit, generateTinderBio);
+router.post('/generateEventReminderEmail',checkLimit, generateEventReminderEmail);
+router.post('/generateInstagramHashtags',checkLimit, generateInstagramHashtags);
+router.post('/generateFollowUpEmail',checkLimit, generateFollowUpEmail);
+router.post('/generateJobOffer', generateJobOfferLetter);
+router.post('/generateResumeSkills', generateResumeSkills);
+router.post('/generateElevatorPitch', generateElevatorPitch);
+router.post('/generateEmailSubjectLine', generateEmailSubjectLine);
+router.post('/generateReviewResponse', generateReviewResponse);
+router.post('/generateJobDescription', generateJobDescription);
+router.post('/generateResignationLetter', generateResignationLetter);
+router.post('/generatePerformanceReview', generatePerformanceReview);
+
+
 module.exports = router;

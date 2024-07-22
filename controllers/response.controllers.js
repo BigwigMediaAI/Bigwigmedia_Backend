@@ -2771,3 +2771,164 @@ exports.generateFollowUpEmail = async (req, res) => {
         res.status(500).json({ error: 'Error generating follow-up emails' });
     }
 };
+
+// -------------Job Offer letter genrator
+
+const { generateJobOfferLetterContent } = require('../utils.js/JobOfferLetterGenerator');
+
+exports.generateJobOfferLetter = async (req, res) => {
+    try {
+        const { recipientName, position, companyName, startDate, salary, tone, language, outputCount } = req.body;
+
+        if (!recipientName || !position || !companyName || !startDate || !salary) {
+            return res.status(400).json({ error: 'Please provide all required fields for the job offer letter' });
+        }
+
+        const jobOfferLetters = await generateJobOfferLetterContent(recipientName, position, companyName, startDate, salary, tone, language, outputCount);
+
+        res.status(200).json(jobOfferLetters);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating job offer letter' });
+    }
+};
+
+// -----------Resume Skills Generator
+
+const { generateResumeSkillsContent } = require('../utils.js/ResumeSkillsGenerator');
+
+exports.generateResumeSkills = async (req, res) => {
+    try {
+        const { profession, experienceLevel, industry, tone, language, outputCount } = req.body;
+
+        if (!profession || !experienceLevel || !industry) {
+            return res.status(400).json({ error: 'Please provide all required fields for generating resume skills' });
+        }
+
+        const resumeSkills = await generateResumeSkillsContent(profession, experienceLevel, industry, tone, language, outputCount);
+
+        res.status(200).json(resumeSkills);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating resume skills' });
+    }
+};
+
+//------------------ Elevator Pitch Generator
+const { generateElevatorPitchContent } = require('../utils.js/ElevatorPitchGenerator');
+
+exports.generateElevatorPitch = async (req, res) => {
+    try {
+        const { name, profession, targetAudience, uniqueSellingPoint, tone, language, outputCount } = req.body;
+
+        if (!name || !profession || !targetAudience || !uniqueSellingPoint) {
+            return res.status(400).json({ error: 'Please provide all required fields for generating the elevator pitch' });
+        }
+
+        const elevatorPitches = await generateElevatorPitchContent(name, profession, targetAudience, uniqueSellingPoint, tone, language, outputCount);
+
+        res.status(200).json(elevatorPitches);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating elevator pitch' });
+    }
+};
+
+// ---------Email Subject line---------
+const { generateEmailSubjectLineUtil } = require('../utils.js/generateEmailSubjectLine');
+
+exports.generateEmailSubjectLine = async (req, res) => {
+    try {
+        const { emailPurpose, tone, language, outputCount } = req.body;
+
+        if (!emailPurpose || !tone || !language || !outputCount) {
+            return res.status(400).json({ error: 'Please provide all required fields: emailPurpose, tone, language, outputCount' });
+        }
+
+        const subjectLines = await generateEmailSubjectLineUtil(emailPurpose, tone, language, outputCount);
+
+        res.status(200).json(subjectLines);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating email subject lines' });
+    }
+};
+
+// ---------Review Response Generator----------
+const { generateReviewResponseUtil } = require('../utils.js/reviewResponse');
+
+exports.generateReviewResponse = async (req, res) => {
+    try {
+        const { reviewText, responseTone, language, outputCount } = req.body;
+
+        if (!reviewText || !responseTone || !language || !outputCount) {
+            return res.status(400).json({ error: 'Please provide all required fields: reviewText, responseTone, language, outputCount' });
+        }
+
+        const reviewResponses = await generateReviewResponseUtil(reviewText, responseTone, language, outputCount);
+
+        res.status(200).json(reviewResponses);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating review responses' });
+    }
+};
+// ------Job Description Generator---------
+const { generateJobDescriptionUtil } = require('../utils.js/jobDescription');
+
+exports.generateJobDescription = async (req, res) => {
+    try {
+        const { jobTitle, responsibilities, qualifications, companyInfo, tone, language, outputCount } = req.body;
+
+        if (!jobTitle || !responsibilities || !qualifications || !companyInfo || !tone || !language || !outputCount) {
+            return res.status(400).json({ error: 'Please provide all required fields: jobTitle, responsibilities, qualifications, companyInfo, tone, language, outputCount' });
+        }
+
+        const jobDescriptions = await generateJobDescriptionUtil(jobTitle, responsibilities, qualifications, companyInfo, tone, language, outputCount);
+
+        res.status(200).json(jobDescriptions);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating job descriptions' });
+    }
+};
+
+// ---Resignation letter generator-------
+const { generateResignationLetterUtil } = require('../utils.js/resignationLetter');
+
+exports.generateResignationLetter = async (req, res) => {
+    try {
+        const { employeeName, position, companyName, lastWorkingDay, reasonForLeaving, tone, language, outputCount } = req.body;
+
+        if (!employeeName || !position || !companyName || !lastWorkingDay || !reasonForLeaving || !tone || !language || !outputCount) {
+            return res.status(400).json({ error: 'Please provide all required fields: employeeName, position, companyName, lastWorkingDay, reasonForLeaving, tone, language, outputCount' });
+        }
+
+        const resignationLetters = await generateResignationLetterUtil(employeeName, position, companyName, lastWorkingDay, reasonForLeaving, tone, language, outputCount);
+
+        res.status(200).json(resignationLetters);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating resignation letters' });
+    }
+};
+
+// -----Performance Review Generator-----------
+const { generatePerformanceReviewUtil } = require('../utils.js/performanceReview');
+
+exports.generatePerformanceReview = async (req, res) => {
+    try {
+        const { employeeName, position, reviewPeriod, keyAchievements, areasOfImprovement, futureGoals, tone, language, outputCount } = req.body;
+
+        if (!employeeName || !position || !reviewPeriod || !keyAchievements || !areasOfImprovement || !futureGoals || !tone || !language || !outputCount) {
+            return res.status(400).json({ error: 'Please provide all required fields: employeeName, position, reviewPeriod, keyAchievements, areasOfImprovement, futureGoals, tone, language, outputCount' });
+        }
+
+        const performanceReviews = await generatePerformanceReviewUtil(employeeName, position, reviewPeriod, keyAchievements, areasOfImprovement, futureGoals, tone, language, outputCount);
+
+        res.status(200).json(performanceReviews);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating performance reviews' });
+    }
+};
