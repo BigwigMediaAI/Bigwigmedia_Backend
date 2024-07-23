@@ -2932,3 +2932,124 @@ exports.generatePerformanceReview = async (req, res) => {
         res.status(500).json({ error: 'Error generating performance reviews' });
     }
 };
+
+// ---------------Call to Action
+
+const { generateCallToActionContent } = require('../utils.js/CallToAction');
+
+exports.generateCallToAction = async (req, res) => {
+    try {
+        const { targetAudience, purpose, desiredAction, tone, language, outputCount } = req.body;
+
+        if (!targetAudience || !purpose || !desiredAction) {
+            return res.status(400).json({ error: 'Please provide all required fields for generating the call to action' });
+        }
+
+        const callToActions = await generateCallToActionContent(targetAudience, purpose, desiredAction, tone, language, outputCount);
+
+        res.status(200).json(callToActions);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating call to action' });
+    }
+};
+
+// ---------------Meeting Invitation generator
+const { generateMeetingInviteContent } = require('../utils.js/MeetingInvitationGenerator');
+
+exports.generateMeetingInvite = async (req, res) => {
+    try {
+        const { meetingTitle, date, time, participants, agenda, tone, language, outputCount } = req.body;
+
+        if (!meetingTitle || !date || !time || !participants || !agenda) {
+            return res.status(400).json({ error: 'Please provide all required fields for generating the meeting invite' });
+        }
+
+        const meetingInvites = await generateMeetingInviteContent(meetingTitle, date, time, participants, agenda, tone, language, outputCount);
+
+        res.status(200).json(meetingInvites);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating meeting invite' });
+    }
+};
+
+// ------------Project Report Generator---------
+const { generateProjectReportContent } = require('../utils.js/ProjectReportGenerator');
+
+exports.generateProjectReport = async (req, res) => {
+    try {
+        const { projectName, projectDescription, keyMilestones, projectOutcome, length, tone, language, outputCount } = req.body;
+
+        if (!projectName || !projectDescription || !keyMilestones || !projectOutcome || !length || !tone || !language || !outputCount) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        const projectReports = await generateProjectReportContent(projectName, projectDescription, keyMilestones, projectOutcome, length, tone, language, outputCount);
+
+        res.status(200).json(projectReports);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating project report' });
+    }
+};
+
+// ----------Google my business product description--------------
+const { generateGMBProductDescriptionContent } = require('../utils.js/gmbProductDescription');
+
+exports.generateGMBProductDescription = async (req, res) => {
+    try {
+        const { productName, productFeatures, targetAudience, language, tone, outputCount } = req.body;
+
+        if (!productName || !productFeatures || !targetAudience || !language || !tone || !outputCount) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        const productDescriptions = await generateGMBProductDescriptionContent(productName, productFeatures, targetAudience, language, tone, outputCount);
+
+        res.status(200).json(productDescriptions);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating product description' });
+    }
+};
+
+// -----------Google My business post generator----------
+const { generateGMBPostContent } = require('../utils.js/gmbPostGenerator');
+
+exports.generateGMBPost = async (req, res) => {
+    try {
+        const { businessUpdate, companyName, language, tone, outputCount } = req.body;
+
+        if (!businessUpdate || !companyName || !language || !tone || !outputCount) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        const posts = await generateGMBPostContent(businessUpdate, companyName, language, tone, outputCount);
+
+        res.status(200).json(posts);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating GMB post' });
+    }
+};
+
+// ----------Product description generator----------
+const { generateProductDescriptionContent } = require('../utils.js/productDescription');
+
+exports.generateProductDescription = async (req, res) => {
+    try {
+        const { productName, productFeatures, targetAudience, language, tone, outputCount } = req.body;
+
+        if (!productName || !productFeatures || !targetAudience || !language || !tone || !outputCount) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        const descriptions = await generateProductDescriptionContent(productName, productFeatures, targetAudience, language, tone, outputCount);
+
+        res.status(200).json(descriptions);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating product descriptions' });
+    }
+};
