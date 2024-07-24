@@ -3053,3 +3053,131 @@ exports.generateProductDescription = async (req, res) => {
         res.status(500).json({ error: 'Error generating product descriptions' });
     }
 };
+
+// --------------Refrence letter generator
+
+const { generateReferenceLetterContent } = require('../utils.js/ReferenceLetterGenerator');
+
+exports.generateReferenceLetter = async (req, res) => {
+    try {
+        const { candidateName, relationship, skills, achievements, tone, language, outputCount } = req.body;
+
+        if (!candidateName || !relationship || !skills || !achievements) {
+            return res.status(400).json({ error: 'Please provide all required fields for generating the reference letter' });
+        }
+
+        const referenceLetters = await generateReferenceLetterContent(candidateName, relationship, skills, achievements, tone, language, outputCount);
+
+        res.status(200).json(referenceLetters);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating reference letter' });
+    }
+};
+
+
+// ----------Product Name generator
+
+const { generateProductNameContent } = require('../utils.js/ProductNameGenerator');
+
+exports.generateProductName = async (req, res) => {
+    try {
+        const { productDescription, targetAudience, tone, language, outputCount } = req.body;
+
+        if (!productDescription || !targetAudience) {
+            return res.status(400).json({ error: 'Please provide all required fields for generating the product name' });
+        }
+
+        const productNames = await generateProductNameContent(productDescription, targetAudience, tone, language, outputCount);
+
+        res.status(200).json(productNames);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating product name' });
+    }
+};
+
+// --------Catchy Tagline Generator
+
+const { generateTaglineContent } = require('../utils.js/CatchyTaglineGenerator');
+
+exports.generateCatchyTagline = async (req, res) => {
+    try {
+        const { productDescription, targetAudience, tone, language, outputCount } = req.body;
+
+        if (!productDescription || !targetAudience) {
+            return res.status(400).json({ error: 'Please provide all required fields for generating the catchy tagline' });
+        }
+
+        const taglines = await generateTaglineContent(productDescription, targetAudience, tone, language, outputCount);
+
+        res.status(200).json(taglines);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating catchy tagline' });
+    }
+};
+
+
+//-------- Business Proposal Generator
+
+const { generateBusinessProposalContent } = require('../utils.js/BusinessProposalGenerator');
+
+exports.generateBusinessProposal = async (req, res) => {
+    try {
+        const { companyName, projectDescription, objectives, deliverables, timeline, budget, tone, language, outputCount } = req.body;
+
+        if (!companyName || !projectDescription || !objectives || !deliverables || !timeline || !budget) {
+            return res.status(400).json({ error: 'Please provide all required fields for generating the business proposal' });
+        }
+
+        const proposals = await generateBusinessProposalContent(companyName, projectDescription, objectives, deliverables, timeline, budget, tone, language, outputCount);
+
+        res.status(200).json(proposals);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating business proposal' });
+    }
+};
+
+// ----------SOP generator
+
+const { generateSOPContent } = require('../utils.js/SOPgenerator');
+
+exports.generateSOP = async (req, res) => {
+    try {
+        const { applicantName, background, goals, whyThisProgram, tone, language, outputCount } = req.body;
+
+        if (!applicantName || !background || !goals || !whyThisProgram) {
+            return res.status(400).json({ error: 'Please provide all required fields for generating the SOP' });
+        }
+
+        const sops = await generateSOPContent(applicantName, background, goals, whyThisProgram, tone, language, outputCount);
+
+        res.status(200).json(sops);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating SOP' });
+    }
+};
+
+// ----------Experiance Letter Generator
+
+const { generateExperienceLetterContent } = require('../utils.js/ExperianceLetterGenerator');
+
+exports.generateExperienceLetter = async (req, res) => {
+    try {
+        const { employeeName, position, department, duration, achievements, company, tone, language, outputCount } = req.body;
+
+        if (!employeeName || !position || !department || !duration || !achievements || !company) {
+            return res.status(400).json({ error: 'Please provide all required fields for generating the experience letter' });
+        }
+
+        const experienceLetters = await generateExperienceLetterContent(employeeName, position, department, duration, achievements, company, tone, language, outputCount);
+
+        res.status(200).json(experienceLetters);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating experience letter' });
+    }
+};

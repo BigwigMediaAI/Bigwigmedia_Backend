@@ -31,7 +31,7 @@ getNotesSummary,
 pdftotext,
 compressedVideo,
 extractpdftoimages ,
-getCompany,pdfTranslate,getDomainNames,video_Text_converter,generateCurrentTopics,trimvideo,trimaudio,NDA_Agreement,deletepdf,Business_Slogan,NCA_Agreement,generateYouTubeScript,TriviaGenerate,improveContent,removeAudio,genratedPolicy,generatePoll,generateBusinessPlan,addAudio,uploadAndSummarize,chatWithPdf,languageTranslation,audioTranslate,videoTranlator,youtubeTranslator,financeadvisor,AiDetector,newsSummerizer,generateTextInfographic,createAvatar,compressImage,generateSWOT,generateCoverLetter,downloadytdl,generateLinkedInPost,generateLinkedInBio,generateLinkedInRecommendation,generateConnectionRequest,youtubeDownloader,aboutMe,tiktokCaptionGenerate,generateTitle,generateVideoTitle,generateVideoIdeas,generateScriptOutline,CalenderContentGenerator,tiktokhastag,generateReelScript,generateReelIdeas,generateAboutCompanyPage,generateTweetReply,generateSocialMediaPost,generateBulletPoints,generateEventName,generateProfessionalBio,generateSeoBrief,generateCompanyProfile,generateEventInvitationEmail,generateTinderBio,generateEventReminderEmail,generateInstagramHashtags,generateFollowUpEmail,generateJobOfferLetter,generateResumeSkills,generateElevatorPitch,generateEmailSubjectLine,generateReviewResponse,generateJobDescription,generateResignationLetter,generatePerformanceReview,generateCallToAction,generateMeetingInvite,generateProjectReport,generateGMBProductDescription,generateGMBPost,generateProductDescription} = require("../../controllers/response.controllers");
+getCompany,pdfTranslate,getDomainNames,video_Text_converter,generateCurrentTopics,trimvideo,trimaudio,NDA_Agreement,deletepdf,Business_Slogan,NCA_Agreement,generateYouTubeScript,TriviaGenerate,improveContent,removeAudio,genratedPolicy,generatePoll,generateBusinessPlan,addAudio,uploadAndSummarize,chatWithPdf,languageTranslation,audioTranslate,videoTranlator,youtubeTranslator,financeadvisor,AiDetector,newsSummerizer,generateTextInfographic,createAvatar,compressImage,generateSWOT,generateCoverLetter,downloadytdl,generateLinkedInPost,generateLinkedInBio,generateLinkedInRecommendation,generateConnectionRequest,youtubeDownloader,aboutMe,tiktokCaptionGenerate,generateTitle,generateVideoTitle,generateVideoIdeas,generateScriptOutline,CalenderContentGenerator,tiktokhastag,generateReelScript,generateReelIdeas,generateAboutCompanyPage,generateTweetReply,generateSocialMediaPost,generateBulletPoints,generateEventName,generateProfessionalBio,generateSeoBrief,generateCompanyProfile,generateEventInvitationEmail,generateTinderBio,generateEventReminderEmail,generateInstagramHashtags,generateFollowUpEmail,generateJobOfferLetter,generateResumeSkills,generateElevatorPitch,generateEmailSubjectLine,generateReviewResponse,generateJobDescription,generateResignationLetter,generatePerformanceReview,generateCallToAction,generateMeetingInvite,generateProjectReport,generateGMBProductDescription,generateGMBPost,generateProductDescription,generateReferenceLetter,generateProductName,generateCatchyTagline,generateBusinessProposal,generateSOP,generateExperienceLetter} = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
 const multer = require('multer');
 const path=require("path")
@@ -160,12 +160,24 @@ router.post('/generateReviewResponse',checkLimit, generateReviewResponse);
 router.post('/generateJobDescription',checkLimit, generateJobDescription);
 router.post('/generateResignationLetter',checkLimit, generateResignationLetter);
 router.post('/generatePerformanceReview',checkLimit, generatePerformanceReview);
-router.post('/generateCallToAction', generateCallToAction);
-router.post('/generateMeetingInvite', generateMeetingInvite);
-router.post('/generateProjectReport', generateProjectReport);
-router.post('/generateGMBProductDescription', generateGMBProductDescription);
-router.post('/generateGMBPost', generateGMBPost);
-router.post('/generateProductDescription', generateProductDescription);
+router.post('/generateCallToAction',checkLimit, generateCallToAction);
+router.post('/generateMeetingInvite',checkLimit, generateMeetingInvite);
+router.post('/generateProjectReport',checkLimit, generateProjectReport);
+router.post('/generateGMBProductDescription',checkLimit,generateGMBProductDescription);
+router.post('/generateGMBPost',checkLimit,generateGMBPost);
+router.post('/generateProductDescription',checkLimit,generateProductDescription);
+router.post('/generateReferenceLetter', generateReferenceLetter);
+router.post('/generateProductName', generateProductName);
+router.post('/generateCatchyTagline', generateCatchyTagline);
+router.post('/generateBusinessProposal', generateBusinessProposal);
+router.post('/generateSOP', generateSOP);
+router.post('/generateExperienceLetter', generateExperienceLetter);
+
+
+
+
+
+
 
 
 
