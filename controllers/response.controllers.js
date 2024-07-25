@@ -3181,3 +3181,163 @@ exports.generateExperienceLetter = async (req, res) => {
         res.status(500).json({ error: 'Error generating experience letter' });
     }
 };
+
+// ---------Motto Generator---------
+const { generateMottoContent } = require('../utils.js/mottoGenerator');
+
+exports.generateMotto = async (req, res) => {
+    try {
+        const { companyName, industry, values, language, tone, outputCount } = req.body;
+
+        if (!companyName || !industry || !values || !language || !tone || !outputCount) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        const mottos = await generateMottoContent(companyName, industry, values, language, tone, outputCount);
+
+        res.status(200).json(mottos);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating mottos' });
+    }
+};
+
+// --------Product Brochure--------
+const { generateProductBrochureContent } = require('../utils.js/productBrochureGenerator');
+
+exports.generateProductBrochure = async (req, res) => {
+    try {
+        const { productName, productDescription, features, benefits, language, tone, outputCount } = req.body;
+
+        if (!productName || !productDescription || !features || !benefits || !language || !tone || !outputCount) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        const brochures = await generateProductBrochureContent(productName, productDescription, features, benefits, language, tone, outputCount);
+
+        res.status(200).json(brochures);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating product brochure' });
+    }
+};
+
+// ----------Business Memo Generator----------
+const { generateMemoContent } = require('../utils.js/businessMemoGenerator');
+
+exports.generateBusinessMemo = async (req, res) => {
+    try {
+        const { subject, memoContent, tone, language, outputCount } = req.body;
+
+        if (!subject || !memoContent) {
+            return res.status(400).json({ error: 'Please provide a subject and content for the memo' });
+        }
+
+        const memos = await generateMemoContent(subject, memoContent, tone, language, outputCount);
+
+        res.status(200).json({ memos });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating business memo' });
+    }
+};
+
+// --------PAS Framework-----------
+const { generatePASContent } = require('../utils.js/pasFramework');
+
+exports.generatePAS = async (req, res) => {
+    try {
+        const { companyName, productDescription, language, tone, outputCount } = req.body;
+
+        if (!companyName || !productDescription) {
+            return res.status(400).json({ error: 'Please provide both company/product name and product description for the PAS framework' });
+        }
+
+        const pasContent = await generatePASContent(companyName, productDescription, language, tone, outputCount);
+
+        res.status(200).json(pasContent);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating PAS content' });
+    }
+};
+
+// ---------AIDA Framework------------
+const { generateAIDAContent } = require('../utils.js/Generateaida');
+
+exports.generateAIDA = async (req, res) => {
+    try {
+        const { companyName, productDescription, language, tone, outputCount } = req.body;
+
+        if (!companyName || !productDescription) {
+            return res.status(400).json({ error: 'Please provide both company/product name and product description for the AIDA framework' });
+        }
+
+        const aidaContent = await generateAIDAContent(companyName, productDescription, language, tone, outputCount);
+
+        res.status(200).json(aidaContent);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating AIDA content' });
+    }
+};
+
+// --------------Cold Email Generator-------------
+const { generateColdEmails } = require('../utils.js/coldEmail');
+
+exports.generateColdEmail = async (req, res) => {
+    try {
+        const { recipientName, companyName, yourCompanyName, yourProductService, language, tone, outputCount } = req.body;
+
+        if (!recipientName || !companyName || !yourCompanyName || !yourProductService) {
+            return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        const coldEmails = await generateColdEmails(recipientName, companyName, yourCompanyName, yourProductService, language, tone, outputCount);
+
+        res.status(200).json(coldEmails);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating cold emails' });
+    }
+};
+
+// -----------Meta Description------------
+const { generateMetaDescriptions } = require('../utils.js/metaDescription');
+
+exports.generateMetaDescription = async (req, res) => {
+    try {
+        const { pageTitle, pageContent, language, tone, outputCount } = req.body;
+
+        if (!pageTitle || !pageContent) {
+            return res.status(400).json({ error: 'Please provide both page title and page content' });
+        }
+
+        const metaDescriptions = await generateMetaDescriptions(pageTitle, pageContent, language, tone, outputCount);
+
+        res.status(200).json(metaDescriptions);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating meta descriptions' });
+    }
+};
+
+// -----------NewsLetter Name Generator---------------
+const { generateNewsletterNames } = require('../utils.js/newsLetterName');
+
+exports.generateNewsletterName = async (req, res) => {
+    try {
+        const { industry, keywords, tone, audience, language, outputCount } = req.body;
+
+        if (!industry || !keywords || !audience) {
+            return res.status(400).json({ error: 'Please provide industry, keywords, and target audience' });
+        }
+
+        const newsletterNames = await generateNewsletterNames(industry, keywords, tone, audience, language, outputCount);
+
+        res.status(200).json(newsletterNames);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating newsletter names' });
+    }
+};
