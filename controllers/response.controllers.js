@@ -3341,3 +3341,221 @@ exports.generateNewsletterName = async (req, res) => {
         res.status(500).json({ error: 'Error generating newsletter names' });
     }
 };
+
+// ----------Job Summary Generator---------
+const { generateJobSummaries } = require('../utils.js/jobSummary');
+
+exports.generateJobSummary = async (req, res) => {
+    try {
+        const { jobTitle, companyName, keyResponsibilities, requirements, location, tone, language, outputCount } = req.body;
+
+        if (!jobTitle || !companyName || !keyResponsibilities || !requirements || !location) {
+            return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        const jobSummaries = await generateJobSummaries(jobTitle, companyName, keyResponsibilities, requirements, location, tone, language, outputCount);
+
+        res.status(200).json(jobSummaries);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating job summaries' });
+    }
+};
+
+// ---------Job Qualification Generator-----------
+const { generateJobQualifications } = require('../utils.js/jobQualifications');
+
+exports.generateJobQualifications = async (req, res) => {
+    try {
+        const { jobTitle, companyName, responsibilities, tone, language, outputCount } = req.body;
+
+        if (!jobTitle || !companyName || !responsibilities) {
+            return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        const jobQualifications = await generateJobQualifications(jobTitle, companyName, responsibilities, tone, language, outputCount);
+
+        res.status(200).json(jobQualifications);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating job qualifications' });
+    }
+};
+
+// -------Job Responsibility Generator----------
+const { generateJobResponsibilities } = require('../utils.js/jobResponsibilities');
+
+exports.generateJobResponsibilities = async (req, res) => {
+    try {
+        const { jobTitle, companyName, tone, language, outputCount } = req.body;
+
+        if (!jobTitle || !companyName) {
+            return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        const jobResponsibilities = await generateJobResponsibilities(jobTitle, companyName, tone, language, outputCount);
+
+        res.status(200).json(jobResponsibilities);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating job responsibilities' });
+    }
+};
+
+// ---------Subheading Generator-------------
+const { generateSubheadings } = require('../utils.js/subHeading');
+
+exports.generateSubheadings = async (req, res) => {
+    try {
+        const { heading, tone, language, outputCount, context } = req.body;
+
+        if (!heading) {
+            return res.status(400).json({ error: 'Please provide a heading' });
+        }
+
+        const subheadings = await generateSubheadings({ heading, tone, language, outputCount, context });
+
+        res.status(200).json(subheadings);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating subheadings' });
+    }
+};
+
+// ----------Unique Value Proposition--------
+const { generateUVP } = require('../utils.js/uniqueValue');
+
+exports.generateUVP = async (req, res) => {
+    try {
+        const { productName, targetAudience, keyBenefit, tone, language, outputCount } = req.body;
+
+        if (!productName || !targetAudience || !keyBenefit) {
+            return res.status(400).json({ error: 'Please provide product name, target audience, and key benefit' });
+        }
+
+        const uvps = await generateUVP({ productName, targetAudience, keyBenefit, tone, language, outputCount });
+
+        res.status(200).json(uvps);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating UVP' });
+    }
+};
+
+// -----------OKR generator--------------
+const { generateOKR } = require('../utils.js/okrGenerate');
+
+exports.generateOKR = async (req, res) => {
+    try {
+        const { objective, department, timeFrame, keyResultsCount, tone, language, outputCount } = req.body;
+
+        if (!objective || !department || !timeFrame || !keyResultsCount || !tone || !language || !outputCount) {
+            return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        const okrs = await generateOKR({ objective, department, timeFrame, keyResultsCount, tone, language, outputCount });
+
+        res.status(200).json(okrs);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating OKRs' });
+    }
+};
+
+// ---------Project timeline generator----------
+const { generateTimeline } = require('../utils.js/projectTimeline');
+
+exports.generateProjectTimeline = async (req, res) => {
+    try {
+        const { projectName, projectDescription, startDate, endDate, milestones, tone, language, outputCount } = req.body;
+
+        if (!projectName || !projectDescription || !startDate || !endDate || !milestones || !tone || !language || !outputCount) {
+            return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        const timelines = await generateTimeline({ projectName, projectDescription, startDate, endDate, milestones, tone, language, outputCount });
+
+        res.status(200).json(timelines);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating project timeline' });
+    }
+};
+
+
+// controllers/imageController.js
+const FormData = require('form-data');
+
+// Set up storage engine for multer
+const storage = multer.diskStorage({
+  destination: './uploads/',
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+
+// Initialize upload variable
+const uploaddata = multer({
+  storage: storage,
+  limits: { fileSize: 9000000 }, // Limit file size to 9MB
+}).single('image');
+
+// Function to call the background removal API
+const removeBackground = async (imageUrl, callback) => {
+  const form = new FormData();
+  form.append('image_url', imageUrl);
+
+  const options = {
+    method: 'POST',
+    url: 'https://background-removal.p.rapidapi.com/remove',
+    headers: {
+      'x-rapidapi-key': 'b3402da2eemsh9f38aabddad6fabp1be739jsn49f1254bdd37',
+      'x-rapidapi-host': 'background-removal.p.rapidapi.com',
+      ...form.getHeaders()
+    },
+    data: form
+  };
+
+  try {
+    const response = await axios(options);
+    console.log(response)
+    const backgroundRemovedImageUrl = response.data.response.image_url; // Adjust this based on API response format
+    callback(backgroundRemovedImageUrl);
+  } catch (error) {
+    console.error(`Error removing background: ${error.message}`);
+    callback(null);
+  }
+};
+
+// Controller function to handle image upload and background removal
+exports.uploadImageBG = (req, res) => {
+  uploaddata(req, res, (err) => {
+    if (err) {
+      res.status(500).send('Something went wrong!');
+    } else {
+      const imagePath = path.join(__dirname, '../uploads', req.file.filename);
+      const downloadUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename};`
+
+      // Optionally, serve the image file directly from the server
+      // app.use('/uploads', express.static('uploads'));
+
+      // Call the background removal API with the image URL
+      removeBackground(downloadUrl, (apiRes) => {
+        if (apiRes) {
+          // Delete the uploaded image file
+          fs.unlink(imagePath, (unlinkErr) => {
+            if (unlinkErr) {
+              console.error(`Error deleting file: ${unlinkErr.message}`);
+              res.status(500).send('Failed to delete the original image!');
+            } else {
+              res.json({ downloadUrl, backgroundRemovedImageUrl: apiRes });
+            }
+          });
+        } else {
+          res.status(500).send('Background removal failed!');
+        }
+      });
+    }
+  });
+};
+
