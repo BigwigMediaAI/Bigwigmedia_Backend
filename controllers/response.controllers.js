@@ -3514,8 +3514,8 @@ const removeBackground = async (imageUrl, callback) => {
 
 // Controller function to handle the response after image upload and background removal
  exports.uploadImageBG = (req, res) => {
-  const imagePath = path.join(__dirname, '../uploads', req.file.filename);
-  const downloadUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+  const imagePath = path.join(__dirname, '../uploads', req.file.originalname);
+  const downloadUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.originalname}`;
   console.log(downloadUrl)
 
   // Call the background removal API with the image URL

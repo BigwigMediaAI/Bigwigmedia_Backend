@@ -20,7 +20,7 @@ const DOWNLOAD_FOLDER = path.resolve(__dirname, 'downloads');
 
 // Serve the downloaded files
 app.use('/downloads', express.static(DOWNLOAD_FOLDER));
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const PORT = 4000 || process.env.PORT;
 
 app.get("/", (req, res) => {
