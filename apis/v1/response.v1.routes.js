@@ -54,7 +54,19 @@ const storage = multer.diskStorage({
 });
 const uploadfile = multer({ storage: storage });
 
-
+const storage2 = multer.diskStorage({
+    destination: './uploads/',
+    filename: (req, file, cb) => {
+      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+  });
+  
+  // Initialize upload variable
+  const uploadbackgroundimage = multer({
+    storage: storage2,
+    limits: { fileSize: 9000000 }, // Limit file size to 9MB
+  });
+  
  
 
 
@@ -189,7 +201,7 @@ router.post('/generateSubheadings', generateSubheadings);
 router.post('/generateUVP', generateUVP);
 router.post('/generateOKR', generateOKR);
 router.post('/generateProjectTimeline', generateProjectTimeline);
-router.post('/removebackground', uploadImageBG);
+router.post('/removebackground',uploadbackgroundimage.single('image'), uploadImageBG);
 
 
 

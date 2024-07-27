@@ -3483,22 +3483,8 @@ exports.generateProjectTimeline = async (req, res) => {
 };
 
 
-// controllers/imageController.js
+
 const FormData = require('form-data');
-
-// Set up storage engine for multer
-const storage = multer.diskStorage({
-  destination: './uploads/',
-  filename: (req, file, cb) => {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-  }
-});
-
-// Initialize upload variable
-const uploaddata = multer({
-  storage: storage,
-  limits: { fileSize: 9000000 }, // Limit file size to 9MB
-}).single('image');
 
 // Function to call the background removal API
 const removeBackground = async (imageUrl, callback) => {
@@ -3518,7 +3504,6 @@ const removeBackground = async (imageUrl, callback) => {
 
   try {
     const response = await axios(options);
-    console.log(response)
     const backgroundRemovedImageUrl = response.data.response.image_url; // Adjust this based on API response format
     callback(backgroundRemovedImageUrl);
   } catch (error) {
@@ -3527,34 +3512,27 @@ const removeBackground = async (imageUrl, callback) => {
   }
 };
 
-// Controller function to handle image upload and background removal
-exports.uploadImageBG = (req, res) => {
-  uploaddata(req, res, (err) => {
-    if (err) {
-      res.status(500).send('Something went wrong!');
-    } else {
-      const imagePath = path.join(__dirname, '../uploads', req.file.filename);
-      const downloadUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename};`
+// Controller function to handle the response after image upload and background removal
+ exports.uploadImageBG = (req, res) => {
+  const imagePath = path.join(__dirname, '../uploads', req.file.filename);
+  const downloadUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+  console.log(downloadUrl)
 
-      // Optionally, serve the image file directly from the server
-      // app.use('/uploads', express.static('uploads'));
-
-      // Call the background removal API with the image URL
-      removeBackground(downloadUrl, (apiRes) => {
-        if (apiRes) {
-          // Delete the uploaded image file
-          fs.unlink(imagePath, (unlinkErr) => {
-            if (unlinkErr) {
-              console.error(`Error deleting file: ${unlinkErr.message}`);
-              res.status(500).send('Failed to delete the original image!');
-            } else {
-              res.json({ downloadUrl, backgroundRemovedImageUrl: apiRes });
-            }
-          });
+  // Call the background removal API with the image URL
+  removeBackground(downloadUrl, (apiRes) => {
+    if (apiRes) {
+      // Delete the uploaded image file
+      fs.unlink(imagePath, (unlinkErr) => {
+        if (unlinkErr) {
+          console.error(`Error deleting file: ${unlinkErr.message}`);
+          res.status(500).send('Failed to delete the original image!');
         } else {
-          res.status(500).send('Background removal failed!');
+          res.json({ downloadUrl, backgroundRemovedImageUrl: apiRes });
+          // console.log(downloadUrl)
         }
       });
+    } else {
+      res.status(500).send('Background removal failed!');
     }
   });
 };
