@@ -3522,17 +3522,7 @@ const removeBackground = async (imageUrl, callback) => {
   removeBackground(downloadUrl, (apiRes) => {
     if (apiRes) {
       // Delete the uploaded image file
-      fs.unlink(imagePath, (unlinkErr) => {
-        if (unlinkErr) {
-          console.error(`Error deleting file: ${unlinkErr.message}`);
-          res.status(500).send('Failed to delete the original image!');
-        } else {
-          res.json({ downloadUrl, backgroundRemovedImageUrl: apiRes });
-          // console.log(downloadUrl)
-        }
-      });
-    } else {
-      res.status(500).send('Background removal failed!');
+      res.json({ downloadUrl, backgroundRemovedImageUrl: apiRes });
     }
   });
 };
