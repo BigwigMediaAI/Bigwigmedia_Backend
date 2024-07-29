@@ -3495,7 +3495,7 @@ const removeBackground = async (imageUrl, callback) => {
     method: 'POST',
     url: 'https://background-removal.p.rapidapi.com/remove',
     headers: {
-      'x-rapidapi-key': 'b3402da2eemsh9f38aabddad6fabp1be739jsn49f1254bdd37',
+      'x-rapidapi-key': '1266f65bacmshfbf778aa6f303f1p11a3a1jsne4a8b5e28855',
       'x-rapidapi-host': 'background-removal.p.rapidapi.com',
       ...form.getHeaders()
     },
