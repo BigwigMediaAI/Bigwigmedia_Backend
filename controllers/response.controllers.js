@@ -3527,3 +3527,78 @@ const removeBackground = async (imageUrl, callback) => {
   });
 };
 
+// ---------Statical Generator
+const { generateStatisticsContent } = require('../utils.js/StatisticsGenerator');
+
+exports.generateStatistics = async (req, res) => {
+    try {
+        const { dataset, metrics, tone, language, outputCount } = req.body;
+
+        if (!dataset || !metrics) {
+            return res.status(400).json({ error: 'Please provide all required fields for generating statistics' });
+        }
+
+        const statistics = await generateStatisticsContent(dataset, metrics, tone, language, outputCount);
+
+        res.status(200).json(statistics);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating statistics' });
+    }
+};
+
+//------- Digital PR Ideas Generator,
+
+const { generatePRIdeasContent } = require('../utils.js/DigitalPrIdeas');
+
+exports.generatePRIdeas = async (req, res) => {
+    try {
+        const { companyName, industry, targetAudience, goals, tone, language, outputCount } = req.body;
+
+        if (!companyName || !industry || !targetAudience || !goals) {
+            return res.status(400).json({ error: 'Please provide all required fields for generating PR ideas' });
+        }
+
+        const prIdeas = await generatePRIdeasContent(companyName, industry, targetAudience, goals, tone, language, outputCount);
+
+        res.status(200).json(prIdeas);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating PR ideas' });
+    }
+};
+
+
+// -------Meeting Audio Points
+const { transcribeAudioMeeting, convertToBulletPoints } = require('../utils.js/MeetingAudioPoints');
+
+exports.transcribeMeeting = async (req, res) => {
+    const file = req.file;
+    const { language } = req.body; // Extract language from request body
+
+    if (!file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    if (!language) {
+        return res.status(400).json({ error: 'No language specified' });
+    }
+
+    const audioPath = path.join(__dirname, '..', file.path);
+
+    try {
+        // Transcribe the uploaded audio file
+        const text = await transcribeAudioMeeting(audioPath, language, process.env.OPENAI_API_KEY);
+
+        // Convert the transcribed text into bullet points
+        const bulletPoints = await convertToBulletPoints(text);
+
+        res.json({ text, bulletPoints });
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ error: error.message });
+    } finally {
+        // Clean up the uploaded file
+        fs.unlinkSync(audioPath);
+    }
+};
