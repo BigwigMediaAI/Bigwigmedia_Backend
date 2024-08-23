@@ -3602,3 +3602,106 @@ exports.transcribeMeeting = async (req, res) => {
         fs.unlinkSync(audioPath);
     }
 };
+
+
+// ----------Pdf To Audio------------
+
+
+exports.pdfToAudio = async (req, res) => {
+  const filePath = req.file.path;
+
+  try {
+    // Step 1: Extract text from the PDF
+    const dataBuffer = fs.readFileSync(filePath);
+    const data = await pdfParse(dataBuffer);
+
+    if (!data.text) {
+      throw new Error('No text found in the PDF.');
+    }
+
+    // Step 2: Translate the extracted text
+    const targetLanguage = req.body.language || 'en'; // Get the target language from the request, default to English
+    const translatedText = await translatetext(data.text, targetLanguage);
+
+    if (!translatedText) {
+      throw new Error('Translation failed.');
+    }
+
+    // Step 3: Convert the translated text to audio
+    const tone = req.body.tone || 'nova'; // Get the tone from the request, or use a default value
+    const audioFilePath = await textToSpeech(translatedText, tone);
+
+    // Step 4: Set headers to play audio in the browser
+    res.setHeader('Content-Type', 'audio/mpeg');  // Assuming the output format is MP3
+    res.setHeader('Content-Disposition', 'inline'); // 'inline' will play the audio in the browser
+
+    // Step 5: Stream the audio to the response
+    const audioStream = fs.createReadStream(audioFilePath);
+    audioStream.pipe(res);
+
+    // Clean up files after streaming is done
+    audioStream.on('end', () => {
+      fs.unlinkSync(filePath); // Delete the uploaded PDF file
+      fs.unlinkSync(audioFilePath); // Delete the generated audio file
+    });
+
+    // Handle errors during streaming
+    audioStream.on('error', (streamErr) => {
+      console.error('Error streaming audio:', streamErr);
+      res.status(500).send({ error: 'Error streaming audio.' });
+    });
+
+  } catch (error) {
+    // Handle errors during the PDF to audio conversion
+    res.status(500).send({ error: `Error converting PDF to audio: ${error.message}` });
+
+    // Clean up files if an error occurs
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+  }
+};
+
+
+// --------sign in pdf -------------
+
+const { rgb } = require('pdf-lib');
+
+exports.pdfSign=async (req,res) => {
+  const { path } = req.file;
+  try {
+    const pdfBytes = fs.readFileSync(path);
+    const pdfDoc = await PDFDocument.load(pdfBytes);
+    const pages = pdfDoc.getPages();
+
+    pages.forEach((page) => {
+      const { width, height } = page.getSize();
+      const textWidth = 200;
+      const textHeight = 50;
+      page.drawRectangle({
+        x: width - textWidth - 10,
+        y: 10,
+        width: textWidth,
+        height: textHeight,
+        borderColor: rgb(0, 0, 0),
+        borderWidth: 1.5,
+      });
+      page.drawText('Signature:', {
+        x: width - textWidth,
+        y: 30,
+        size: 12,
+        color: rgb(0, 0, 0),
+      });
+    });
+
+    const modifiedPdfBytes = await pdfDoc.save();
+    fs.writeFileSync('output.pdf', modifiedPdfBytes);
+    res.download('output.pdf');
+  } catch (error) {
+    res.status(500).send('Error processing PDF');
+  } finally {
+    fs.unlinkSync(path); // Clean up the uploaded file
+  }
+
+}
+
