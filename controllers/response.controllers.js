@@ -3705,3 +3705,58 @@ exports.pdfSign=async (req,res) => {
 
 }
 
+// ------------Docx to audio---------------
+const mammoth = require('mammoth')
+exports.docsToAudio = async (req, res) => {
+  const filePath = req.file.path;
+
+  try {
+    // Step 1: Extract text from the DOCS file
+    const { value: extractedText } = await mammoth.extractRawText({ path: filePath });
+
+    if (!extractedText) {
+      throw new Error('No text found in the DOCS file.');
+    }
+
+    // Step 2: Translate the extracted text
+    const targetLanguage = req.body.language || 'en'; // Default to English if no language is specified
+    const translatedText = await translatetext(extractedText, targetLanguage);
+
+    if (!translatedText) {
+      throw new Error('Translation failed.');
+    }
+
+    // Step 3: Convert the translated text to audio
+    const tone = req.body.tone || 'nova'; // Use the specified tone or a default value
+    const audioFilePath = await textToSpeech(translatedText, tone);
+
+    // Step 4: Set headers to play audio in the browser
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('Content-Disposition', 'inline');
+
+    // Step 5: Stream the audio to the response
+    const audioStream = fs.createReadStream(audioFilePath);
+    audioStream.pipe(res);
+
+    // Clean up files after streaming is done
+    audioStream.on('end', () => {
+      fs.unlinkSync(filePath); // Delete the uploaded DOCS file
+      fs.unlinkSync(audioFilePath); // Delete the generated audio file
+    });
+
+    // Handle errors during streaming
+    audioStream.on('error', (streamErr) => {
+      console.error('Error streaming audio:', streamErr);
+      res.status(500).send({ error: 'Error streaming audio.' });
+    });
+
+  } catch (error) {
+    // Handle errors during the DOCS to audio conversion
+    res.status(500).send({ error: `Error converting DOCS to audio: ${error.message} `});
+
+    // Clean up files if an error occurs
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+  }
+};
