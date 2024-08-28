@@ -3760,3 +3760,87 @@ exports.docsToAudio = async (req, res) => {
     }
   }
 };
+
+// -----------Text Extractor from Docx----------
+const { Document, Packer, Paragraph, TextRun } = require('docx');
+
+async function createDocxFile(text) {
+  const doc = new Document({
+    sections: [
+      {
+        properties: {},
+        children: [
+          new Paragraph({
+            children: [
+              new TextRun(text)
+            ],
+          }),
+        ],
+      },
+    ],
+  });
+
+  const buffer = await Packer.toBuffer(doc);
+  return buffer;
+}
+
+exports.extractText = async (req, res) => {
+  const filePath = path.join(__dirname, '..', req.file.path);
+
+  try {
+    // Step 1: Extract text from the DOCX file
+    const { value: extractedText } = await mammoth.extractRawText({ path: filePath });
+
+    if (!extractedText) {
+      throw new Error('No text found in the DOCX file.');
+    }
+
+    // Step 2: Translate the extracted text
+    const targetLanguage = req.body.language || 'en'; // Default to English if no language is specified
+    const translatedText = await translatetext(extractedText, targetLanguage);
+
+    if (!translatedText) {
+      throw new Error('Translation failed.');
+    }
+
+    // Create a DOCX file with the translated text
+    const docxBuffer = await createDocxFile(translatedText);
+
+    // Optionally, delete the uploaded file after processing
+    fs.unlinkSync(filePath);
+
+    // Send the DOCX file as a response
+    res.setHeader('Content-Disposition', 'attachment; filename=translated.docx');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    res.send(docxBuffer);
+  } catch (err) {
+    // Optionally, delete the uploaded file in case of error
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+
+    res.status(500).send(`Error processing the DOCX file: ${err.message}`);
+  }
+};
+
+// --------------Image Prompt Generator------------
+
+// controllers/imagePromptController.js
+const { generateImagePromptContent } = require('../utils.js/imagePromptGenerator');
+
+exports.generateImagePrompt = async (req, res) => {
+    try {
+        const { mainObject, style, feeling, colors, background, language, outputCount } = req.body;
+
+        if (!mainObject || !style || !feeling || !colors || !background || !language || !outputCount) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        const prompts = await generateImagePromptContent(mainObject, style, feeling, colors, background, language, outputCount);
+
+        res.status(200).json(prompts);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating prompts' });
+    }
+};
