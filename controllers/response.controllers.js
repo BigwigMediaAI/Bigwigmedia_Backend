@@ -177,38 +177,38 @@ const upload = multer({ dest: 'uploads/' }); // Destination folder for uploaded 
 // Resize options for different platforms
 const resizeOptions = {
     facebook: {
-        profilePicture: { width: 180, height: 180 },
-        coverPhoto: { width: 820, height: 312 },
-        sharedImage: { width: 1200, height: 630 }
+        "Facebook Profile Picture": { width: 180, height: 180 },
+        "Facebook Cover Photo": { width: 820, height: 312 },
+        "Facebook Shared Image": { width: 1200, height: 630 }
     },
     instagram: {
-        profilePicture: { width: 110, height: 110 },
-        squareImage: { width: 1080, height: 1080 },
-        landscapeImage: { width: 1080, height: 566 },
-        portraitImage: { width: 1080, height: 1350 }
+      "Instagram Profile Picture": { width: 110, height: 110 },
+      "Instagram Square Image": { width: 1080, height: 1080 },
+      "Landscape Image": { width: 1080, height: 566 },
+      "Instagram Portrait Image": { width: 1080, height: 1350 }
     },
     twitter: {
-        profilePicture: { width: 400, height: 400 },
-        headerPhoto: { width: 1500, height: 500 },
-        sharedImage: { width: 1200, height: 675 }
+        "Twitter Profile Image": { width: 400, height: 400 },
+        "Twitter Header Image": { width: 1500, height: 500 },
+        "Twitter Shared Image": { width: 1200, height: 675 }
     },
     linkedin: {
-        profilePicture: { width: 400, height: 400 },
-        coverPhoto: { width: 1584, height: 396 },
-        sharedImage: { width: 1200, height: 627 }
+        "Linkedin Profile Picture": { width: 400, height: 400 },
+        "Linkedin Cover Photo": { width: 1584, height: 396 },
+        "Linkedin Shared Image": { width: 1200, height: 627 }
     },
     pinterest: {
-        profilePicture: { width: 165, height: 165 },
-        pinImage: { width: 1000, height: 1500 }
+      "Pinterest Profile Picture": { width: 165, height: 165 },
+      "Pinterest Pin Image": { width: 1000, height: 1500 }
     },
     snapchat: {
-        geofilter: { width: 1080, height: 2340 },
-        snapAd: { width: 1080, height: 1920 }
+      "Snapchat Geo Filter": { width: 1080, height: 2340 },
+      "Snapchat SnapAd": { width: 1080, height: 1920 }
     },
     youtube: {
-        channelProfilePicture: { width: 800, height: 800 },
-        channelCoverPhoto: { width: 2560, height: 1440 },
-        videoThumbnail: { width: 1280, height: 720 }
+        "Channel Profile Image": { width: 800, height: 800 },
+        "Channel Cover Image": { width: 2560, height: 1440 },
+        "Video Thumbnail": { width: 1280, height: 720 }
     }
 };
 
