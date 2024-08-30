@@ -3844,3 +3844,21 @@ exports.generateImagePrompt = async (req, res) => {
         res.status(500).json({ error: 'Error generating prompts' });
     }
 };
+
+const instagramGetUrl = require('instagram-url-direct');
+
+exports.instaImageVideoDownloader=async(req,res)=>{
+  const { url } = req.body;
+
+    if (!url) {
+        return res.status(400).send({ error: 'URL is required' });
+    }
+  try {
+    let links = await instagramGetUrl(url);
+        res.send(links);
+    
+  } catch (error) {
+    res.status(500).send({ error: 'Failed to retrieve URL' });
+
+  }
+}
