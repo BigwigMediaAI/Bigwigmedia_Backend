@@ -3,9 +3,11 @@ require("dotenv").config();
 
 const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
-async function generateYoutubeScript(topic, tone, length,language) {
+async function generateYoutubeScript(topic, tone, length,language,outputCount) {
+  let responses = [];
   try {
-    const completion = await openai.chat.completions.create({
+    for (let i = 0; i < outputCount; i++) {
+      const completion = await openai.chat.completions.create({
       messages: [
         {
           role: "system",
@@ -18,13 +20,15 @@ async function generateYoutubeScript(topic, tone, length,language) {
       ],
       model: "gpt-4o"
     });
+    
 
     if (!completion || !completion.choices || completion.choices.length === 0) {
       throw new Error("Invalid completion response");
     }
 
-    const script = completion.choices[0].message.content.trim();
-    return script;
+    responses.push(completion.choices[0].message.content.trim());
+  }
+    return responses;
   } catch (error) {
     console.error("Error:", error);
     return "Failed to generate YouTube script";

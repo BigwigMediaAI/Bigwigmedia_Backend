@@ -5,7 +5,7 @@ const openai = new openAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-async function generateBusinessPlan(businessType, industry, targetMarket,language) {
+async function generateBusinessPlan(businessType, industry, targetMarket,language,outputCount) {
   const prompt = `
   Create a detailed business plan in ${language} for a ${businessType} in the ${industry} industry targeting ${targetMarket}. Include sections on:
   1. Executive Summary
@@ -19,6 +19,9 @@ async function generateBusinessPlan(businessType, industry, targetMarket,languag
   9. Appendix
   `;
 
+  let responses = [];
+
+  for (let i = 0; i < outputCount; i++) {
   const completion = await openai.chat.completions.create({
     messages: [
       {
@@ -33,8 +36,9 @@ async function generateBusinessPlan(businessType, industry, targetMarket,languag
     model: "gpt-4o"
   });
 
-  const businessPlan = completion.choices[0].message.content.trim();
-  return businessPlan;
+  responses.push(completion.choices[0].message.content.trim());
+}
+  return responses;
 }
 
 module.exports = generateBusinessPlan;

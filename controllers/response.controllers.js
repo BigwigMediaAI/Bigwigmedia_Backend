@@ -1561,8 +1561,8 @@ exports.NCA_Agreement= async (req,res)=>{
 // *************Youtube Script Generator************
 exports.generateYouTubeScript = async (req, res) => {
   try {
-    const { topic,tone,length,language } = req.body;
-    const script = await generateYoutubeScript(topic,tone, length,language);
+    const { topic,tone,length,language,outputCount } = req.body;
+    const script = await generateYoutubeScript(topic,tone, length,language,outputCount);
     res.status(200).json({ script });
   } catch (error) {
     console.error("Error:", error);
@@ -1667,8 +1667,8 @@ exports.generatePoll = async (req, res) => {
 
 exports.generateBusinessPlan = async (req, res) => {
   try {
-    const { businessType, industry, targetMarket,language } = req.body;
-    const plan = await generateBusinessPlan(businessType, industry, targetMarket,language);
+    const { businessType, industry, targetMarket,language,outputCount } = req.body;
+    const plan = await generateBusinessPlan(businessType, industry, targetMarket,language,outputCount);
     res.status(200).json({ businessPlan: plan });
   } catch (error) {
     console.error("Error:", error);
@@ -3844,6 +3844,9 @@ exports.generateImagePrompt = async (req, res) => {
         res.status(500).json({ error: 'Error generating prompts' });
     }
 };
+
+
+// instagram image and video downloader controller
 
 const instagramGetUrl = require('instagram-url-direct');
 
