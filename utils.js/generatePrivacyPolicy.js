@@ -3,8 +3,10 @@ require("dotenv").config();
 
 const openai = new OpenAI();
 
-async function generatePrivacyPolicy(companyName, address, websiteURL,language) {
+async function generatePrivacyPolicy(companyName, address, websiteURL,language,outputCount) {
+    let responses = [];
     try {
+        for (let i = 0; i < outputCount; i++) {
         const prompt = `Generate a privacy policy in ${language} for a company with the following details:\nCompany Name: ${companyName}\nAddress: ${address}\nWebsite URL: ${websiteURL}\n\nPrivacy Policy:`;
 
         const completion = await openai.chat.completions.create({
@@ -17,12 +19,9 @@ async function generatePrivacyPolicy(companyName, address, websiteURL,language) 
             model: "gpt-4o",
         });
 
-        const privacyPolicy = completion.choices[0].message.content.trim();
-        return {
-            data: {
-                privacyPolicy: privacyPolicy
-            }
-        };
+        responses.push( completion.choices[0].message.content.trim());
+    }
+        return responses
     } catch (error) {
         console.error("Error generating privacy policy:", error);
         return null;

@@ -1629,8 +1629,8 @@ exports.removeAudio=async(req,res)=>{
 // *******Privacy Policy Generator*******
 exports.genratedPolicy = async (req, res) => {
   try {
-    const { companyName, address, websiteURL,language } = req.body;
-    const improvedContent = await generatePrivacyPolicy(companyName, address, websiteURL,language);
+    const { companyName, address, websiteURL,language,outputCount } = req.body;
+    const improvedContent = await generatePrivacyPolicy(companyName, address, websiteURL,language,outputCount);
 
     response_200(res, "Privacy Policy generated successfully", { improvedContent });
   } catch (error) {
