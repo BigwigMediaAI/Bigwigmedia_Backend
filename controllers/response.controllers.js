@@ -3865,3 +3865,81 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
   }
 }
+
+
+// -----------Instagram Caption Generator--------------
+const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost } = require('../utils.js/generativeTools');
+
+exports.generateCaption = async (req, res) => {
+    try {
+        const { postDetails, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+        if (!postDetails || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+            return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        const captions = await generateCaption({ postDetails, tone, language, outputCount, useEmoji, useHashtags });
+
+        res.status(200).json(captions);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating captions' });
+    }
+};
+
+// -----------Instagram Bio Generator--------------
+
+exports.generateInstagramBio = async (req, res) => {
+    try {
+        const { profile, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+        if (!profile || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+            return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        const bios = await generateInstagramBio({ profile, tone, language, outputCount, useEmoji, useHashtags });
+
+        res.status(200).json(bios);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating Instagram bios' });
+    }
+};
+
+// -----------Instagram Story Post Generator--------------
+
+exports.generateInstagramStory = async (req, res) => {
+  try {
+      const { story, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+      if (!story || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const stories = await generateInstagramStory({ story, tone, language, outputCount, useEmoji, useHashtags });
+
+      res.status(200).json(stories);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Instagram stories' });
+  }
+};
+
+// -----------Instagram Reel Post Generator--------------
+
+exports.generateReelPost = async (req, res) => {
+    try {
+        const { theme, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+        if (!theme || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+            return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        const posts = await generateReelPost({ theme, tone, language, outputCount, useEmoji, useHashtags });
+
+        res.status(200).json(posts);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating Reel posts' });
+    }
+};
