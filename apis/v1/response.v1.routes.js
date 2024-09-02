@@ -194,23 +194,23 @@ router.post('/generateAIDA',checkLimit, generateAIDA);
 router.post('/generateColdEmail',checkLimit, generateColdEmail);
 router.post('/generateMetaDescription',checkLimit, generateMetaDescription);
 router.post('/generateNewsletterName',checkLimit, generateNewsletterName);
-router.post('/generateJobSummary', generateJobSummary);
-router.post('/generateJobQualifications', generateJobQualifications);
-router.post('/generateJobResponsibilities', generateJobResponsibilities);
-router.post('/generateSubheadings', generateSubheadings);
-router.post('/generateUVP', generateUVP);
-router.post('/generateOKR', generateOKR);
-router.post('/generateProjectTimeline', generateProjectTimeline);
-router.post('/removebackground',uploadbackgroundimage.single('image'), uploadImageBG);
-router.post('/generateStatistics', generateStatistics);
-router.post('/generatePRIdeas', generatePRIdeas);
-router.post('/transcribe', upload.single('audio'), transcribeMeeting);
-router.post('/pdftoaudio', upload.single('pdf'), pdfToAudio);
-router.post('/sign',upload.single('pdf'),pdfSign)
-router.post('/docstoaudio', upload.single('docs'), docsToAudio);
-router.post('/extractText',upload.single('docs'),extractText)
-router.post('/generateImagePrompt', generateImagePrompt);
-router.post('/instadownloader',instaImageVideoDownloader);
+router.post('/generateJobSummary',checkLimit, generateJobSummary);
+router.post('/generateJobQualifications',checkLimit, generateJobQualifications);
+router.post('/generateJobResponsibilities',checkLimit, generateJobResponsibilities);
+router.post('/generateSubheadings',checkLimit, generateSubheadings);
+router.post('/generateUVP',checkLimit, generateUVP);
+router.post('/generateOKR',checkLimit, generateOKR);
+router.post('/generateProjectTimeline',checkLimit, generateProjectTimeline);
+router.post('/removebackground',checkLimit,uploadbackgroundimage.single('image'), uploadImageBG);
+router.post('/generateStatistics',checkLimit,generateStatistics);
+router.post('/generatePRIdeas',checkLimit, generatePRIdeas);
+router.post('/transcribe',checkLimit, upload.single('audio'), transcribeMeeting);
+router.post('/pdftoaudio',checkLimit, upload.single('pdf'), pdfToAudio);
+router.post('/sign',checkLimit,upload.single('pdf'),pdfSign)
+router.post('/docstoaudio',checkLimit, upload.single('docs'), docsToAudio);
+router.post('/extractText',checkLimit,upload.single('docs'),extractText)
+router.post('/generateImagePrompt',checkLimit, generateImagePrompt);
+router.post('/instadownloader',checkLimit,instaImageVideoDownloader);
 
 
 
