@@ -3868,7 +3868,7 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
 
 // -----------Instagram Caption Generator--------------
-const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost } = require('../utils.js/generativeTools');
+const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio } = require('../utils.js/generativeTools');
 
 exports.generateCaption = async (req, res) => {
     try {
@@ -3940,6 +3940,84 @@ exports.generateReelPost = async (req, res) => {
         res.status(200).json(posts);
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).json({ error: 'Error generating Reel posts' });
-    }
+        res.status(500).json({ error: 'Error generating Reel posts' });
+    }
+};
+
+
+// -----------Instagram Threads Post Generator--------------
+
+exports.generateThreadsPost = async (req, res) => {
+    try {
+        const { theme, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+        if (!theme || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+            return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        const posts = await generateThreadsPost({ theme, tone, language, outputCount, useEmoji, useHashtags });
+
+        res.status(200).json(posts);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating Threads posts' });
+    }
+};
+
+// -----------Facebook Post Generator-------------- 
+
+exports.generateFacebookPost = async (req, res) => {
+    try {
+        const { theme, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+        if (!theme || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+            return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        const posts = await generateFacebookPost({ theme, tone, language, outputCount, useEmoji, useHashtags });
+
+        res.status(200).json(posts);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating Facebook posts' });
+    }
+};
+
+// -----------Facebook Ad Headline Generator--------------
+
+exports.generateFacebookAdHeadline = async (req, res) => {
+  try {
+      const { brandOrProductName, purpose, businessType, tone, language, outputCount, useEmoji } = req.body;
+
+      if (!brandOrProductName || !purpose || !businessType || !tone || !language || !outputCount || useEmoji === undefined) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const headlines = await generateFacebookAdHeadline({ brandOrProductName, purpose, businessType, tone, language, outputCount, useEmoji });
+
+      res.status(200).json(headlines);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Facebook Ad headlines' });
+  }
+};
+
+
+// -----------Facebook Bio Generator-------------- 
+
+exports.generateFacebookBio = async (req, res) => {
+  try {
+      const { description, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+      if (!description || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await generateFacebookBio({ description, tone, language, outputCount, useEmoji, useHashtags });
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Facebook bios' });
+  }
 };

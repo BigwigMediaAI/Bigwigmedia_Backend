@@ -77,11 +77,13 @@ async function generateInstagramStory({ story, tone, language, outputCount, useE
 
     try {
         for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
             const completion = await openai.chat.completions.create({
                 messages: [
                     {
                         role: 'system',
-                        content: `Generate an Instagram story post in ${language} with a ${tone} tone${useEmoji ? ' and use emojis' : ''}${useHashtags ? ' and include hashtags' : ''}.`
+                        content: `Generate an Instagram story post in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
                     },
                     {
                         role: 'user',
@@ -109,11 +111,13 @@ async function generateReelPost({ theme, tone, language, outputCount, useEmoji, 
 
     try {
         for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
             const completion = await openai.chat.completions.create({
                 messages: [
                     {
                         role: 'system',
-                        content: `You are a social media expert creating Instagram Reel captions. Generate a short, engaging, and dynamic caption for an Instagram Reel in ${language} with a ${tone} tone${useEmoji ? ' that includes emojis' : ''}${useHashtags ? ' and relevant hashtags' : ''}.`
+                        content: `You are a social media expert creating Instagram Reel captions. Generate a short, engaging, and dynamic caption for an Instagram Reel in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
                     },
                     {
                         role: 'user',
@@ -137,5 +141,155 @@ async function generateReelPost({ theme, tone, language, outputCount, useEmoji, 
 }
 
 
+async function generateThreadsPost({ theme, tone, language, outputCount, useEmoji, useHashtags }) {
+    let responses = [];
 
-module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost };
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert creating Instagram Threads content. Generate a concise, engaging, and thoughtful post in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Create an Instagram Threads post based on the following theme: "${theme}". The post should resonate with the Threads community and encourage interaction.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            responses.push(completion.choices[0].message.content.trim());
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating Instagram Threads post:', error);
+        return 'Failed to generate Instagram Threads post';
+    }
+}
+
+
+async function generateFacebookPost({ theme, tone, language, outputCount, useEmoji, useHashtags }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert creating Facebook posts. Generate a well-crafted, engaging, and shareable Facebook post in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Create a Facebook post based on the following theme: "${theme}". The post should be engaging, encourage interaction, and be suitable for a broad audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPost = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPost);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating Facebook post:', error);
+        return 'Failed to generate Facebook post';
+    }
+}
+
+
+async function generateFacebookAdHeadline({ brandOrProductName, purpose, businessType, tone, language, outputCount, useEmoji }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a copywriting expert creating Facebook Ad headlines. Generate a catchy, compelling, and concise headline in ${language} with a ${tone} tone${emojiText}. The headline should be tailored to the specified business type and align with the purpose.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Brand/Product: ${brandOrProductName}\nPurpose: ${purpose}\nBusiness Type: ${businessType}`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedHeadline = completion.choices[0].message.content.trim();
+
+
+            responses.push(generatedHeadline);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating Facebook Ad headline:', error);
+        return 'Failed to generate Facebook Ad headline';
+    }
+}
+
+
+async function generateFacebookBio({ description, tone, language, outputCount, useEmoji, useHashtags }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert creating Facebook bios. Generate a well-crafted, engaging, and shareable Facebook bio in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Create a Facebook bio based on the following theme: "${description}". The post should be engaging, encourage interaction, and be suitable for a broad audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPost = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPost);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating Facebook bio:', error);
+        return 'Failed to generate Facebook bio';
+    }
+}
+
+
+
+module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio};
