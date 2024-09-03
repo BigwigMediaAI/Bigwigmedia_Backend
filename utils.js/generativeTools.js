@@ -289,7 +289,80 @@ async function generateFacebookBio({ description, tone, language, outputCount, u
         return 'Failed to generate Facebook bio';
     }
 }
+async function generateFacebookGroupPost({ description, tone, language, outputCount, useEmoji, useHashtags }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert creating Facebook group posts. Generate a well-crafted, engaging, and shareable Facebook group post in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Create a Facebook group post based on the following theme: "${description}". The post should be engaging, encourage interaction, and be suitable for a broad audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPost = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPost);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating Facebook group post:', error);
+        return 'Failed to generate Facebook group post';
+    }
+}
 
 
+async function generateFacebookGroupDescription({ description, tone, language, outputCount, useEmoji, useHashtags }) {
+    let responses = [];
 
-module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio};
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert creating Facebook group description. Generate a well-crafted, engaging, and shareable Facebook group description in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Create a Facebook group description based on the following description: "${description}". The post should be engaging, encourage interaction, and be suitable for a broad audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPost = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPost);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating Facebook group description:', error);
+        return 'Failed to generate Facebook group description';
+    }
+}
+
+
+module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription};

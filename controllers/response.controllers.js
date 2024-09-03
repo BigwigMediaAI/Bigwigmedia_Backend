@@ -3868,7 +3868,7 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
 
 // -----------Instagram Caption Generator--------------
-const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio } = require('../utils.js/generativeTools');
+const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost } = require('../utils.js/generativeTools');
 
 exports.generateCaption = async (req, res) => {
     try {
@@ -4019,5 +4019,40 @@ exports.generateFacebookBio = async (req, res) => {
   } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ error: 'Error generating Facebook bios' });
+  }
+};
+
+// -----------Facebook Group Post Generator--------------
+exports.generateFacebookGroupPost = async (req, res) => {
+  try {
+      const { description, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+      if (!description || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await generateFacebookGroupPost({ description, tone, language, outputCount, useEmoji, useHashtags });
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Facebook group post' });
+  }
+};
+// -----------Facebook Group Discription Generator--------------
+exports.generateFacebookGroupDescription = async (req, res) => {
+  try {
+      const { description, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+      if (!description || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await generateFacebookGroupDescription({ description, tone, language, outputCount, useEmoji, useHashtags });
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Facebook group description' });
   }
 };
