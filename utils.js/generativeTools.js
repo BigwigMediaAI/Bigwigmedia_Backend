@@ -469,10 +469,306 @@ async function YouTubePostDescription ({ description, tone, language, outputCoun
         }
         return responses;
     } catch (error) {
-        console.error('Error generating YouTube Post Title:', error);
-        return 'Failed to generate YouTube Post Title';
+        console.error('Error generating YouTube Post Description:', error);
+        return 'Failed to generate YouTube Post Description';
     }
 }
 
 
-module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription};
+async function TwitterBio ({ description, tone, language, outputCount, useEmoji, useHashtags }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert creating Twitter Bio. Generate a well-crafted, engaging, and shareable Twitter Bio in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Create a Twitter Bio Generator based on the following description: "${description}". The post should be engaging, encourage interaction, and be suitable for a broad audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPost = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPost);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating Twitter Bio Generator:', error);
+        return 'Failed to generate Twitter Bio Generator';
+    }
+}
+async function TwitterPost ({ description, tone, language, outputCount, useEmoji, useHashtags }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert creating Twitter Post. Generate a well-crafted, engaging, and shareable Twitter Post in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Create a Twitter Post based on the following description: "${description}". The post should be engaging, encourage interaction, and be suitable for a broad audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPost = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPost);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating Twitter Post:', error);
+        return 'Failed to generate Twitter Post';
+    }
+}
+async function TwitterThreadsPost ({ description, tone, language, outputCount, useEmoji, useHashtags }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert creating Twitter Threads Post. Generate a well-crafted, engaging, and shareable Twitter Threads Post in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Create a Twitter Threads Post based on the following description: "${description}". The post should be engaging, encourage interaction, and be suitable for a broad audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPost = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPost);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating Twitter Threads Post:', error);
+        return 'Failed to generate Twitter Threads Post';
+    }
+}
+async function TwitterThreadsBio ({ description, tone, language, outputCount, useEmoji, useHashtags }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert creating Twitter Threads Bio. Generate a well-crafted, engaging, and shareable Twitter Threads Bio in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Create a Twitter Threads Bio based on the following description: "${description}". The post should be engaging, encourage interaction, and be suitable for a broad audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPost = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPost);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating Twitter Threads Bio :', error);
+        return 'Failed to generate Twitter Threads Bio ';
+    }
+}
+async function LinkedInPageHeadline({ description, tone, language, outputCount, useEmoji, useHashtags }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert creating LinkedIn Page Headline. Generate a well-crafted, engaging, and shareable LinkedIn Page Headline in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Create a LinkedIn Page Headline based on the following description: "${description}". The post should be engaging, encourage interaction, and be suitable for a broad audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPost = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPost);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error LinkedIn Page Headline:', error);
+        return 'Failed to LinkedIn Page Headline';
+    }
+}
+
+async function LinkedinCompanyPageHeadline({ description, tone, language, outputCount, useEmoji, useHashtags }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert creating Linkedin Company Page Headline. Generate a well-crafted, engaging, and shareable Linkedin Company Page Headline in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Create a Linkedin Company Page Headline based on the following description: "${description}". The post should be engaging, encourage interaction, and be suitable for a broad audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPost = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPost);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error Linkedin Company Page Headline:', error);
+        return 'Failed to Linkedin Company Page Headline';
+    }
+}
+
+
+async function LinkedInPageSummary({ description, tone, language, outputCount, useEmoji, useHashtags }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert creating LinkedIn Page Summary. Generate a well-crafted, engaging, and shareable LinkedIn Page Summary in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Create a LinkedIn Page Summary based on the following description: "${description}". The post should be engaging, encourage interaction, and be suitable for a broad audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPost = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPost);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error LinkedIn Page Summary:', error);
+        return 'Failed to LinkedIn Page Summary';
+    }
+}
+
+
+async function LinkedInCompanySummary({ description, tone, language, outputCount, useEmoji, useHashtags }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert creating LinkedIn Company Summary. Generate a well-crafted, engaging, and shareable LinkedIn Company Summary in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Create a LinkedIn Company Summary based on the following description: "${description}". The post should be engaging, encourage interaction, and be suitable for a broad audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPost = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPost);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error LinkedIn Company Summary:', error);
+        return 'Failed to LinkedIn Company Summary';
+    }
+}
+
+
+
+module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary};

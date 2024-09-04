@@ -3868,7 +3868,7 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
 
 // -----------Instagram Caption Generator--------------
-const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription } = require('../utils.js/generativeTools');
+const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary } = require('../utils.js/generativeTools');
 
 exports.generateCaption = async (req, res) => {
     try {
@@ -4107,5 +4107,147 @@ exports.generateYouTubePostDescription = async (req, res) => {
   } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ error: 'Error generating YouTube Post Title' });
+  }
+};
+
+
+exports.generateTwitterBio = async (req, res) => {
+  try {
+      const { description, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+      if (!description || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await TwitterBio({ description, tone, language, outputCount, useEmoji, useHashtags });
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Twitter Bio Generator' });
+  }
+};
+
+
+exports.generateTwitterPost = async (req, res) => {
+  try {
+      const { description, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+      if (!description || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await TwitterPost({ description, tone, language, outputCount, useEmoji, useHashtags });
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Twitter Post' });
+  }
+};
+
+exports.generateTwitterThreadsPost = async (req, res) => {
+  try {
+      const { description, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+      if (!description || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await TwitterThreadsPost({ description, tone, language, outputCount, useEmoji, useHashtags });
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Twitter Threads Post' });
+  }
+};
+
+
+exports.generateTwitterThreadsBio = async (req, res) => {
+  try {
+      const { description, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+      if (!description || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await TwitterThreadsBio({ description, tone, language, outputCount, useEmoji, useHashtags });
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Twitter Threads Post' });
+  }
+};
+
+exports.generateLinkedInPageHeadline = async (req, res) => {
+  try {
+      const { description, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+      if (!description || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await LinkedInPageHeadline({ description, tone, language, outputCount, useEmoji, useHashtags });
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Twitter Threads Post' });
+  }
+};
+
+
+exports.generateLinkedinCompanyPageHeadline = async (req, res) => {
+  try {
+      const { description, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+      if (!description || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await LinkedinCompanyPageHeadline({ description, tone, language, outputCount, useEmoji, useHashtags });
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Twitter Threads Post' });
+  }
+};
+
+
+exports.generateLinkedInPageSummary = async (req, res) => {
+  try {
+      const { description, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+      if (!description || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await LinkedInPageSummary({ description, tone, language, outputCount, useEmoji, useHashtags });
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Twitter Threads Post' });
+  }
+};
+
+
+exports.generateLinkedInCompanySummary = async (req, res) => {
+  try {
+      const { description, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+      if (!description || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await LinkedInCompanySummary({ description, tone, language, outputCount, useEmoji, useHashtags });
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating LinkedIn Company Summary' });
   }
 };
