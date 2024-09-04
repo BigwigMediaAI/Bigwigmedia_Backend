@@ -3868,7 +3868,7 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
 
 // -----------Instagram Caption Generator--------------
-const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription } = require('../utils.js/generativeTools');
+const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription } = require('../utils.js/generativeTools');
 
 exports.generateCaption = async (req, res) => {
     try {
@@ -4054,5 +4054,58 @@ exports.generateFacebookGroupDescription = async (req, res) => {
   } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ error: 'Error generating Facebook group description' });
+  }
+};
+
+
+// -----------Facebook Page Discription Generator--------------
+exports.generateFacebookPageDescription = async (req, res) => {
+  try {
+      const { description, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+      if (!description || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await FacebookPageDescription({ description, tone, language, outputCount, useEmoji, useHashtags });
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Facebook group description' });
+  }
+};
+
+
+exports.generateYouTubePostTitle = async (req, res) => {
+  try {
+      const { description, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+      if (!description || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await YouTubePostTitle({ description, tone, language, outputCount, useEmoji, useHashtags });
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating YouTube Post Title' });
+  }
+};
+exports.generateYouTubePostDescription = async (req, res) => {
+  try {
+      const { description, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+
+      if (!description || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await YouTubePostDescription({ description, tone, language, outputCount, useEmoji, useHashtags });
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating YouTube Post Title' });
   }
 };

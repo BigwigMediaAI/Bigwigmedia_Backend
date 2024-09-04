@@ -365,4 +365,114 @@ async function generateFacebookGroupDescription({ description, tone, language, o
 }
 
 
-module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription};
+async function FacebookPageDescription ({ description, tone, language, outputCount, useEmoji, useHashtags }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert creating Facebook page description. Generate a well-crafted, engaging, and shareable Facebook page description in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Create a Facebook page description based on the following description: "${description}". The post should be engaging, encourage interaction, and be suitable for a broad audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPost = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPost);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating Facebook page description:', error);
+        return 'Failed to generate Facebook page description';
+    }
+}
+async function YouTubePostTitle ({ description, tone, language, outputCount, useEmoji, useHashtags }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert creating YouTube Post Title. Generate a well-crafted, engaging, and shareable YouTube Post Title in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Create a YouTube Post Title based on the following description: "${description}". The post should be engaging, encourage interaction, and be suitable for a broad audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPost = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPost);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating YouTube Post Title:', error);
+        return 'Failed to generate YouTube Post Title';
+    }
+}
+async function YouTubePostDescription ({ description, tone, language, outputCount, useEmoji, useHashtags }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const emojiText = useEmoji ? ' with emojis' : ' without emojis';
+            const hashtagText = useHashtags ? ' and include relevant hashtags' : ' and without any hashtags';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert creating YouTube Post Description. Generate a well-crafted, engaging, and shareable YouTube Post Description in ${language} with a ${tone} tone${emojiText}${hashtagText}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Create a YouTube Post Description based on the following description: "${description}". The post should be engaging, encourage interaction, and be suitable for a broad audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPost = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPost);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating YouTube Post Title:', error);
+        return 'Failed to generate YouTube Post Title';
+    }
+}
+
+
+module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription};
