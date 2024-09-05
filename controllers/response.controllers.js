@@ -3868,7 +3868,7 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
 
 // -----------Instagram Caption Generator--------------
-const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease } = require('../utils.js/generativeTools');
+const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription} = require('../utils.js/generativeTools');
 
 exports.generateCaption = async (req, res) => {
     try {
@@ -4320,6 +4320,113 @@ exports.generatePressRelease = async (req, res) => {
       res.status(200).json(posts);
   } catch (error) {
       console.error('Error:', error);
-      res.status(500).json({ error: 'Error generating Article' });
+      res.status(500).json({ error: 'Error generating Press Release' });
+  }
+};
+
+
+exports.generateNewsletter = async (req, res) => {
+  try {
+      const {organizationName, event, tone, language, outputCount} = req.body;
+
+      if (!organizationName||!event || !language || !outputCount||!tone) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await Newsletter({organizationName, event, tone, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Newsletter' });
+  }
+};
+
+
+exports.generateGoogleAdsHeadliner = async (req, res) => {
+  try {
+      const {serviceName, keywordsAndHighlights, tone, adPurpose, businessType, language, outputCount} = req.body;
+
+      if (!serviceName||!keywordsAndHighlights || !language || !outputCount||!tone||!adPurpose||!businessType) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await GoogleAdsHeadline({serviceName, keywordsAndHighlights, tone, adPurpose, businessType, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error GoogleAds Headliner' });
+  }
+};
+
+exports.generateGoogleAdDescription = async (req, res) => {
+  try {
+      const {serviceName, keywordsAndHighlights, tone, adPurpose, businessType, language, outputCount} = req.body;
+
+      if (!serviceName||!keywordsAndHighlights || !language || !outputCount||!tone||!adPurpose||!businessType) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await GoogleAdDescription({serviceName, keywordsAndHighlights, tone, adPurpose, businessType, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error Google Ad Description' });
+  }
+};
+
+
+exports.generateMarketingPlan = async (req, res) => {
+  try {
+      const {describeBusiness, goal, objective, tone, language, outputCount} = req.body;
+
+      if (!describeBusiness||!goal || !language || !outputCount||!tone||!objective) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await MarketingPlan({describeBusiness, goal, objective, tone, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error Marketing Plan' });
+  }
+};
+
+
+exports.generateMarketingFunnel = async (req, res) => {
+  try {
+      const {productOrService, targetAudience, budget, goal, tone, language, outputCount} = req.body;
+
+      if (!productOrService||!goal || !language || !outputCount||!tone||!targetAudience||!budget) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await MarketingFunnel({productOrService, targetAudience, budget, goal, tone, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error Marketing Funnel' });
+  }
+};
+
+
+exports.createProductDescription = async (req, res) => {
+  try {
+      const {description, tone, language, outputCount} = req.body;
+
+      if (!description||!language || !outputCount||!tone) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await ProductDescription({description, tone, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error Product Description' });
   }
 };

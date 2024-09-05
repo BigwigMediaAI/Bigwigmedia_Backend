@@ -913,10 +913,228 @@ async function PressRelease({ organizationName, eventName, tone, language, outpu
     }
 }
 
+async function Newsletter({ organizationName, event, tone, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are an expert in crafting engaging newsletters. Write a well-structured and appealing newsletter in ${language} with a ${tone} tone. The newsletter should effectively communicate the key points and engage the readers.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Organization: "${organizationName}"\nEvent: "${event}".\nCreate a newsletter that highlights the event and provides relevant information to the subscribers.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedNewsletter = completion.choices[0].message.content.trim();
+
+            responses.push(generatedNewsletter);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating newsletter:', error);
+        return 'Failed to generate newsletter';
+    }
+}
+
+
+async function GoogleAdsHeadline({ serviceName, keywordsAndHighlights, tone, adPurpose, businessType, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are an expert in creating compelling Google Ads headlines. Generate catchy and effective headlines in ${language} with a ${tone} tone. The headlines should be tailored for ${businessType} and align with the ad purpose: ${adPurpose}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Service: "${serviceName}"\nKeywords and Highlights: "${keywordsAndHighlights.join(', ')}"\nAd Purpose: ${adPurpose}\nBusiness Type: ${businessType}`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedHeadlines = completion.choices[0].message.content.trim();
+
+            responses.push(generatedHeadlines);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating Google Ads headlines:', error);
+        return 'Failed to generate Google Ads headlines';
+    }
+}
+
+
+async function GoogleAdDescription({ serviceName, keywordsAndHighlights, tone, adPurpose, businessType, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are an expert in creating compelling Google Ad Description. Generate catchy and effective Description in ${language} with a ${tone} tone. The Description should be tailored for ${businessType} and align with the ad purpose: ${adPurpose}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Service: "${serviceName}"\nKeywords and Highlights: "${keywordsAndHighlights.join(', ')}"\nAd Purpose: ${adPurpose}\nBusiness Type: ${businessType}`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedDescription = completion.choices[0].message.content.trim();
+
+            responses.push(generatedDescription);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating Google Ads Description:', error);
+        return 'Failed to generate Google Ads Description';
+    }
+}
+
+async function MarketingPlan({ describeBusiness, goal, objective, tone, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a marketing expert. Generate a comprehensive marketing plan in ${language} with a ${tone} tone. The plan should be well-structured and tailored to achieve the stated goal and objective for the described business.`
+                    },
+                    {
+                        role: 'user',
+                        content: `
+                            Business Description: "${describeBusiness}"
+                            Goal: "${goal}"
+                            Objective: "${objective}"
+                        `
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedMarketingPlan = completion.choices[0].message.content.trim();
+
+            responses.push(generatedMarketingPlan);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating marketing plan:', error);
+        return 'Failed to generate marketing plan';
+    }
+}
+
+async function MarketingFunnel({ productOrService, targetAudience, budget, goal, tone, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a marketing strategist. Generate a detailed marketing funnel in ${language} with a ${tone} tone. The funnel should be designed to effectively guide the target audience through the stages of awareness, consideration, and conversion, given the product or service and budget constraints.`
+                    },
+                    {
+                        role: 'user',
+                        content: `
+                            Product/Service: "${productOrService}"
+                            Target Audience: "${targetAudience}"
+                            Budget: "${budget}"
+                            Goal: "${goal}"
+                        `
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedFunnel = completion.choices[0].message.content.trim();
+
+            responses.push(generatedFunnel);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating marketing funnel:', error);
+        return 'Failed to generate marketing funnel';
+    }
+}
+
+
+async function ProductDescription({ description, tone, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a product description specialist. Generate a compelling and engaging product description in ${language} with a ${tone} tone. The description should highlight the key features and benefits of the product effectively.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Product Details: "${description}"`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedDescription = completion.choices[0].message.content.trim();
+
+            responses.push(generatedDescription);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating product description:', error);
+        return 'Failed to generate product description';
+    }
+}
 
 
 
 
 
 
-module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease};
+
+
+
+module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription};
