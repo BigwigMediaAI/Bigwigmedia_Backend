@@ -3868,7 +3868,7 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
 
 // -----------Instagram Caption Generator--------------
-const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary } = require('../utils.js/generativeTools');
+const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease } = require('../utils.js/generativeTools');
 
 exports.generateCaption = async (req, res) => {
     try {
@@ -4249,5 +4249,77 @@ exports.generateLinkedInCompanySummary = async (req, res) => {
   } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ error: 'Error generating LinkedIn Company Summary' });
+  }
+};
+
+
+exports.generatePostHashtags = async (req, res) => {
+  try {
+      const { description, language, outputCount} = req.body;
+
+      if (!description|| !language || !outputCount) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await PostHashtags({description, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Post Hashtags' });
+  }
+};
+
+
+exports.generateBlogPost = async (req, res) => {
+  try {
+      const {title, description, keywords, tone, language, wordCount, includeIntroduction, includeConclusion, outputCount} = req.body;
+
+      if (!description|| !language || !outputCount|| !title || !keywords || !tone ||!wordCount ||! includeIntroduction||!includeConclusion) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await BlogPost({title, description, keywords, tone, language, wordCount, includeIntroduction, includeConclusion, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Blog Post' });
+  }
+};
+
+
+exports.generateArticle = async (req, res) => {
+  try {
+      const {description, tone, language, outputCount} = req.body;
+
+      if (!description|| !language || !outputCount||!tone) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await ArticleGenerator({description, tone, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Article' });
+  }
+};
+
+
+exports.generatePressRelease = async (req, res) => {
+  try {
+      const {organizationName, eventName, tone, language, outputCount} = req.body;
+
+      if (!organizationName||!eventName || !language || !outputCount||!tone) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await PressRelease({organizationName, eventName, tone, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Article' });
   }
 };

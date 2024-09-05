@@ -769,6 +769,154 @@ async function LinkedInCompanySummary({ description, tone, language, outputCount
     }
 }
 
+async function PostHashtags({ description, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a social media expert specializing in creating relevant and trending hashtags for posts. Generate a list of effective and popular hashtags in ${language}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Based on the following description: "${description}", generate a set of hashtags that would help increase visibility and engagement for this post.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedHashtags = completion.choices[0].message.content.trim();
+
+            responses.push(generatedHashtags);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating hashtags:', error);
+        return 'Failed to generate hashtags';
+    }
+}
 
 
-module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary};
+async function BlogPost({ title, description, keywords, tone, language, wordCount, includeIntroduction, includeConclusion, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are an experienced content writer. Generate a well-structured and engaging blog post in ${language} with a ${tone} tone. The blog post should be informative, well-researched, and optimized for SEO.`
+                    },
+                    {
+                        role: 'user',
+                        content: `
+                            Title: "${title}"
+                            Description: "${description}"
+                            Keywords: "${keywords.join(', ')}"
+                            Word Count: ${wordCount}
+                            Include Introduction: ${includeIntroduction}
+                            Include Conclusion: ${includeConclusion}
+                        `
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPost = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPost);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating blog post:', error);
+        return 'Failed to generate blog post';
+    }
+}
+
+async function ArticleGenerator({ description, tone, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a skilled article writer. Generate a well-researched and engaging article in ${language} with a ${tone} tone. The article should be informative, clear, and relevant to the target audience.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Based on the following description: "${description}", create an article that effectively conveys the message and engages the audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedArticle = completion.choices[0].message.content.trim();
+
+            responses.push(generatedArticle);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating article:', error);
+        return 'Failed to generate article';
+    }
+}
+
+async function PressRelease({ organizationName, eventName, tone, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a public relations expert. Write a well-crafted and professional press release in ${language} with a ${tone} tone. The press release should be informative, engaging, and suitable for media distribution.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Organization: "${organizationName}"\nEvent: "${eventName}".\nCreate a press release that effectively communicates the importance of this event and engages the target audience.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedPressRelease = completion.choices[0].message.content.trim();
+
+            responses.push(generatedPressRelease);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating press release:', error);
+        return 'Failed to generate press release';
+    }
+}
+
+
+
+
+
+
+
+module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease};
