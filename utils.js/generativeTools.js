@@ -1270,9 +1270,227 @@ async function BlogIdeas({ topic, language, outputCount }) {
 }
 
 
+async function BlogTitles({ topic, tone, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a creative content strategist. Generate catchy and compelling blog titles in ${language} with a ${tone} tone. The titles should be relevant to the topic and designed to capture the reader's attention.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Topic: "${topic}"`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedTitles = completion.choices[0].message.content.trim();
+
+            responses.push(generatedTitles);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating blog titles:', error);
+        return 'Failed to generate blog titles';
+    }
+}
+
+async function BlogOutline({ topic, mainPointsForIntro, tone, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const introPointsText = mainPointsForIntro ? ` The introduction should cover the following points: "${mainPointsForIntro}".` : '';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are an experienced content strategist. Generate a well-structured blog outline in ${language} with a ${tone} tone. The outline should cover key points, subheadings, and flow logically to create a comprehensive blog post on the given topic.${introPointsText}`
+                    },
+                    {
+                        role: 'user',
+                        content: `Topic: "${topic}"`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedOutline = completion.choices[0].message.content.trim();
+
+            responses.push(generatedOutline);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating blog outline:', error);
+        return 'Failed to generate blog outline';
+    }
+}
+
+
+async function BlogIntro({ topic, mainPointsForIntro, tone, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const introPointsText = mainPointsForIntro ? ` The introduction should cover the following points: "${mainPointsForIntro}".` : '';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are an experienced content strategist. Generate a well-structured blog intro in ${language} with a ${tone} tone. The intro should cover key points, subheadings, and flow logically to create a comprehensive blog post on the given topic.${introPointsText}`
+                    },
+                    {
+                        role: 'user',
+                        content: `Topic: "${topic}"`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedOutline = completion.choices[0].message.content.trim();
+
+            responses.push(generatedOutline);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating blog intro:', error);
+        return 'Failed to generate blog intro';
+    }
+}
+
+async function FreestyleEmail({ topic, subjectAndPoints, tone, writingStyle, recipient, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const recipientText = recipient ? ` Address the email to "${recipient}".` : '';
+
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a professional email writer. Generate a well-crafted email in ${language} with a ${tone} tone and a ${writingStyle} writing style.${recipientText}`
+                    },
+                    {
+                        role: 'user',
+                        content: `Topic: "${topic}". Subject and Points: "${subjectAndPoints}".`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedEmail = completion.choices[0].message.content.trim();
+
+            responses.push(generatedEmail);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating email:', error);
+        return 'Failed to generate email';
+    }
+}
+
+
+async function EmailGenerator({ supportScenario, emailContent, language, tone, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a professional email writer with expertise in handling support scenarios. Generate a well-crafted email in ${language} with a ${tone} tone. The email should effectively address the support scenario described and incorporate the provided content.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Support Scenario: "${supportScenario}". Email Content: "${emailContent}".`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedEmail = completion.choices[0].message.content.trim();
+
+            responses.push(generatedEmail);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating email:', error);
+        return 'Failed to generate email';
+    }
+}
+
+
+
+async function EmailReply({ receivedEmail, tone, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a professional email writer with expertise in crafting appropriate and effective email replies. Generate a well-crafted reply in ${language} with a ${tone} tone. The reply should directly address the content and concerns in the received email.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Received Email: "${receivedEmail}"`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedReply = completion.choices[0].message.content.trim();
+
+            responses.push(generatedReply);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating email reply:', error);
+        return 'Failed to generate email reply';
+    }
+}
 
 
 
 
 
-module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas};
+
+
+
+
+
+module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,FreestyleEmail,EmailGenerator,EmailReply};

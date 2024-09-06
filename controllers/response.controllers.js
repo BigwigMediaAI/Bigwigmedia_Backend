@@ -3868,7 +3868,9 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
 
 // -----------Instagram Caption Generator--------------
-const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas} = require('../utils.js/generativeTools');
+const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,FreestyleEmail,EmailGenerator,EmailReply
+
+} = require('../utils.js/generativeTools');
 
 exports.generateCaption = async (req, res) => {
     try {
@@ -4500,5 +4502,112 @@ exports.GenerateBlogIdeas = async (req, res) => {
   } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ error: 'Error generating Blog Ideas' });
+  }
+};
+
+
+exports.GenerateBlogTitles = async (req, res) => {
+  try {
+      const {topic, tone, language, outputCount } = req.body;
+
+      if (!topic||!language||!tone || !outputCount) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await BlogTitles({topic, tone, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Blog Titles' });
+  }
+};
+
+
+exports.GenerateBlogOutline = async (req, res) => {
+  try {
+      const {topic, mainPointsForIntro, tone, language, outputCount } = req.body;
+
+      if (!topic||!language||!tone || !outputCount) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await BlogOutline({topic, mainPointsForIntro, tone, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Blog Outline' });
+  }
+};
+
+
+exports.GenerateBlogIntro = async (req, res) => {
+  try {
+      const {topic, mainPointsForIntro, tone, language, outputCount } = req.body;
+
+      if (!topic||!language||!tone || !outputCount) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await BlogIntro({topic, mainPointsForIntro, tone, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Blog Intro' });
+  }
+};
+
+
+exports.GenerateFreestyleEmail = async (req, res) => {
+  try {
+      const {topic, subjectAndPoints, tone, writingStyle, recipient, language, outputCount } = req.body;
+
+      if (!topic||!language||!tone || !outputCount||!subjectAndPoints||!writingStyle) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await FreestyleEmail({topic, subjectAndPoints, tone, writingStyle, recipient, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Freestyle Email' });
+  }
+};
+
+
+exports.GenerateEmailGenerator = async (req, res) => {
+  try {
+      const {supportScenario, emailContent, language, tone, outputCount } = req.body;
+
+      if (!supportScenario||!language||!tone || !outputCount||!emailContent) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await EmailGenerator({supportScenario, emailContent, language, tone, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Freestyle Email' });
+  }
+};
+
+exports.GenerateEmailReply = async (req, res) => {
+  try {
+      const {receivedEmail, tone, language, outputCount } = req.body;
+
+      if (!receivedEmail||!language||!tone || !outputCount) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await EmailReply({receivedEmail, tone, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Email Reply' });
   }
 };
