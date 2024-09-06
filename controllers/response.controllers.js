@@ -3868,7 +3868,7 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
 
 // -----------Instagram Caption Generator--------------
-const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription} = require('../utils.js/generativeTools');
+const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas} = require('../utils.js/generativeTools');
 
 exports.generateCaption = async (req, res) => {
     try {
@@ -4428,5 +4428,77 @@ exports.createProductDescription = async (req, res) => {
   } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ error: 'Error Product Description' });
+  }
+};
+
+
+exports.GenerateArticleIdeas = async (req, res) => {
+  try {
+      const {topic, tone, language, outputCount} = req.body;
+
+      if (!topic||!language || !outputCount||!tone) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await ArticleIdeas({topic, tone, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Atricle Ideas' });
+  }
+};
+
+
+exports.GenerateArticleOutline = async (req, res) => {
+  try {
+      const {topic, tone, language, outputCount} = req.body;
+
+      if (!topic||!language || !outputCount||!tone) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await ArticleOutline({topic, tone, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Article Outline' });
+  }
+};
+
+
+exports.GenerateArticleIntro = async (req, res) => {
+  try {
+      const {topic, tone, language, outputCount} = req.body;
+
+      if (!topic||!language || !outputCount||!tone) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await ArticleIntro({topic, tone, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Article Outline' });
+  }
+};
+
+
+exports.GenerateBlogIdeas = async (req, res) => {
+  try {
+      const {topic, language, outputCount} = req.body;
+
+      if (!topic||!language || !outputCount) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await BlogIdeas({topic, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Blog Ideas' });
   }
 };

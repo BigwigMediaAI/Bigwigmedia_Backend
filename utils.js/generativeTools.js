@@ -1130,6 +1130,144 @@ async function ProductDescription({ description, tone, language, outputCount }) 
 }
 
 
+async function ArticleIdeas({ topic, tone, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a creative content strategist. Generate unique and engaging article ideas in ${language} with a ${tone} tone. The ideas should be fresh, relevant to the topic, and suitable for a wide audience.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Topic: "${topic}"`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedIdeas = completion.choices[0].message.content.trim();
+
+            responses.push(generatedIdeas);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating article ideas:', error);
+        return 'Failed to generate article ideas';
+    }
+}
+
+
+async function ArticleOutline({ topic, tone, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are an expert content strategist. Generate a detailed and structured article outline in ${language} with a ${tone} tone. The outline should cover key points, subheadings, and flow logically to create a comprehensive article on the given topic.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Topic: "${topic}"`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedOutline = completion.choices[0].message.content.trim();
+
+            responses.push(generatedOutline);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating Article Outline:', error);
+        return 'Failed to generate Article Outline';
+    }
+}
+
+
+async function ArticleIntro({ topic, tone, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are an expert content strategist. Generate a detailed and structured Article Intro in ${language} with a ${tone} tone. The Intro should cover key points, subheadings, and flow logically to create a comprehensive article on the given topic.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Topic: "${topic}"`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedOutline = completion.choices[0].message.content.trim();
+
+            responses.push(generatedOutline);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating Article Intro:', error);
+        return 'Failed to generate Article Intro';
+    }
+}
+
+
+async function BlogIdeas({ topic, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a creative content strategist. Generate unique and engaging blog post ideas in ${language}. The ideas should be fresh, relevant to the topic, and suitable for a wide audience.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Topic: "${topic}"`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedIdeas = completion.choices[0].message.content.trim();
+
+            responses.push(generatedIdeas);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating blog ideas:', error);
+        return 'Failed to generate blog ideas';
+    }
+}
 
 
 
@@ -1137,4 +1275,4 @@ async function ProductDescription({ description, tone, language, outputCount }) 
 
 
 
-module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription};
+module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas};
