@@ -1377,22 +1377,24 @@ async function BlogIntro({ topic, mainPointsForIntro, tone, language, outputCoun
     }
 }
 
-async function FreestyleEmail({ topic, subjectAndPoints, tone, writingStyle, recipient, language, outputCount }) {
+async function SEOTitleDescription({ companyName, description, fewKeywords, tone, language, outputCount }) {
     let responses = [];
 
     try {
         for (let i = 0; i < outputCount; i++) {
-            const recipientText = recipient ? ` Address the email to "${recipient}".` : '';
-
             const completion = await openai.chat.completions.create({
                 messages: [
                     {
                         role: 'system',
-                        content: `You are a professional email writer. Generate a well-crafted email in ${language} with a ${tone} tone and a ${writingStyle} writing style.${recipientText}`
+                        content: `You are an expert in SEO and content creation. Generate an SEO-optimized title and meta description for a company in ${language} with a ${tone} tone. The title and description should include the provided keywords and effectively represent the company's offerings.`
                     },
                     {
                         role: 'user',
-                        content: `Topic: "${topic}". Subject and Points: "${subjectAndPoints}".`
+                        content: `
+                            Company Name: "${companyName}"
+                            Description: "${description}"
+                            Keywords: "${fewKeywords.join(', ')}"
+                        `
                     }
                 ],
                 model: 'gpt-4'
@@ -1402,19 +1404,18 @@ async function FreestyleEmail({ topic, subjectAndPoints, tone, writingStyle, rec
                 throw new Error('Invalid completion response');
             }
 
-            let generatedEmail = completion.choices[0].message.content.trim();
+            let generatedTitleDescription = completion.choices[0].message.content.trim();
 
-            responses.push(generatedEmail);
+            responses.push(generatedTitleDescription);
         }
         return responses;
     } catch (error) {
-        console.error('Error generating email:', error);
-        return 'Failed to generate email';
+        console.error('Error generating SEO title and description:', error);
+        return 'Failed to generate SEO title and description';
     }
 }
 
-
-async function EmailGenerator({ supportScenario, emailContent, language, tone, outputCount }) {
+async function PromptGenerator({ context, purpose, tone, creativityLevel, language, outputCount }) {
     let responses = [];
 
     try {
@@ -1423,11 +1424,14 @@ async function EmailGenerator({ supportScenario, emailContent, language, tone, o
                 messages: [
                     {
                         role: 'system',
-                        content: `You are a professional email writer with expertise in handling support scenarios. Generate a well-crafted email in ${language} with a ${tone} tone. The email should effectively address the support scenario described and incorporate the provided content.`
+                        content: `You are a creative expert in generating prompts. Create a series of prompts that are innovative, engaging, and aligned with the specified context and purpose. The prompts should be written in ${language} with a ${tone} tone and match the creativity level of ${creativityLevel}.`
                     },
                     {
                         role: 'user',
-                        content: `Support Scenario: "${supportScenario}". Email Content: "${emailContent}".`
+                        content: `
+                            Context: "${context}"
+                            Purpose: "${purpose}"
+                        `
                     }
                 ],
                 model: 'gpt-4'
@@ -1437,60 +1441,17 @@ async function EmailGenerator({ supportScenario, emailContent, language, tone, o
                 throw new Error('Invalid completion response');
             }
 
-            let generatedEmail = completion.choices[0].message.content.trim();
+            let generatedPrompt = completion.choices[0].message.content.trim();
 
-            responses.push(generatedEmail);
+            responses.push(generatedPrompt);
         }
         return responses;
     } catch (error) {
-        console.error('Error generating email:', error);
-        return 'Failed to generate email';
+        console.error('Error generating prompt:', error);
+        return 'Failed to generate prompt';
     }
 }
 
 
 
-async function EmailReply({ receivedEmail, tone, language, outputCount }) {
-    let responses = [];
-
-    try {
-        for (let i = 0; i < outputCount; i++) {
-            const completion = await openai.chat.completions.create({
-                messages: [
-                    {
-                        role: 'system',
-                        content: `You are a professional email writer with expertise in crafting appropriate and effective email replies. Generate a well-crafted reply in ${language} with a ${tone} tone. The reply should directly address the content and concerns in the received email.`
-                    },
-                    {
-                        role: 'user',
-                        content: `Received Email: "${receivedEmail}"`
-                    }
-                ],
-                model: 'gpt-4'
-            });
-
-            if (!completion || !completion.choices || completion.choices.length === 0) {
-                throw new Error('Invalid completion response');
-            }
-
-            let generatedReply = completion.choices[0].message.content.trim();
-
-            responses.push(generatedReply);
-        }
-        return responses;
-    } catch (error) {
-        console.error('Error generating email reply:', error);
-        return 'Failed to generate email reply';
-    }
-}
-
-
-
-
-
-
-
-
-
-
-module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,FreestyleEmail,EmailGenerator,EmailReply};
+module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator};

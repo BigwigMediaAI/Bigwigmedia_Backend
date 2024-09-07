@@ -3868,7 +3868,7 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
 
 // -----------Instagram Caption Generator--------------
-const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,FreestyleEmail,EmailGenerator,EmailReply
+const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator
 
 } = require('../utils.js/generativeTools');
 
@@ -4560,54 +4560,40 @@ exports.GenerateBlogIntro = async (req, res) => {
 };
 
 
-exports.GenerateFreestyleEmail = async (req, res) => {
+exports.GenerateSEOTitleDescription = async (req, res) => {
   try {
-      const {topic, subjectAndPoints, tone, writingStyle, recipient, language, outputCount } = req.body;
+      const {companyName, description, fewKeywords, tone, language, outputCount} = req.body;
 
-      if (!topic||!language||!tone || !outputCount||!subjectAndPoints||!writingStyle) {
+      if (!companyName||!language||!tone || !outputCount||!description||!fewKeywords) {
           return res.status(400).json({ error: 'Please provide all required fields' });
       }
 
-      const posts = await FreestyleEmail({topic, subjectAndPoints, tone, writingStyle, recipient, language, outputCount});
+      const posts = await SEOTitleDescription({companyName, description, fewKeywords, tone, language, outputCount});
 
       res.status(200).json(posts);
   } catch (error) {
       console.error('Error:', error);
-      res.status(500).json({ error: 'Error generating Freestyle Email' });
+      res.status(500).json({ error: 'Error generating SEO Title Description' });
   }
 };
 
 
-exports.GenerateEmailGenerator = async (req, res) => {
+exports.GeneratePromptGenerator = async (req, res) => {
   try {
-      const {supportScenario, emailContent, language, tone, outputCount } = req.body;
+      const {context, purpose, tone, creativityLevel, language, outputCount} = req.body;
 
-      if (!supportScenario||!language||!tone || !outputCount||!emailContent) {
+      if (!context||!language||!tone || !outputCount||!purpose||!creativityLevel) {
           return res.status(400).json({ error: 'Please provide all required fields' });
       }
 
-      const posts = await EmailGenerator({supportScenario, emailContent, language, tone, outputCount});
+      const posts = await PromptGenerator({context, purpose, tone, creativityLevel, language, outputCount});
 
       res.status(200).json(posts);
   } catch (error) {
       console.error('Error:', error);
-      res.status(500).json({ error: 'Error generating Freestyle Email' });
+      res.status(500).json({ error: 'Error generating Prompt Generator' });
   }
 };
 
-exports.GenerateEmailReply = async (req, res) => {
-  try {
-      const {receivedEmail, tone, language, outputCount } = req.body;
 
-      if (!receivedEmail||!language||!tone || !outputCount) {
-          return res.status(400).json({ error: 'Please provide all required fields' });
-      }
 
-      const posts = await EmailReply({receivedEmail, tone, language, outputCount});
-
-      res.status(200).json(posts);
-  } catch (error) {
-      console.error('Error:', error);
-      res.status(500).json({ error: 'Error generating Email Reply' });
-  }
-};
