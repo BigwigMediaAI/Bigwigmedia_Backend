@@ -252,8 +252,8 @@ router.post('/GenerateBlogOutline',checkLimit,GenerateBlogOutline);
 router.post('/GenerateBlogIntro',checkLimit,GenerateBlogIntro);  
 router.post('/GenerateSEOTitleDescription',checkLimit,GenerateSEOTitleDescription);  
 router.post('/GeneratePromptGenerator',checkLimit,GeneratePromptGenerator);  
-router.post('/GenerateReviewReply',GenerateReviewReply);  
-router.post('/GenerateVideoScript',GenerateVideoScript);  
+router.post('/GenerateReviewReply',checkLimit,GenerateReviewReply);  
+router.post('/GenerateVideoScript',checkLimit,GenerateVideoScript);  
 
 
 
