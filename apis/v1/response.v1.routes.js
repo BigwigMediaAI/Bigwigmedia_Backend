@@ -233,25 +233,25 @@ router.post('/generateLinkedInPageHeadline',checkLimit,generateLinkedInPageHeadl
 router.post('/generateLinkedinCompanyPageHeadline',checkLimit,generateLinkedinCompanyPageHeadline);
 router.post('/generateLinkedInPageSummary',checkLimit,generateLinkedInPageSummary);
 router.post('/generateLinkedInCompanySummary',checkLimit,generateLinkedInCompanySummary);
-router.post('/generatePostHashtags',generatePostHashtags);
-router.post('/generateBlogPost',generateBlogPost);
-router.post('/generateArticle',generateArticle);
-router.post('/generatePressRelease',generatePressRelease);
-router.post('/generateNewsletter',generateNewsletter);
-router.post('/generateGoogleAdsHeadliner',generateGoogleAdsHeadliner);
-router.post('/generateGoogleAdDescription',generateGoogleAdDescription);
-router.post('/generateMarketingPlan',generateMarketingPlan);
-router.post('/generateMarketingFunnel',generateMarketingFunnel);
-router.post('/createProductDescription',createProductDescription);
-router.post('/GenerateArticleIdeas',GenerateArticleIdeas);
-router.post('/GenerateArticleOutline',GenerateArticleOutline);
-router.post('/GenerateArticleIntro',GenerateArticleIntro);
-router.post('/GenerateBlogIdeas',GenerateBlogIdeas);
-router.post('/GenerateBlogTitles',GenerateBlogTitles);  //start
-router.post('/GenerateBlogOutline',GenerateBlogOutline);  
-router.post('/GenerateBlogIntro',GenerateBlogIntro);  
-router.post('/GenerateSEOTitleDescription',GenerateSEOTitleDescription);  
-router.post('/GeneratePromptGenerator',GeneratePromptGenerator);  
+router.post('/generatePostHashtags',checkLimit,generatePostHashtags);
+router.post('/generateBlogPost',checkLimit,generateBlogPost);
+router.post('/generateArticle',checkLimit,generateArticle);
+router.post('/generatePressRelease',checkLimit,generatePressRelease);
+router.post('/generateNewsletter',checkLimit,generateNewsletter);
+router.post('/generateGoogleAdsHeadliner',checkLimit,generateGoogleAdsHeadliner);
+router.post('/generateGoogleAdDescription',checkLimit,generateGoogleAdDescription);
+router.post('/generateMarketingPlan',checkLimit,generateMarketingPlan);
+router.post('/generateMarketingFunnel',checkLimit,generateMarketingFunnel);
+router.post('/createProductDescription',checkLimit,createProductDescription);
+router.post('/GenerateArticleIdeas',checkLimit,GenerateArticleIdeas);
+router.post('/GenerateArticleOutline',checkLimit,GenerateArticleOutline);
+router.post('/GenerateArticleIntro',checkLimit,GenerateArticleIntro);
+router.post('/GenerateBlogIdeas',checkLimit,GenerateBlogIdeas);
+router.post('/GenerateBlogTitles',checkLimit,GenerateBlogTitles);  //start
+router.post('/GenerateBlogOutline',checkLimit,GenerateBlogOutline);  
+router.post('/GenerateBlogIntro',checkLimit,GenerateBlogIntro);  
+router.post('/GenerateSEOTitleDescription',checkLimit,GenerateSEOTitleDescription);  
+router.post('/GeneratePromptGenerator',checkLimit,GeneratePromptGenerator);  
 
 
 
