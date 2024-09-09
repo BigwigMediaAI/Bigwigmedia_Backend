@@ -3868,7 +3868,7 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
 
 // -----------Instagram Caption Generator--------------
-const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator
+const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript
 
 } = require('../utils.js/generativeTools');
 
@@ -4593,6 +4593,42 @@ exports.GeneratePromptGenerator = async (req, res) => {
       console.error('Error:', error);
       res.status(500).json({ error: 'Error generating Prompt Generator' });
   }
+};
+
+
+exports.GenerateReviewReply = async (req, res) => {
+  try {
+      const { review, tone, language, outputCount} = req.body;
+
+      if (!review||!language||!tone || !outputCount) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await ReviewReply({review, tone, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Review Reply' });
+  }
+};
+
+
+exports.GenerateVideoScript = async (req, res) => {
+  try {
+      const { topic, objective, tone, language, outputCount} = req.body;
+
+      if (!topic||!language||!tone || !outputCount||!objective) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await VideoScript({topic, objective, tone, language, outputCount});
+
+      res.status(200).json(posts);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Review Reply' });
+  }
 };
 
 

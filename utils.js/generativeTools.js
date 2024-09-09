@@ -1452,6 +1452,82 @@ async function PromptGenerator({ context, purpose, tone, creativityLevel, langua
     }
 }
 
+async function ReviewReply({ review, tone, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a customer service expert skilled in crafting professional, empathetic, and engaging responses to customer reviews. Generate replies that reflect the specified tone, are written in ${language}, and address the content of the review appropriately.`
+                    },
+                    {
+                        role: 'user',
+                        content: `
+                            Review: "${review}"
+                            Tone: "${tone}"
+                        `
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedReply = completion.choices[0].message.content.trim();
+
+            responses.push(generatedReply);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating review reply:', error);
+        return 'Failed to generate review reply';
+    }
+}
+
+async function VideoScript({ topic, objective, tone, language, outputCount }) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are a skilled video scriptwriter. Generate an engaging and well-structured video script that aligns with the given topic and objective. The script should be written in ${language} with a ${tone} tone, and should be suitable for the intended audience.`
+                    },
+                    {
+                        role: 'user',
+                        content: `
+                            Topic: "${topic}"
+                            Objective: "${objective}"
+                        `
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            let generatedScript = completion.choices[0].message.content.trim();
+
+            responses.push(generatedScript);
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating video script:', error);
+        return 'Failed to generate video script';
+    }
+}
 
 
-module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator};
+
+
+
+module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript};
