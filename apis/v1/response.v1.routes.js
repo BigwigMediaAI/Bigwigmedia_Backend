@@ -247,7 +247,7 @@ router.post('/GenerateArticleIdeas',checkLimit,GenerateArticleIdeas);
 router.post('/GenerateArticleOutline',checkLimit,GenerateArticleOutline);
 router.post('/GenerateArticleIntro',checkLimit,GenerateArticleIntro);
 router.post('/GenerateBlogIdeas',checkLimit,GenerateBlogIdeas);
-router.post('/GenerateBlogTitles',checkLimit,GenerateBlogTitles);  //start
+router.post('/GenerateBlogTitles',checkLimit,GenerateBlogTitles);
 router.post('/GenerateBlogOutline',checkLimit,GenerateBlogOutline);  
 router.post('/GenerateBlogIntro',checkLimit,GenerateBlogIntro);  
 router.post('/GenerateSEOTitleDescription',checkLimit,GenerateSEOTitleDescription);  
