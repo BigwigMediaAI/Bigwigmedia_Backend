@@ -4631,5 +4631,37 @@ exports.GenerateVideoScript = async (req, res) => {
   }
 };
 
+// ***************Generate image from prompt***************
 
+const { generateImagePrompt, generateImageFromSelectedPrompt } = require('../utils.js/GenerateImgFromPrompt');
+
+// Controller for generating image prompts
+exports.generatePrompts = async (req, res) => {
+    const { mainObject, style, feeling, colors, background, language, outputCount } = req.body;
+    try {
+        const prompts = await generateImagePrompt(mainObject, style, feeling, colors, background, language, outputCount);
+        if (!prompts || prompts.length === 0) {
+            return res.status(400).json({ message: 'No prompts generated' });
+        }
+        res.status(200).json({ prompts });
+    } catch (error) {
+        console.error('Error generating prompts:', error);
+        res.status(500).json({ message: 'Failed to generate prompts' });
+    }
+};
+
+// Controller for generating an image from a selected prompt.
+exports.generateImageFromPrompt = async (req, res) => {
+    const { prompt} = req.body;
+    try {
+        const imageData = await generateImageFromSelectedPrompt(prompt);
+        if (!imageData || imageData.length === 0) {
+            return res.status(400).json({ message: 'No image generated' });
+        }
+        res.status(200).json({ images: imageData });
+    } catch (error) {
+        console.error('Error generating image:', error);
+        res.status(500).json({ message: 'Failed to generate image' });
+    }
+};
 
