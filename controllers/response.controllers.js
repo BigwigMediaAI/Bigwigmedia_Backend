@@ -4646,7 +4646,7 @@ exports.generatePrompts = async (req, res) => {
         res.status(200).json({ prompts });
     } catch (error) {
         console.error('Error generating prompts:', error);
-        res.status(500).json({ message: 'Failed to generate prompts' });
+        res.status(500).json({ message: 'Failed to generate image prompts' });
     }
 };
 
@@ -4661,7 +4661,27 @@ exports.generateImageFromPrompt = async (req, res) => {
         res.status(200).json({ images: imageData });
     } catch (error) {
         console.error('Error generating image:', error);
-        res.status(500).json({ message: 'Failed to generate image' });
+        res.status(500).json({ message: 'Failed to generate image from prompt'});
     }
 };
 
+
+const {generateVideoPromptContent}=require("../utils.js/videoPromptGenerator")
+
+exports.GenerateVideoPromptContent = async (req, res) => {
+    try {
+        const { mainObject, style, mood, cameraAngles, sceneType, language, duration, outputCount } = req.body;
+
+        if (!mainObject || !style || !mood || !cameraAngles || !sceneType || !language || !duration || !outputCount) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        const prompts = await generateVideoPromptContent(mainObject, style, mood, cameraAngles, sceneType, language, duration, outputCount);
+
+        res.status(200).json(prompts);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error generating prompts' });
+    }
+
+  };
