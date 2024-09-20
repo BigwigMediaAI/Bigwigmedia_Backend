@@ -42,7 +42,7 @@
         "potrace": "^2.1.8",
         "proxy-agent": "^6.4.0",
         "puppeteer": "^22.8.0",
-        "qrcode": "^1.5.3",
+        "qrcode": "^1.5.4",
         "random-avatar-generator": "^2.0.0",
         "razorpay": "^2.9.2",
         "redis": "^4.6.13",
