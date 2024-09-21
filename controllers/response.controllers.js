@@ -4875,3 +4875,186 @@ function hexToRgb(hex) {
   const b = bigint & 255;
   return [r / 255, g / 255, b / 255]; // Normalize to 0-1 range
 }
+
+// ------------------------------------Visiting Card End's Here-------------------------------------
+
+
+
+
+// --------------------------------------- LETTER HEAD GENERATOR---------------------------------------
+exports.generateLetterHead=async (req,res)=>{
+try {
+        const { headerText, bodyText, address, phone, email, website, HeaderColor, currentDate } = req.body;
+
+        // Create a new PDF document
+        const pdfDoc = await PDFDocument.create();
+        const page = pdfDoc.addPage([600, 800]);
+        const { width, height } = page.getSize();
+
+        // Load standard fonts
+        const helveticaFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+        const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+
+        // Set font sizes
+        const headerFontSize = 24;
+        const bodyFontSize = 16;
+        const footerFontSize = 12;
+
+        // Function to convert hex color to RGB
+        function hexToRgb(hex) {
+            const bigint = parseInt(hex.slice(1), 16);
+            const r = (bigint >> 16) & 255;
+            const g = (bigint >> 8) & 255;
+            const b = bigint & 255;
+            return [r / 255, g / 255, b / 255]; // Normalize to 0-1 range
+        }
+
+        // Add background image if provided
+        if (req.files && req.files.background) {
+            const backgroundImagePath = req.files.background[0].path;
+            const backgroundImageBytes = fs.readFileSync(backgroundImagePath);
+            const backgroundImage = await pdfDoc.embedPng(backgroundImageBytes);
+
+            // Draw the background image to fill the entire page
+            page.drawImage(backgroundImage, {
+                x: 0,
+                y: 0,
+                width: width,
+                height: height,
+                opacity: 0.5 // Optional: Adjust opacity if needed
+            });
+
+            // Remove the uploaded file from temp storage
+            fs.unlinkSync(backgroundImagePath);
+        }
+
+        // Add header text
+        page.drawText(headerText, {
+            x: 140,
+            y: height - 80,
+            size: headerFontSize,
+            font: helveticaFont,
+            color: rgb(...hexToRgb(HeaderColor || '#FFFFFF')) // Custom color for header
+        });
+
+        // Add date text just below the header
+        page.drawText(`Date: ${currentDate}`, {
+            x: 450,
+            y: height - 150, // Adjust the Y position as needed
+            size: 16,
+            font: timesRomanFont,
+            color: rgb(0.2, 0.2, 0.2), // Dark grey color for date
+        });
+
+        // Add body text
+        page.drawText(bodyText, {
+            x: 50,
+            y: height - 200,
+            size: bodyFontSize,
+            font: timesRomanFont,
+            color: rgb(0.2, 0.2, 0.2),  // Dark grey color for body
+        });
+
+        // Add a logo if it exists
+        if (req.files && req.files.logo) {
+            const logoImagePath = req.files.logo[0].path;
+            const logoBytes = fs.readFileSync(logoImagePath);
+            const logoImage = await pdfDoc.embedPng(logoBytes);
+
+            // Add the logo to the header (top-left corner)
+            page.drawImage(logoImage, {
+                x: 80,
+                y: height - 90,
+                width: 40,
+                height: 40 // Adjust the size as needed
+            });
+
+            // Add the logo as a watermark (center of the page)
+            const logoWidth = 300;  // Adjust based on your logo dimensions
+            const logoHeight = 300; // Adjust based on your logo dimensions
+            const centerX = (width - logoWidth) / 2;
+            const centerY = (height - logoHeight) / 2;
+
+            // Draw the logo as a watermark with lower opacity
+            page.drawImage(logoImage, {
+                x: centerX,
+                y: centerY,
+                width: logoWidth,
+                height: logoHeight,
+                opacity: 0.15 // Set the opacity (0.0 = fully transparent, 1.0 = fully opaque)
+            });
+
+            // Remove the uploaded file from temp storage
+            fs.unlinkSync(logoImagePath);
+        }
+
+        // Draw a horizontal line before the footer
+        page.drawLine({
+            start: { x: 50, y: 120 },
+            end: { x: width - 50, y: 120 },
+            thickness: 1,
+            color: rgb(0.0, 0.5, 0.2),
+        });
+
+        // Add footer fields (address, phone, email, website) with grey text
+        const footerTextY = 100;
+        const greyColor = rgb(0.5, 0.5, 0.5);  // Grey color for footer text
+
+        if (address) {
+            page.drawText(`Address: ${address}`, {
+                x: 55,
+                y: footerTextY,
+                size: footerFontSize,
+                font: helveticaFont,
+                color: greyColor,
+            });
+        }
+
+        if (phone) {
+            page.drawText(`Phone: ${phone}`, {
+                x: 55,
+                y: footerTextY - 16,
+                size: footerFontSize,
+                font: timesRomanFont,
+                color: greyColor,
+            });
+        }
+
+        if (email) {
+            page.drawText(`Email: ${email}`, {
+                x: 55,
+                y: footerTextY - 34,
+                size: footerFontSize,
+                font: helveticaFont,
+                color: greyColor,
+            });
+        }
+
+        if (website) {
+            page.drawText(`Website: ${website}`, {
+                x: 55,
+                y: footerTextY - 50,
+                size: footerFontSize,
+                font: timesRomanFont,
+                color: greyColor,
+            });
+        }
+
+        // Save the PDF as bytes
+        const pdfBytes = await pdfDoc.save();
+
+        // Set response headers to serve a PDF
+        res.setHeader('Content-Disposition', 'attachment; filename=Generatedletterhead.pdf');
+        res.setHeader('Content-Type', 'application/pdf');
+
+        // Send the PDF as a buffer
+        res.send(Buffer.from(pdfBytes));
+
+    } catch (err) {
+        console.error('Error generating PDF:', err);
+        res.status(500).send('Failed to generate PDF');
+    }
+}
+
+
+// --------------------------------------- LETTER HEAD GENERATOR ENDS HERE---------------------------------------
