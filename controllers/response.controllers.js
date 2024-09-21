@@ -4884,7 +4884,7 @@ function hexToRgb(hex) {
 // --------------------------------------- LETTER HEAD GENERATOR---------------------------------------
 exports.generateLetterHead=async (req,res)=>{
 try {
-        const { headerText, bodyText, address, phone, email, website, HeaderColor, currentDate } = req.body;
+        const { headerText,address, phone, email, website, HeaderColor, currentDate } = req.body;
 
         // Create a new PDF document
         const pdfDoc = await PDFDocument.create();
@@ -4944,15 +4944,6 @@ try {
             size: 16,
             font: timesRomanFont,
             color: rgb(0.2, 0.2, 0.2), // Dark grey color for date
-        });
-
-        // Add body text
-        page.drawText(bodyText, {
-            x: 50,
-            y: height - 200,
-            size: bodyFontSize,
-            font: timesRomanFont,
-            color: rgb(0.2, 0.2, 0.2),  // Dark grey color for body
         });
 
         // Add a logo if it exists
