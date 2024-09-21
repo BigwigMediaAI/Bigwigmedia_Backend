@@ -4665,6 +4665,11 @@ exports.generateImageFromPrompt = async (req, res) => {
     }
 };
 
+// ******************Generate image from prompt Ends here******************************
+
+
+
+// *****************************Video prompt generator ***********************
 
 const {generateVideoPromptContent}=require("../utils.js/videoPromptGenerator")
 
@@ -4685,3 +4690,188 @@ exports.GenerateVideoPromptContent = async (req, res) => {
     }
 
   };
+
+  // *****************************Video prompt generator Ends here ***********************
+
+
+
+
+  // ------------------------------------Visiting Card-------------------------------------
+const { StandardFonts } = require('pdf-lib');
+
+exports.generateVisiting=async (req,res)=>{
+  try {
+    const {
+      name,
+      position,
+      phone,
+      email,
+      address,
+      company,
+      backgroundColor,
+      nameColor,
+      lineColor,
+      positionColor,
+      textColor,
+    } = req.body;
+  
+    // Check for missing fields
+    if (!name || !position || !phone || !email || !address || !company) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+  
+    // Create a new PDF Document for the front
+    const frontPdfDoc = await PDFDocument.create();
+    
+    // Add a page for the front
+    const frontPage = frontPdfDoc.addPage([400, 200]);
+  
+    // Check if a background image was uploaded and embed it, otherwise use a background color
+    const backgroundFile = req.files?.background ? req.files.background[0].path : null;
+    let backgroundImage;
+  
+    if (backgroundFile) {
+      try {
+        const backgroundBytes = fs.readFileSync(backgroundFile);
+        backgroundImage = await frontPdfDoc.embedJpg(backgroundBytes);
+        
+        // Add the background image to the front page
+        frontPage.drawImage(backgroundImage, {
+          x: 0,
+          y: 0,
+          width: 400,
+          height: 200,
+        });
+      } catch (err) {
+        return res.status(500).json({ error: 'Error embedding the background image' });
+      }
+    } else {
+      // If no background image is uploaded, use the background color
+      const bgColor = rgb(...hexToRgb(backgroundColor || '#FFFFFF'));
+      
+      // Front page background color
+      frontPage.drawRectangle({
+        x: 0,
+        y: 0,
+        width: 400,
+        height: 200,
+        color: bgColor,
+      });
+    }
+  
+    // Set up fonts for the front
+    const frontFont = await frontPdfDoc.embedFont(StandardFonts.Helvetica);
+    const boldFrontFont = await frontPdfDoc.embedFont(StandardFonts.HelveticaBold);
+  
+    // Check if logo file was uploaded and embed the image
+    let logoImage;
+    if (req.files?.logo) {
+      try {
+        const logoImageBytes = fs.readFileSync(req.files.logo[0].path);
+        
+        // Embed logo into the front PDF
+        logoImage = await frontPdfDoc.embedJpg(logoImageBytes);
+        
+        // Draw logo on the front page (top-right corner)
+        frontPage.drawImage(logoImage, {
+          x: 330,
+          y: 130,
+          width: 50,
+          height: 50,
+        });
+      } catch (err) {
+        return res.status(500).json({ error: 'Error embedding the logo image' });
+      }
+    }
+  
+    // Add name and position to the front page
+    frontPage.drawText(name, {
+      x: 20,
+      y: 150,
+      size: 20,
+      font: boldFrontFont,
+      color: rgb(...hexToRgb(nameColor || '#000000')),
+    });
+  
+    frontPage.drawText(position, {
+      x: 20,
+      y: 130,
+      size: 12,
+      font: frontFont,
+      color: rgb(...hexToRgb(positionColor || '#a2a2a3')),
+    });
+  
+    // Draw a separating line on the front page
+    frontPage.drawLine({
+      start: { x: 20, y: 120 },
+      end: { x: 150, y: 120 },
+      thickness: 1,
+      color: rgb(...hexToRgb(lineColor || '#FFFFFF')),
+    });
+  
+    // Add contact details to the front page
+    frontPage.drawText(`Phone: ${phone}`, {
+      x: 20,
+      y: 90,
+      size: 12,
+      font: frontFont,
+      color: rgb(...hexToRgb(textColor || '#000000')),
+    });
+  
+    frontPage.drawText(`Email: ${email}`, {
+      x: 20,
+      y: 70,
+      size: 12,
+      font: frontFont,
+      color: rgb(...hexToRgb(textColor || '#000000')),
+    });
+  
+    frontPage.drawText(`Address: ${address}`, {
+      x: 20,
+      y: 50,
+      size: 12,
+      font: frontFont,
+      color: rgb(...hexToRgb(textColor || '#000000')),
+    });
+  
+    frontPage.drawText(`Company: ${company}`, {
+      x: 20,
+      y: 30,
+      size: 12,
+      font: frontFont,
+      color: rgb(...hexToRgb(textColor || '#000000')),
+    });
+  
+    // Serialize the front PDF into a buffer
+    const frontPdfBytes = await frontPdfDoc.save();
+  
+    // Set headers to download the front PDF
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=front_visiting_card.pdf');
+    res.send(Buffer.from(frontPdfBytes));
+  
+    // Delete the uploaded logo and background files after response is sent
+    if (req.files?.logo) {
+      fs.unlink(req.files.logo[0].path, (err) => {
+        if (err) console.error('Error deleting the logo file:', err);
+      });
+    }
+    if (backgroundFile) {
+      fs.unlink(backgroundFile, (err) => {
+        if (err) console.error('Error deleting the background file:', err);
+      });
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Error generating visiting cards" });
+  }
+}
+
+
+function hexToRgb(hex) {
+  const bigint = parseInt(hex.slice(1), 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return [r / 255, g / 255, b / 255]; // Normalize to 0-1 range
+}
