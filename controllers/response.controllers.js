@@ -4896,7 +4896,7 @@ try {
         const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
 
         // Set font sizes
-        const headerFontSize = 24;
+        const headerFontSize = 22;
         const bodyFontSize = 16;
         const footerFontSize = 12;
 
