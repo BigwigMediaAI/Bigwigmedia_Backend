@@ -255,8 +255,8 @@ router.post('/GeneratePromptGenerator',checkLimit,GeneratePromptGenerator);
 router.post('/GenerateReviewReply',checkLimit,GenerateReviewReply);  
 router.post('/GenerateVideoScript',checkLimit,GenerateVideoScript);  
 router.post('/generatePrompts',generatePrompts);  
-router.post('/generateImageFromPrompt',generateImageFromPrompt);
-router.post('/GenerateVideoPromptContent',GenerateVideoPromptContent);
+router.post('/generateImageFromPrompt',checkLimit,generateImageFromPrompt);
+router.post('/GenerateVideoPromptContent',checkLimit,GenerateVideoPromptContent);
 router.post("/visiting",upload.fields([{ name: 'logo' }, { name: 'background' }]),generateVisiting)
 router.post('/create-letterhead', upload.fields([{ name: 'logo' }, { name: 'background' }]),generateLetterHead)
 
