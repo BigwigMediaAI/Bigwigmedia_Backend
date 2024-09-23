@@ -4884,7 +4884,7 @@ function hexToRgb(hex) {
 // --------------------------------------- LETTER HEAD GENERATOR---------------------------------------
 exports.generateLetterHead=async (req,res)=>{
 try {
-        const { headerText,address, phone, email, website, HeaderColor, currentDate } = req.body;
+        const { headerText,address, phone, email, website, HeaderColor, currentDate,FooterColor,FooterLineColor } = req.body;
 
         // Create a new PDF document
         const pdfDoc = await PDFDocument.create();
@@ -4984,7 +4984,7 @@ try {
             start: { x: 50, y: 120 },
             end: { x: width - 50, y: 120 },
             thickness: 1,
-            color: rgb(0.0, 0.5, 0.2),
+            color:rgb(...hexToRgb(FooterLineColor || '#000000')),
         });
 
         // Add footer fields (address, phone, email, website) with grey text
@@ -4997,7 +4997,7 @@ try {
                 y: footerTextY,
                 size: footerFontSize,
                 font: helveticaFont,
-                color: greyColor,
+                color: rgb(...hexToRgb(FooterColor || `#808080`)),
             });
         }
 
@@ -5007,7 +5007,7 @@ try {
                 y: footerTextY - 16,
                 size: footerFontSize,
                 font: timesRomanFont,
-                color: greyColor,
+                color: rgb(...hexToRgb(FooterColor || `#808080`)),
             });
         }
 
@@ -5017,7 +5017,7 @@ try {
                 y: footerTextY - 34,
                 size: footerFontSize,
                 font: helveticaFont,
-                color: greyColor,
+                color: rgb(...hexToRgb(FooterColor || `#808080`)),
             });
         }
 
@@ -5027,7 +5027,7 @@ try {
                 y: footerTextY - 50,
                 size: footerFontSize,
                 font: timesRomanFont,
-                color: greyColor,
+                color: rgb(...hexToRgb(FooterColor || `#808080`)),
             });
         }
 
