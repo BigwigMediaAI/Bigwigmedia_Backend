@@ -4954,7 +4954,7 @@ try {
 
             // Add the logo to the header (top-left corner)
             page.drawImage(logoImage, {
-                x: 80,
+                x: 70,
                 y: height - 90,
                 width: 40,
                 height: 40 // Adjust the size as needed
