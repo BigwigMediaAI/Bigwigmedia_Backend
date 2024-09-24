@@ -3665,7 +3665,7 @@ exports.pdfToAudio = async (req, res) => {
 
 // --------sign in pdf -------------
 
-const { rgb } = require('pdf-lib');
+const { rgb,degrees } = require('pdf-lib');
 
 exports.pdfSign=async (req,res) => {
   const { path } = req.file;
@@ -4722,7 +4722,7 @@ exports.generateVisiting=async (req,res)=>{
   
     // Create a new PDF Document for the front
     const frontPdfDoc = await PDFDocument.create();
-    
+  
     // Add a page for the front
     const frontPage = frontPdfDoc.addPage([400, 200]);
   
@@ -4733,8 +4733,19 @@ exports.generateVisiting=async (req,res)=>{
     if (backgroundFile) {
       try {
         const backgroundBytes = fs.readFileSync(backgroundFile);
-        backgroundImage = await frontPdfDoc.embedJpg(backgroundBytes);
-        
+  
+        // Detect MIME type using multer's provided file metadata instead of just the file extension
+        const backgroundMimeType = req.files.background[0].mimetype;
+  
+        // Embed background image based on MIME type
+        if (backgroundMimeType === 'image/jpeg' || backgroundMimeType === 'image/jpg') {
+          backgroundImage = await frontPdfDoc.embedJpg(backgroundBytes);
+        } else if (backgroundMimeType === 'image/png') {
+          backgroundImage = await frontPdfDoc.embedPng(backgroundBytes);
+        } else {
+          return res.status(400).json({ error: 'Unsupported background image format. Only JPG and PNG are allowed.' });
+        }
+  
         // Add the background image to the front page
         frontPage.drawImage(backgroundImage, {
           x: 0,
@@ -4748,7 +4759,7 @@ exports.generateVisiting=async (req,res)=>{
     } else {
       // If no background image is uploaded, use the background color
       const bgColor = rgb(...hexToRgb(backgroundColor || '#FFFFFF'));
-      
+  
       // Front page background color
       frontPage.drawRectangle({
         x: 0,
@@ -4768,18 +4779,19 @@ exports.generateVisiting=async (req,res)=>{
     if (req.files?.logo) {
       try {
         const logoImageBytes = fs.readFileSync(req.files.logo[0].path);
-        
+  
         // Embed logo into the front PDF
-        logoImage = await frontPdfDoc.embedJpg(logoImageBytes);
-        
-        // Draw logo on the front page (top-right corner)
-        frontPage.drawImage(logoImage, {
-          x: 330,
-          y: 130,
-          width: 50,
-          height: 50,
-        });
+        if (req.files.logo[0].mimetype === 'image/jpeg' || req.files.logo[0].mimetype === 'image/jpg') {
+          logoImage = await frontPdfDoc.embedJpg(logoImageBytes);
+        } else if (req.files.logo[0].mimetype === 'image/png') {
+          logoImage = await frontPdfDoc.embedPng(logoImageBytes);
+        } else {
+          return res.status(400).json({ error: 'Unsupported logo image format. Only JPG and PNG are allowed.' });
+        }
+  
+  
       } catch (err) {
+        console.error('Error while embedding the logo image:', err); // Log the error for better debugging
         return res.status(500).json({ error: 'Error embedding the logo image' });
       }
     }
@@ -4842,15 +4854,57 @@ exports.generateVisiting=async (req,res)=>{
       color: rgb(...hexToRgb(textColor || '#000000')),
     });
   
-    // Serialize the front PDF into a buffer
-    const frontPdfBytes = await frontPdfDoc.save();
+    // Create a back page in the same PDF
+    const backPage = frontPdfDoc.addPage([400, 200]);
   
-    // Set headers to download the front PDF
+    // Apply the same background image to the back side
+    if (backgroundImage) {
+      backPage.drawImage(backgroundImage, {
+        x: 0,
+        y: 0,
+        width: 400,
+        height: 200,
+      });
+    } else {
+      // Use background color if no image was provided
+      const backBgColor = rgb(...hexToRgb(backgroundColor || '#FFFFFF'));
+      backPage.drawRectangle({
+        x: 0,
+        y: 0,
+        width: 400,
+        height: 200,
+        color: backBgColor,
+      });
+    }
+  
+    // Embed the logo on the back page (centered horizontally and vertically)
+    if (logoImage) {
+      backPage.drawImage(logoImage, {
+        x: (400 - 100) / 2, // Horizontally center the logo (logo width: 100)
+        y: (200 - 100) / 2 + 10, // Vertically center the logo (logo height: 100)
+        width: 100,
+        height: 100,
+      });
+    }
+  
+    // Draw the company name centered below the logo on the back page
+    backPage.drawText(company, {
+      x: (400 - boldFrontFont.widthOfTextAtSize(company, 20)) / 2, // Horizontally center the company text
+      y: (200 - 100) / 2 - 10, // Place below the logo
+      size: 20,
+      font: boldFrontFont,
+      color: rgb(...hexToRgb(textColor || '#000000')) // Default to black text
+    });
+  
+    // Serialize the PDFs for front and back
+    const pdfBytes = await frontPdfDoc.save();
+  
+    // Set headers to download the PDF
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=front_visiting_card.pdf');
-    res.send(Buffer.from(frontPdfBytes));
+    res.setHeader('Content-Disposition', 'attachment; filename=visiting_card.pdf');
+    res.send(Buffer.from(pdfBytes));
   
-    // Delete the uploaded logo and background files after response is sent
+    // Clean up temporary files
     if (req.files?.logo) {
       fs.unlink(req.files.logo[0].path, (err) => {
         if (err) console.error('Error deleting the logo file:', err);
@@ -4859,8 +4913,8 @@ exports.generateVisiting=async (req,res)=>{
     if (backgroundFile) {
       fs.unlink(backgroundFile, (err) => {
         if (err) console.error('Error deleting the background file:', err);
-      });
-    }
+      });
+    }
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Error generating visiting cards" });
@@ -4883,168 +4937,215 @@ function hexToRgb(hex) {
 
 // --------------------------------------- LETTER HEAD GENERATOR---------------------------------------
 exports.generateLetterHead=async (req,res)=>{
-try {
-        const { headerText,address, phone, email, website, HeaderColor, currentDate,FooterColor,FooterLineColor } = req.body;
+  try {
+    const { headerText, address, phone, email, website, HeaderColor, currentDate, FooterColor, FooterLineColor, watermarkType, watermarkText } = req.body;
 
-        // Create a new PDF document
-        const pdfDoc = await PDFDocument.create();
-        const page = pdfDoc.addPage([600, 800]);
-        const { width, height } = page.getSize();
+    // Create a new PDF document
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([600, 800]);
+    const { width, height } = page.getSize();
 
-        // Load standard fonts
-        const helveticaFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-        const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+    // Load standard fonts
+    const helveticaFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
 
-        // Set font sizes
-        const headerFontSize = 22;
-        const bodyFontSize = 16;
-        const footerFontSize = 12;
+    // Set font sizes
+    const headerFontSize = 22;
+    const footerFontSize = 12;
 
-        // Function to convert hex color to RGB
-        function hexToRgb(hex) {
-            const bigint = parseInt(hex.slice(1), 16);
-            const r = (bigint >> 16) & 255;
-            const g = (bigint >> 8) & 255;
-            const b = bigint & 255;
-            return [r / 255, g / 255, b / 255]; // Normalize to 0-1 range
-        }
-
-        // Add background image if provided
-        if (req.files && req.files.background) {
-            const backgroundImagePath = req.files.background[0].path;
-            const backgroundImageBytes = fs.readFileSync(backgroundImagePath);
-            const backgroundImage = await pdfDoc.embedPng(backgroundImageBytes);
-
-            // Draw the background image to fill the entire page
-            page.drawImage(backgroundImage, {
-                x: 0,
-                y: 0,
-                width: width,
-                height: height,
-                opacity: 0.5 // Optional: Adjust opacity if needed
-            });
-
-            // Remove the uploaded file from temp storage
-            fs.unlinkSync(backgroundImagePath);
-        }
-
-        // Add header text
-        page.drawText(headerText, {
-            x: 140,
-            y: height - 80,
-            size: headerFontSize,
-            font: helveticaFont,
-            color: rgb(...hexToRgb(HeaderColor || '#FFFFFF')) // Custom color for header
-        });
-
-        // Add date text just below the header
-        page.drawText(`Date: ${currentDate}`, {
-            x: 450,
-            y: height - 150, // Adjust the Y position as needed
-            size: 16,
-            font: timesRomanFont,
-            color: rgb(0.2, 0.2, 0.2), // Dark grey color for date
-        });
-
-        // Add a logo if it exists
-        if (req.files && req.files.logo) {
-            const logoImagePath = req.files.logo[0].path;
-            const logoBytes = fs.readFileSync(logoImagePath);
-            const logoImage = await pdfDoc.embedPng(logoBytes);
-
-            // Add the logo to the header (top-left corner)
-            page.drawImage(logoImage, {
-                x: 70,
-                y: height - 90,
-                width: 40,
-                height: 40 // Adjust the size as needed
-            });
-
-            // Add the logo as a watermark (center of the page)
-            const logoWidth = 300;  // Adjust based on your logo dimensions
-            const logoHeight = 300; // Adjust based on your logo dimensions
-            const centerX = (width - logoWidth) / 2;
-            const centerY = (height - logoHeight) / 2;
-
-            // Draw the logo as a watermark with lower opacity
-            page.drawImage(logoImage, {
-                x: centerX,
-                y: centerY,
-                width: logoWidth,
-                height: logoHeight,
-                opacity: 0.15 // Set the opacity (0.0 = fully transparent, 1.0 = fully opaque)
-            });
-
-            // Remove the uploaded file from temp storage
-            fs.unlinkSync(logoImagePath);
-        }
-
-        // Draw a horizontal line before the footer
-        page.drawLine({
-            start: { x: 50, y: 120 },
-            end: { x: width - 50, y: 120 },
-            thickness: 1,
-            color:rgb(...hexToRgb(FooterLineColor || '#000000')),
-        });
-
-        // Add footer fields (address, phone, email, website) with grey text
-        const footerTextY = 100;
-        const greyColor = rgb(0.5, 0.5, 0.5);  // Grey color for footer text
-
-        if (address) {
-            page.drawText(`Address: ${address}`, {
-                x: 55,
-                y: footerTextY,
-                size: footerFontSize,
-                font: helveticaFont,
-                color: rgb(...hexToRgb(FooterColor || `#808080`)),
-            });
-        }
-
-        if (phone) {
-            page.drawText(`Phone: ${phone}`, {
-                x: 55,
-                y: footerTextY - 16,
-                size: footerFontSize,
-                font: timesRomanFont,
-                color: rgb(...hexToRgb(FooterColor || `#808080`)),
-            });
-        }
-
-        if (email) {
-            page.drawText(`Email: ${email}`, {
-                x: 55,
-                y: footerTextY - 34,
-                size: footerFontSize,
-                font: helveticaFont,
-                color: rgb(...hexToRgb(FooterColor || `#808080`)),
-            });
-        }
-
-        if (website) {
-            page.drawText(`Website: ${website}`, {
-                x: 55,
-                y: footerTextY - 50,
-                size: footerFontSize,
-                font: timesRomanFont,
-                color: rgb(...hexToRgb(FooterColor || `#808080`)),
-            });
-        }
-
-        // Save the PDF as bytes
-        const pdfBytes = await pdfDoc.save();
-
-        // Set response headers to serve a PDF
-        res.setHeader('Content-Disposition', 'attachment; filename=Generatedletterhead.pdf');
-        res.setHeader('Content-Type', 'application/pdf');
-
-        // Send the PDF as a buffer
-        res.send(Buffer.from(pdfBytes));
-
-    } catch (err) {
-        console.error('Error generating PDF:', err);
-        res.status(500).send('Failed to generate PDF');
+    // Function to convert hex color to RGB
+    function hexToRgb(hex) {
+        const bigint = parseInt(hex.slice(1), 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        return [r / 255, g / 255, b / 255]; // Normalize to 0-1 range
     }
+
+    // Add background image if provided
+    if (req.files && req.files.background) {
+        const backgroundImageBytes = fs.readFileSync(req.files.background[0].path);
+        let backgroundImage;
+
+        if (req.files.background[0].mimetype === 'image/jpeg' || req.files.background[0].mimetype === 'image/jpg') {
+            backgroundImage = await pdfDoc.embedJpg(backgroundImageBytes);
+        } else if (req.files.background[0].mimetype === 'image/png') {
+            backgroundImage = await pdfDoc.embedPng(backgroundImageBytes);
+        } else {
+            return res.status(400).json({ error: 'Unsupported background image format. Only JPG and PNG are allowed.' });
+        }
+
+        // Draw the background image to fill the entire page
+        page.drawImage(backgroundImage, {
+            x: 0,
+            y: 0,
+            width: width,
+            height: height,
+            opacity: 0.5 // Optional: Adjust opacity if needed
+        });
+    }
+
+    // Add header text
+    page.drawText(headerText, {
+        x: 120,
+        y: height - 80,
+        size: headerFontSize,
+        font: helveticaFont,
+        color: rgb(...hexToRgb(HeaderColor || '#FFFFFF')) // Custom color for header
+    });
+
+    // Add date text just below the header
+    page.drawText(`Date: ${currentDate}`, {
+        x: 450,
+        y: height - 150, // Adjust the Y position as needed
+        size: 16,
+        font: timesRomanFont,
+        color: rgb(0.2, 0.2, 0.2), // Dark grey color for date
+    });
+
+    // Add a logo if it exists
+    if (req.files && req.files.logo) {
+        const logoImageBytes = fs.readFileSync(req.files.logo[0].path);
+        let logoImage;
+
+        if (req.files.logo[0].mimetype === 'image/jpeg' || req.files.logo[0].mimetype === 'image/jpg') {
+            logoImage = await pdfDoc.embedJpg(logoImageBytes);
+        } else if (req.files.logo[0].mimetype === 'image/png') {
+            logoImage = await pdfDoc.embedPng(logoImageBytes);
+        } else {
+            return res.status(400).json({ error: 'Unsupported logo image format. Only JPG and PNG are allowed.' });
+        }
+
+        // Add the logo to the header (top-left corner)
+        page.drawImage(logoImage, {
+            x: 50,
+            y: height - 90,
+            width: 40,
+            height: 40 // Adjust the size as needed
+        });
+    }
+
+    // Add a watermark (logo or text) to the center of the page
+    if (watermarkType === 'logo' && req.files && req.files.logo) {
+        const logoImageBytes = fs.readFileSync(req.files.logo[0].path);
+        let logoImage;
+
+        if (req.files.logo[0].mimetype === 'image/jpeg' || req.files.logo[0].mimetype === 'image/jpg') {
+            logoImage = await pdfDoc.embedJpg(logoImageBytes);
+        } else if (req.files.logo[0].mimetype === 'image/png') {
+            logoImage = await pdfDoc.embedPng(logoImageBytes);
+        }
+
+        // Add the logo as a watermark (center of the page)
+        const logoWidth = 300;  // Adjust based on your logo dimensions
+        const logoHeight = 300; // Adjust based on your logo dimensions
+        const centerX = (width - logoWidth) / 2;
+        const centerY = (height - logoHeight) / 2;
+
+        // Draw the logo as a watermark with lower opacity
+        page.drawImage(logoImage, {
+            x: centerX,
+            y: centerY,
+            width: logoWidth,
+            height: logoHeight,
+            opacity: 0.15 // Set the opacity (0.0 = fully transparent, 1.0 = fully opaque)
+        });
+    } else if (watermarkType === 'text' && watermarkText) {
+        // Add text as a watermark in the center of the page
+        const textFontSize = 90; // Adjust as needed
+        const textWidth = helveticaFont.widthOfTextAtSize(watermarkText, textFontSize);
+        const textX = (width - textWidth+30);
+        const textY = height / 4;
+    
+        // Set rotation angle in degrees
+        const rotationAngle = 45; // 45 degrees
+    
+        page.drawText(watermarkText, {
+            x: textX,
+            y: textY,
+            size: textFontSize,
+            font: helveticaFont,
+            color: rgb(0.5, 0.5, 0.5), // Grey color for watermark text
+            opacity: 0.15, // Set lower opacity for the watermark
+            rotate: degrees(rotationAngle), // Use degrees function to set rotation
+        });
+    }
+    
+
+    // Draw a horizontal line before the footer
+    page.drawLine({
+        start: { x: 50, y: 120 },
+        end: { x: width - 50, y: 120 },
+        thickness: 1,
+        color: rgb(...hexToRgb(FooterLineColor || '#FFFFFF')),
+    });
+
+    // Add footer fields (address, phone, email, website) with grey text
+    const footerTextY = 100;
+
+    if (address) {
+        page.drawText(`Address: ${address}`, {
+            x: 55,
+            y: footerTextY,
+            size: footerFontSize,
+            font: helveticaFont,
+            color: rgb(...hexToRgb(FooterColor || '#FFFFFF')),
+        });
+    }
+
+    if (phone) {
+        page.drawText(`Phone: ${phone}`, {
+            x: 55,
+            y: footerTextY - 16,
+            size: footerFontSize,
+            font: timesRomanFont,
+            color: rgb(...hexToRgb(FooterColor || '#FFFFFF')),
+        });
+    }
+
+    if (email) {
+        page.drawText(`Email: ${email}`, {
+            x: 55,
+            y: footerTextY - 34,
+            size: footerFontSize,
+            font: helveticaFont,
+            color: rgb(...hexToRgb(FooterColor || '#FFFFFF')),
+        });
+    }
+
+    if (website) {
+        page.drawText(`Website: ${website}`, {
+            x: 55,
+            y: footerTextY - 50,
+            size: footerFontSize,
+            font: timesRomanFont,
+            color: rgb(...hexToRgb(FooterColor || '#FFFFFF')),
+        });
+    }
+
+    // Save the PDF as bytes
+    const pdfBytes = await pdfDoc.save();
+
+    // Set response headers to serve a PDF
+    res.setHeader('Content-Disposition', 'attachment; filename=Generatedletterhead.pdf');
+    res.setHeader('Content-Type', 'application/pdf');
+
+    // Send the PDF as a buffer
+    res.send(Buffer.from(pdfBytes));
+
+    // After the PDF is sent, delete the uploaded files
+    if (req.files && req.files.logo) {
+        fs.unlinkSync(req.files.logo[0].path);
+    }
+
+    if (req.files && req.files.background) {
+        fs.unlinkSync(req.files.background[0].path);
+    }
+
+} catch (err) {
+    console.error('Error generating PDF:', err);
+    res.status(500).json({ error: 'An error occurred while generating the letterhead' });
+}
 }
 
 
