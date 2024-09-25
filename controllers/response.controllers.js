@@ -4713,10 +4713,11 @@ exports.generateVisiting=async (req,res)=>{
       lineColor,
       positionColor,
       textColor,
+      includeCompanyOnBack
     } = req.body;
   
     // Check for missing fields
-    if (!name || !position || !phone || !email || !address || !company) {
+    if (!name || !position || !phone || !email ) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
   
@@ -4776,25 +4777,33 @@ exports.generateVisiting=async (req,res)=>{
   
     // Check if logo file was uploaded and embed the image
     let logoImage;
-    if (req.files?.logo) {
-      try {
-        const logoImageBytes = fs.readFileSync(req.files.logo[0].path);
+  if (req.files?.logo) {
+    try {
+      const logoImageBytes = fs.readFileSync(req.files.logo[0].path);
   
-        // Embed logo into the front PDF
-        if (req.files.logo[0].mimetype === 'image/jpeg' || req.files.logo[0].mimetype === 'image/jpg') {
-          logoImage = await frontPdfDoc.embedJpg(logoImageBytes);
-        } else if (req.files.logo[0].mimetype === 'image/png') {
-          logoImage = await frontPdfDoc.embedPng(logoImageBytes);
-        } else {
-          return res.status(400).json({ error: 'Unsupported logo image format. Only JPG and PNG are allowed.' });
-        }
-  
-  
-      } catch (err) {
-        console.error('Error while embedding the logo image:', err); // Log the error for better debugging
-        return res.status(500).json({ error: 'Error embedding the logo image' });
+      // Embed logo into the front PDF
+      if (req.files.logo[0].mimetype === 'image/jpeg' || req.files.logo[0].mimetype === 'image/jpg') {
+        logoImage = await frontPdfDoc.embedJpg(logoImageBytes);
+      } else if (req.files.logo[0].mimetype === 'image/png') {
+        logoImage = await frontPdfDoc.embedPng(logoImageBytes);
+      } else {
+        return res.status(400).json({ error: 'Unsupported logo image format. Only JPG and PNG are allowed.' });
       }
+  
+      // Draw the logo image on the front page at the calculated position
+      frontPage.drawImage(logoImage, {
+        x: 330,
+        y: 130,
+        width: 50,
+        height: 50,
+      });
+  
+    } catch (err) {
+      console.error('Error while embedding the logo image:', err); // Log the error for better debugging
+      return res.status(500).json({ error: 'Error embedding the logo image' });
     }
+  }
+  
   
     // Add name and position to the front page
     frontPage.drawText(name, {
@@ -4824,7 +4833,7 @@ exports.generateVisiting=async (req,res)=>{
     // Add contact details to the front page
     frontPage.drawText(`Phone: ${phone}`, {
       x: 20,
-      y: 90,
+      y: 70,
       size: 12,
       font: frontFont,
       color: rgb(...hexToRgb(textColor || '#000000')),
@@ -4832,21 +4841,13 @@ exports.generateVisiting=async (req,res)=>{
   
     frontPage.drawText(`Email: ${email}`, {
       x: 20,
-      y: 70,
-      size: 12,
-      font: frontFont,
-      color: rgb(...hexToRgb(textColor || '#000000')),
-    });
-  
-    frontPage.drawText(`Address: ${address}`, {
-      x: 20,
       y: 50,
       size: 12,
       font: frontFont,
       color: rgb(...hexToRgb(textColor || '#000000')),
     });
   
-    frontPage.drawText(`Company: ${company}`, {
+    frontPage.drawText(`Address: ${address}`, {
       x: 20,
       y: 30,
       size: 12,
@@ -4881,20 +4882,22 @@ exports.generateVisiting=async (req,res)=>{
     if (logoImage) {
       backPage.drawImage(logoImage, {
         x: (400 - 100) / 2, // Horizontally center the logo (logo width: 100)
-        y: (200 - 100) / 2 + 10, // Vertically center the logo (logo height: 100)
+        y: (200 - 100) / 2 , // Vertically center the logo (logo height: 100)
         width: 100,
         height: 100,
       });
     }
   
     // Draw the company name centered below the logo on the back page
+    if (includeCompanyOnBack === 'true') {
     backPage.drawText(company, {
       x: (400 - boldFrontFont.widthOfTextAtSize(company, 20)) / 2, // Horizontally center the company text
-      y: (200 - 100) / 2 - 10, // Place below the logo
+      y: (200 - 100) / 2 - 20, // Place below the logo
       size: 20,
       font: boldFrontFont,
       color: rgb(...hexToRgb(textColor || '#000000')) // Default to black text
     });
+  }
   
     // Serialize the PDFs for front and back
     const pdfBytes = await frontPdfDoc.save();
