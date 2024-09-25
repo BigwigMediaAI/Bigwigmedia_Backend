@@ -4713,7 +4713,8 @@ exports.generateVisiting=async (req,res)=>{
       lineColor,
       positionColor,
       textColor,
-      includeCompanyOnBack
+      includeCompanyOnBack,
+      includeLogoOnFront
     } = req.body;
   
     // Check for missing fields
@@ -4791,12 +4792,14 @@ exports.generateVisiting=async (req,res)=>{
       }
   
       // Draw the logo image on the front page at the calculated position
+      if (includeLogoOnFront === 'true'){
       frontPage.drawImage(logoImage, {
         x: 330,
         y: 130,
         width: 50,
         height: 50,
       });
+    }
   
     } catch (err) {
       console.error('Error while embedding the logo image:', err); // Log the error for better debugging
@@ -5153,3 +5156,69 @@ exports.generateLetterHead=async (req,res)=>{
 
 
 // --------------------------------------- LETTER HEAD GENERATOR ENDS HERE---------------------------------------
+
+
+
+// ----------------------------------------- FREE EMAIL STYLE GENERATOR -----------------------------------------
+const generateFreestyleEmailUtil=require("../utils.js/FreeStyleEmail")
+
+exports.generateFreeEmail = async (req, res) => {
+  const { to, subject, content, tone, writingStyle, recipient, language, outputCount } = req.body;
+
+    // Validation to ensure required fields are provided
+    if (!to || !subject || !content || !tone || !writingStyle || !language || !outputCount) {
+        return res.status(400).json({
+            error: 'Missing required fields. Ensure to include to, subject, content, tone, writingStyle, language, and outputCount.'
+        });
+    }
+
+    try {
+        // Call the email generation utility
+        const emailResponses = await generateFreestyleEmailUtil(to, subject, content, tone, writingStyle, recipient, language, outputCount);
+        
+        // Respond with generated emails
+        return res.status(200).json({
+            success: true,
+            emails: emailResponses
+        });
+    } catch (error) {
+        console.error('Error generating freestyle emails:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to generate freestyle emails.'
+        });
+    }
+};
+
+// --------------------------------------------FREE STYLE EMAIL ENDS HERE----------------------------------
+
+
+const {generateReplyEmailUtil}=require("../utils.js/EmailReplie")
+
+exports.generateemailreplie=async(req,res)=>{
+  const { to, receivedEmail, tone, language, outputCount } = req.body;
+
+    // Validation to ensure required fields are provided
+    if (!to || !receivedEmail || !tone || !language || !outputCount) {
+        return res.status(400).json({
+            error: 'Missing required fields. Ensure to include to, receivedEmail, tone, language, and outputCount.'
+        });
+    }
+
+    try {
+        // Call the email reply generation utility
+        const emailResponses = await generateReplyEmailUtil(to, receivedEmail, tone, language, outputCount);
+        
+        // Respond with generated email replies
+        return res.status(200).json({
+            success: true,
+            emails: emailResponses
+        });
+    } catch (error) {
+        console.error('Error generating reply emails:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to generate reply emails.'
+        });
+    }
+}

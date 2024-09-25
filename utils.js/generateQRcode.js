@@ -55,7 +55,7 @@ async function generateQRCodeWithLogo(text, filename, logoPath, color,textAboveQ
 
         // Add text below the QR code
         if (textBelowQR) {
-            const font = await Jimp.loadFont(Jimp.FONT_SANS_14_BLACK);
+            const font = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
             const textWidth = Jimp.measureText(font, textBelowQR);
             const textX = (qrImage.bitmap.width - textWidth)/2;
             const textY = qrImage.bitmap.height - 20; // Adjust vertical position as needed
