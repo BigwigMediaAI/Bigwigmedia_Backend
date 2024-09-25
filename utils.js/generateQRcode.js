@@ -56,13 +56,13 @@ async function generateQRCodeWithLogo(text, filename, logoPath, color, textAbove
             const font = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
             const textWidth = Jimp.measureText(font, textAboveQR);
             const textX = (qrImage.bitmap.width - textWidth) / 2;
-            const textY = 10; // Adjust vertical position as needed
+            const textY = 5; // Adjust vertical position as needed
             qrImage.print(font, textX, textY, textAboveQR);
         }
 
         // Add text below the QR code
         if (textBelowQR) {
-            const font = await Jimp.loadFont(Jimp.FONT_SANS_12_BLACK);
+            const font = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
             const textWidth = Jimp.measureText(font, textBelowQR);
             const textX = (qrImage.bitmap.width - textWidth) / 2;
             const textY = qrImage.bitmap.height - 20; // Adjust vertical position as needed
