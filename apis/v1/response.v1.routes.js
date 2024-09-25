@@ -257,10 +257,10 @@ router.post('/GenerateVideoScript',checkLimit,GenerateVideoScript);
 router.post('/generatePrompts',generatePrompts);  
 router.post('/generateImageFromPrompt',checkLimit,generateImageFromPrompt);
 router.post('/GenerateVideoPromptContent',checkLimit,GenerateVideoPromptContent);
-router.post("/visiting",upload.fields([{ name: 'logo' }, { name: 'background' }]),generateVisiting)
-router.post('/create-letterhead', upload.fields([{ name: 'logo' }, { name: 'background' }]),generateLetterHead)
-router.post('/generateFreeEmail',generateFreeEmail);  
-router.post('/generateemailreplie',generateemailreplie);  
+router.post("/visiting",checkLimit,upload.fields([{ name: 'logo' }, { name: 'background' }]),generateVisiting)
+router.post('/create-letterhead',checkLimit, upload.fields([{ name: 'logo' }, { name: 'background' }]),generateLetterHead)
+router.post('/generateFreeEmail',checkLimit,generateFreeEmail);  
+router.post('/generateemailreplie',checkLimit,generateemailreplie);  
 
 
 

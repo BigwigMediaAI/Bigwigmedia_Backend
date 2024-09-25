@@ -12,7 +12,7 @@ async function generateFreestyleEmailUtil(to, subject, content, tone, writingSty
                 messages: [
                     {
                         role: 'system',
-                        content: `Generate an email in ${language} with a ${tone} tone and a ${writingStyle} writing style.`
+                        content: `You are a professional email writer. Generate a properly formatted email in ${language} with a ${tone} tone and a ${writingStyle} writing style.`
                     },
                     {
                         role: 'user',
@@ -26,7 +26,15 @@ async function generateFreestyleEmailUtil(to, subject, content, tone, writingSty
                 throw new Error('Invalid completion response');
             }
 
-            responses.push(completion.choices[0].message.content.trim());
+            // Formatting the response in an email format
+            const formattedEmail = `
+To: ${to}
+Subject: ${subject}
+
+${completion.choices[0].message.content.trim()}
+            `;
+
+            responses.push(formattedEmail);
         }
 
         return responses;
@@ -36,4 +44,4 @@ async function generateFreestyleEmailUtil(to, subject, content, tone, writingSty
     }
 }
 
-module.exports = generateFreestyleEmailUtil;
+module.exports = generateFreestyleEmailUtil ;
