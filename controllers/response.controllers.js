@@ -4277,7 +4277,7 @@ exports.generateBlogPost = async (req, res) => {
   try {
       const {title, description, keywords, tone, language, wordCount, includeIntroduction, includeConclusion, outputCount} = req.body;
 
-      if (!description|| !language || !outputCount|| !title || !keywords || !tone ||!wordCount ||! includeIntroduction||!includeConclusion) {
+      if (!description|| !language || !outputCount|| !title || !keywords || !tone ||!wordCount) {
           return res.status(400).json({ error: 'Please provide all required fields' });
       }
 
