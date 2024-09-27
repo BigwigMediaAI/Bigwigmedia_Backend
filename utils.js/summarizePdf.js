@@ -6,7 +6,7 @@ const openai = new openAI({
 });
 
 
-const summarizeText = async (text) => {
+const summarizeText = async (text,language) => {
    
   try {
     const response = await openai.chat.completions.create({
@@ -18,7 +18,7 @@ const summarizeText = async (text) => {
         },
         {
           role: "user",
-          content: `Summarize the following text:\n\n${text}`
+          content: `Summarize the following text:\n\n${text} in ${language}`
         }
       ],
       max_tokens: 150,

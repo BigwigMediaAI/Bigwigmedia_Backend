@@ -1755,13 +1755,14 @@ exports.addAudio=async(req,res)=>{
 const summarizeText=require("../utils.js/summarizePdf")
 exports.uploadAndSummarize = async (req, res) => {
   const filePath = req.file.path;
-
+  
   try {
     const dataBuffer = fs.readFileSync(filePath);
     const data = await pdfParse(dataBuffer);
     const text = data.text;
+    const language = req.body.language || 'English'
 
-    const summary = await summarizeText(text);
+    const summary = await summarizeText(text,language);
 
     res.send({ summary });
 
