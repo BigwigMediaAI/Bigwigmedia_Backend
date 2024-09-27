@@ -110,14 +110,25 @@ exports.getParaPhrase = async (req, res) => {
 };
 
 exports.getSpecialtool=async(req,res)=>{
-    try {
-        const {prompt,language,outputCount}=req.body;
-        const response=await getSpecialtool(prompt,language,outputCount);
-        response_200(res, "response generated successfully", response);
-    } catch (error) {
-        response_500(res, "Error getting response", error);
+  try {
+    const { prompt, outputCount = 1, language = "English" } = req.body;
 
-    }
+    // Call the getSpecialtool function with the user input
+    const responses = await getSpecialtool(prompt, outputCount, language);
+
+    // Send the responses back to the client
+    res.status(200).json({
+        success: true,
+        data: responses
+    });
+} catch (error) {
+    // Handle errors
+    console.error(error);
+    res.status(500).json({
+        success: false,
+        message: "An error occurred while processing your request."
+    });
+}
 }
 
 exports.getDecision = async (req, res) => {
