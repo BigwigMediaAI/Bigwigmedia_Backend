@@ -5205,13 +5205,17 @@ exports.generateFreeEmail = async (req, res) => {
 // --------------------------------------------FREE STYLE EMAIL ENDS HERE----------------------------------
 
 
+
+
+// ----------------------------------------------EMAIL REPLIE GENERATOR---------------------------------
+
 const {generateReplyEmailUtil}=require("../utils.js/EmailReplie")
 
 exports.generateemailreplie=async(req,res)=>{
-  const { to, receivedEmail, tone, language, outputCount } = req.body;
+  const { to, receivedEmail, tone, language, outputCount,replyIntent } = req.body;
 
     // Validation to ensure required fields are provided
-    if (!to || !receivedEmail || !tone || !language || !outputCount) {
+    if (!to || !receivedEmail || !tone || !language || !outputCount ||!replyIntent) {
         return res.status(400).json({
             error: 'Missing required fields. Ensure to include to, receivedEmail, tone, language, and outputCount.'
         });
@@ -5219,7 +5223,7 @@ exports.generateemailreplie=async(req,res)=>{
 
     try {
         // Call the email reply generation utility
-        const emailResponses = await generateReplyEmailUtil(to, receivedEmail, tone, language, outputCount);
+        const emailResponses = await generateReplyEmailUtil(to, receivedEmail, tone, language, outputCount,replyIntent);
         
         // Respond with generated email replies
         return res.status(200).json({
@@ -5234,3 +5238,5 @@ exports.generateemailreplie=async(req,res)=>{
         });
     }
 }
+
+// --------------------------------------------EMAIL REPLIE GENERATOR ENDS HERE---------------------------------

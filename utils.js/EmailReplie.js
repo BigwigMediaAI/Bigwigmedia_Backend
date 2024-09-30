@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
-async function generateReplyEmailUtil(to, receivedEmail, tone, language, outputCount) {
+async function generateReplyEmailUtil(to, receivedEmail, tone, language, outputCount, replyIntent) {
     let responses = [];
 
     try {
@@ -12,7 +12,7 @@ async function generateReplyEmailUtil(to, receivedEmail, tone, language, outputC
                 messages: [
                     {
                         role: 'system',
-                        content: `Generate a reply in ${language} with a ${tone} tone.`
+                        content: `Generate a reply in ${language} with a ${tone} tone. The reply should focus on "${replyIntent}".`
                     },
                     {
                         role: 'user',
