@@ -191,4 +191,84 @@ exports.searchBlogsByTags = async (req, res) => {
       res.status(500).json({ msg: 'Server error', error: error.message });
     }
   };
+
+  // Controller for deleting a comment
+exports.deleteComment = async (req, res) => {
+  const { slug, commentId } = req.params;
+  const { username } = req.body;  // Assuming you send the username from the client
+
+  try {
+    // Find the blog post by slug
+    const blogPost = await BlogPost.findOne({ slug });
+
+    if (!blogPost) {
+      return res.status(404).json({ msg: 'Blog post not found' });
+    }
+
+    // Find the comment by ID
+    const commentIndex = blogPost.comments.findIndex(comment => comment._id.toString() === commentId);
+
+    if (commentIndex === -1) {
+      return res.status(404).json({ msg: 'Comment not found' });
+    }
+
+    // Check if the username matches the comment's username (i.e., the user is the owner)
+    if (blogPost.comments[commentIndex].username !== username) {
+      return res.status(403).json({ msg: 'You can only delete your own comment' });
+    }
+
+    // Remove the comment from the blog post
+    blogPost.comments.splice(commentIndex, 1);
+
+    // Save the updated blog post
+    await blogPost.save();
+
+    res.status(200).json({ msg: 'Comment deleted successfully', comments: blogPost.comments });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ msg: 'Server Error', error: error.message });
+  }
+};
+
   
+exports.editComment = async (req, res) => {
+  const { slug, commentId } = req.params;
+  const { username, text } = req.body;  // Assuming you send the username and the updated comment text from the client
+
+  if (!text || text.trim() === '') {
+    return res.status(400).json({ msg: 'Comment text cannot be empty' });
+  }
+
+  try {
+    // Find the blog post by slug
+    const blogPost = await BlogPost.findOne({ slug });
+
+    if (!blogPost) {
+      return res.status(404).json({ msg: 'Blog post not found' });
+    }
+
+    // Find the comment by ID
+    const commentIndex = blogPost.comments.findIndex(comment => comment._id.toString() === commentId);
+
+    if (commentIndex === -1) {
+      return res.status(404).json({ msg: 'Comment not found' });
+    }
+
+    // Check if the username matches the comment's username (i.e., the user is the owner)
+    if (blogPost.comments[commentIndex].username !== username) {
+      return res.status(403).json({ msg: 'You can only edit your own comment' });
+    }
+
+    // Update the comment text
+    blogPost.comments[commentIndex].text = text;
+    blogPost.comments[commentIndex].date = new Date(); // Optional: Update the date of the comment edit
+
+    // Save the updated blog post
+    await blogPost.save();
+
+    res.status(200).json({ msg: 'Comment updated successfully', comment: blogPost.comments[commentIndex] });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ msg: 'Server Error', error: error.message });
+  }
+};
