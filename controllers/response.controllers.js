@@ -5240,3 +5240,46 @@ exports.generateemailreplie=async(req,res)=>{
 }
 
 // --------------------------------------------EMAIL REPLIE GENERATOR ENDS HERE---------------------------------
+
+const {convertToAudio, transcribeToaudio, rephrasetext,textToVoice}=require("../utils.js/AudioRepharse")
+
+exports.audioRepharse=async(req,res)=>{
+  const audioPath = req.file.path; // Uploaded file path
+  const tone = req.body.tone || 'calm'; // Default tone
+  try {
+    // Step 1: Convert audio to MP3 if needed (optional if input isn't MP3)
+    const mp3Path = `uploads/${Date.now()}_converted.mp3`;
+    await convertToAudio(audioPath, mp3Path);
+
+    // Step 2: Transcribe the audio to text
+    const transcribedText = await transcribeToaudio(mp3Path);
+    // console.log('Transcribed Text:', transcribedText);
+
+    // Step 3: Rephrase the transcribed text
+    const rephrasedText = await rephrasetext(transcribedText);
+    // console.log('Rephrased Text:', rephrasedText);
+
+    // Step 4: Convert the rephrased text back to audio
+    const audioBuffer = await textToVoice(rephrasedText, tone);
+    console.log('Generated audio buffer size:', audioBuffer.length);
+
+    // Cleanup the uploaded and intermediate files
+    fs.unlinkSync(audioPath); // Delete uploaded file
+    fs.unlinkSync(mp3Path); // Delete converted MP3 file
+
+    // Send the generated audio file in the response
+    res.set({
+      'Content-Type': 'audio/mpeg',
+      'Content-Disposition': 'attachment; filename="rephrased_audio.mp3"',
+    });
+    res.send(audioBuffer); // Send the audio buffer as the response
+  } catch (error) {
+    console.error('Error processing audio:', error.message);
+
+    // Cleanup in case of error
+    if (fs.existsSync(audioPath)) fs.unlinkSync(audioPath);
+    if (fs.existsSync(mp3Path)) fs.unlinkSync(mp3Path);
+
+    res.status(500).json({ error: error.message });
+  }
+}
