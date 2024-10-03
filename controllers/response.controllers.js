@@ -5246,6 +5246,7 @@ const {convertToAudio, transcribeToaudio, rephrasetext,textToVoice}=require("../
 exports.audioRepharse=async(req,res)=>{
   const audioPath = req.file.path; // Uploaded file path
   const tone = req.body.tone || 'calm'; // Default tone
+  const targetLanguage = req.body.targetLanguage;
   try {
     // Step 1: Convert audio to MP3 if needed (optional if input isn't MP3)
     const mp3Path = `uploads/${Date.now()}_converted.mp3`;
@@ -5259,8 +5260,10 @@ exports.audioRepharse=async(req,res)=>{
     const rephrasedText = await rephrasetext(transcribedText);
     // console.log('Rephrased Text:', rephrasedText);
 
+    const translatedText = await translateText(rephrasedText, targetLanguage)
+
     // Step 4: Convert the rephrased text back to audio
-    const audioBuffer = await textToVoice(rephrasedText, tone);
+    const audioBuffer = await textToVoice(translatedText, tone);
     console.log('Generated audio buffer size:', audioBuffer.length);
 
     // Cleanup the uploaded and intermediate files
