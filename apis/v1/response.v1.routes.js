@@ -261,7 +261,7 @@ router.post("/visiting",checkLimit,upload.fields([{ name: 'logo' }, { name: 'bac
 router.post('/create-letterhead',checkLimit, upload.fields([{ name: 'logo' }, { name: 'background' }]),generateLetterHead)
 router.post('/generateFreeEmail',checkLimit,generateFreeEmail);  
 router.post('/generateemailreplie',checkLimit,generateemailreplie);  
-router.post("/audioRepharse",upload.single('audio'),audioRepharse)
+router.post("/audioRepharse",checkLimit,upload.single('audio'),audioRepharse)
 
 
 
