@@ -898,7 +898,7 @@ async function ArticleGenerator({ description, tone, language, outputCount }) {
     }
 }
 
-async function PressRelease({ organizationName, eventName, tone, language, outputCount }) {
+async function PressRelease({ organizationName, eventName, tone, language, outputCount,eventDetails }) {
     let responses = [];
 
     try {
@@ -911,7 +911,7 @@ async function PressRelease({ organizationName, eventName, tone, language, outpu
                     },
                     {
                         role: 'user',
-                        content: `Organization: "${organizationName}"\nEvent: "${eventName}".\nCreate a press release that effectively communicates the importance of this event and engages the target audience.`
+                        content: `Organization: "${organizationName}"\nEvent: "${eventName}"\nEvent Details: "${eventDetails}".\nCreate a press release that effectively communicates the importance of this event and engages the target audience.`
                     }
                 ],
                 model: 'gpt-4'

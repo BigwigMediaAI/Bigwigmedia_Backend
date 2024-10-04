@@ -4325,15 +4325,17 @@ exports.generateArticle = async (req, res) => {
 
 exports.generatePressRelease = async (req, res) => {
   try {
-      const {organizationName, eventName, tone, language, outputCount} = req.body;
+      const {organizationName, eventName, tone, language, outputCount,eventDetails} = req.body;
 
-      if (!organizationName||!eventName || !language || !outputCount||!tone) {
+      if (!organizationName||!eventName || !language || !outputCount||!tone||!eventDetails) {
           return res.status(400).json({ error: 'Please provide all required fields' });
       }
 
-      const posts = await PressRelease({organizationName, eventName, tone, language, outputCount});
-
-      res.status(200).json(posts);
+      const posts = await PressRelease({organizationName, eventName, tone, language, outputCount,eventDetails});
+      const imageResponse = await generateImageFromPrompt(eventDetails);
+      const imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
+      // Send response
+      res.status(200).json({ posts, imageUrl });
   } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ error: 'Error generating Press Release' });
