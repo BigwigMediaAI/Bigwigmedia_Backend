@@ -3880,7 +3880,7 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
 
 // -----------Instagram Caption Generator--------------
-const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript
+const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt
 
 } = require('../utils.js/generativeTools');
 
@@ -4294,8 +4294,10 @@ exports.generateBlogPost = async (req, res) => {
       }
 
       const posts = await BlogPost({title, description, keywords, tone, language, wordCount, includeIntroduction, includeConclusion, outputCount});
-
-      res.status(200).json(posts);
+      const imageResponse = await generateImageFromPrompt(title);
+      const imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
+      // Send response
+      res.status(200).json({ posts, imageUrl });
   } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ error: 'Error generating Blog Post' });

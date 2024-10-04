@@ -803,6 +803,25 @@ async function PostHashtags({ description, language, outputCount }) {
     }
 }
 
+async function generateImageFromPrompt(selectedPrompt) {
+    try {
+        const response = await openai.images.generate({
+            model: 'dall-e-3',
+            prompt: `${selectedPrompt}`,
+            size: '1024x1024',
+        });
+
+        // Check if the response has the correct structure and return the first image URL
+        if (response && response.data && response.data.length > 0) {
+            return { url: response.data[0].url };  // Adjust based on the actual API response
+        } else {
+            throw new Error('No image generated');
+        }
+    } catch (error) {
+        console.error('Error generating image from selected prompt:', error);
+        return 'Failed to generate image';
+    }
+}
 
 async function BlogPost({ title, description, keywords, tone, language, wordCount, includeIntroduction, includeConclusion, outputCount }) {
     let responses = [];
@@ -1530,4 +1549,4 @@ async function VideoScript({ topic, objective, tone, language, outputCount }) {
 
 
 
-module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript};
+module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt};
