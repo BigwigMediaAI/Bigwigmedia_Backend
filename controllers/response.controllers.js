@@ -4332,7 +4332,7 @@ exports.generatePressRelease = async (req, res) => {
       }
 
       const posts = await PressRelease({organizationName, eventName, tone, language, outputCount,eventDetails});
-      const imageResponse = await generateImageFromPrompt(eventDetails);
+      const imageResponse = await generateImageFromPrompt(eventName);
       const imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
       // Send response
       res.status(200).json({ posts, imageUrl });
