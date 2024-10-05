@@ -5245,6 +5245,10 @@ exports.generateemailreplie=async(req,res)=>{
 
 // --------------------------------------------EMAIL REPLIE GENERATOR ENDS HERE---------------------------------
 
+
+
+
+// -------------------------------------------------AUDIO REPHRASE-----------------------------------------------
 const {convertToAudio, transcribeToaudio, rephrasetext,textToVoice}=require("../utils.js/AudioRepharse")
 
 exports.audioRepharse=async(req,res)=>{
@@ -5291,8 +5295,11 @@ exports.audioRepharse=async(req,res)=>{
   }
 }
 
+// -------------------------------------------------AUDIO REPHRASE ENDS HERE-------------------------------
 
 
+
+// -----------------------------------------------SVG to JPG------------------------------------------
 
 const svg2img = require('svg2img');
 // const fs = require('fs');
@@ -5367,4 +5374,52 @@ exports.convertSvgToJpeg = (req, res) => {
     console.error('Unexpected error:', error);
     res.status(500).json({ error: 'An unexpected error occurred.', details: error.message });
   }
+};
+
+// -----------------------------------------------SVG to JPG ENDS HERE------------------------------------------
+
+
+
+
+// --------------------------------------------------SVG TO PNG -----------------------------------------
+
+const svg2png = require('svg2png');
+
+exports.svgtopngconverter = async (req, res) => {
+  if (!req.file) {
+      return res.status(400).send('No file uploaded.');
+  }
+
+  const svgFilePath = req.file.path; // Get the path of the uploaded SVG file
+
+  try {
+      const sourceBuffer = fs.readFileSync(svgFilePath); // Read the SVG file
+
+      // Optionally set width and height, or use the dimensions from the SVG
+      const options = {
+          width: 300,  // Specify width (can be omitted to use SVG dimensions)
+          height: 400, // Specify height (can be omitted to use SVG dimensions)
+      };
+
+      // Convert SVG buffer to PNG
+      const pngBuffer = await svg2png(sourceBuffer, options);
+
+      // Set the response headers to prompt download
+      res.set('Content-Type', 'image/png');
+      res.set('Content-Disposition', 'attachment; filename=converted.png');
+      res.send(pngBuffer); // Send the converted PNG buffer as response
+
+      // Delete the uploaded SVG file after sending the response
+      fs.unlink(svgFilePath, (err) => {
+          if (err) console.error('Error deleting file:', err);
+      });
+  } catch (error) {
+      console.error('Conversion error:', error); // Log the error
+      res.status(500).send('Error converting image: ' + error.message); // Send error message
+
+      // Delete the uploaded SVG file in case of an error
+      fs.unlink(svgFilePath, (err) => {
+          if (err) console.error('Error deleting file:', err);
+      });
+  }
 };
