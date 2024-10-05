@@ -5290,3 +5290,81 @@ exports.audioRepharse=async(req,res)=>{
     res.status(500).json({ error: error.message });
   }
 }
+
+
+
+
+const svg2img = require('svg2img');
+// const fs = require('fs');
+
+// Helper function to clean SVG data
+const cleanSvg = (svg) => {
+  return svg
+    .replace(/<\?xml[^>]*>/g, '') // Remove XML declaration
+    .replace(/<!DOCTYPE[^>]*>/g, '') // Remove DOCTYPE
+    .replace(/<!--[\s\S]*?-->/g, '') // Remove comments
+    .trim();
+};
+
+exports.convertSvgToJpeg = (req, res) => {
+  try {
+    let svgData;
+
+    console.log('--- Conversion Request Received ---');
+    console.log('req.file:', req.file);
+    console.log('req.body:', req.body);
+
+    if (req.file && req.file.buffer) {
+      // SVG uploaded as a file in memory
+      svgData = req.file.buffer.toString('utf-8');
+      console.log('Received SVG as file (buffer):', svgData.slice(0, 100)); // Log first 100 chars
+    } else if (req.file && req.file.path) {
+      // SVG uploaded as a file stored on disk
+      svgData = fs.readFileSync(req.file.path, 'utf-8');
+      console.log('Received SVG as file (path):', svgData.slice(0, 100)); // Log first 100 chars
+    } else if (req.body.svg) {
+      // SVG sent as a string in JSON
+      svgData = req.body.svg;
+      console.log('Received SVG as string:', svgData.slice(0, 100)); // Log first 100 chars
+    } else {
+      console.error('No SVG data provided.');
+      return res.status(400).json({ error: 'No SVG data provided.' });
+    }
+
+    // Clean the SVG data
+    const cleanedSvg = cleanSvg(svgData);
+    console.log('Cleaned SVG:', cleanedSvg.slice(0, 100)); // Log first 100 chars
+
+    // Validate cleaned SVG (basic validation)
+    if (!cleanedSvg.startsWith('<svg')) {
+      console.error('Invalid SVG format after cleaning.');
+      return res.status(400).json({ error: 'Invalid SVG format.' });
+    }
+
+    // Convert SVG to JPEG
+    svg2img(cleanedSvg, { format: 'jpeg', quality: 90 }, (error, buffer) => {
+      if (error) {
+        console.error('Conversion error:', error);
+        return res.status(500).json({ error: 'Failed to convert SVG to JPEG.', details: error.message });
+      }
+
+      // Set response headers for JPEG
+      res.set('Content-Type', 'image/jpeg');
+      res.set('Content-Disposition', 'attachment; filename="converted.jpg"');
+      res.send(buffer);
+
+      // Remove the uploaded SVG file from disk after processing
+      if (req.file && req.file.path) {
+        try {
+          fs.unlinkSync(req.file.path);
+          console.log('Successfully deleted the uploaded SVG file:', req.file.path);
+        } catch (unlinkError) {
+          console.error('Error deleting the uploaded SVG file:', unlinkError);
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Unexpected error:', error);
+    res.status(500).json({ error: 'An unexpected error occurred.', details: error.message });
+  }
+};
