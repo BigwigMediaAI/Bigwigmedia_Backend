@@ -5386,40 +5386,50 @@ exports.convertSvgToJpeg = (req, res) => {
 const svg2png = require('svg2png');
 
 exports.svgtopngconverter = async (req, res) => {
-  if (!req.file) {
-      return res.status(400).send('No file uploaded.');
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).send('No files uploaded.');
   }
 
-  const svgFilePath = req.file.path; // Get the path of the uploaded SVG file
+  // Create a zip archive
+  const archive = archiver('zip', {
+    zlib: { level: 9 } // Set the compression level
+  });
+
+  // Set headers to download the ZIP file
+  res.setHeader('Content-Type', 'application/zip');
+  res.setHeader('Content-Disposition', 'attachment; filename=converted_images.zip');
+
+  archive.pipe(res); // Pipe the archive data to the response
 
   try {
+    await Promise.all(req.files.map(async (file) => {
+      const svgFilePath = file.path; // Get the path of the uploaded SVG file
       const sourceBuffer = fs.readFileSync(svgFilePath); // Read the SVG file
 
-      // Optionally set width and height, or use the dimensions from the SVG
+      // Optionally set width and height for each file
       const options = {
-          width: 300,  // Specify width (can be omitted to use SVG dimensions)
-          height: 400, // Specify height (can be omitted to use SVG dimensions)
+        width: 300,  // Specify width (can be omitted to use SVG dimensions)
+        height: 400, // Specify height (can be omitted to use SVG dimensions)
       };
 
-      // Convert SVG buffer to PNG
+      // Convert SVG to PNG
       const pngBuffer = await svg2png(sourceBuffer, options);
 
-      // Set the response headers to prompt download
-      res.set('Content-Type', 'image/png');
-      res.set('Content-Disposition', 'attachment; filename=converted.png');
-      res.send(pngBuffer); // Send the converted PNG buffer as response
+      // Add the PNG file to the zip archive with the original filename as PNG
+      const pngFilename = path.parse(file.originalname).name + '.png';
+      archive.append(pngBuffer, { name: pngFilename });
 
-      // Delete the uploaded SVG file after sending the response
+      // Delete the SVG file after processing
       fs.unlink(svgFilePath, (err) => {
-          if (err) console.error('Error deleting file:', err);
+        if (err) console.error('Error deleting file:', err);
       });
-  } catch (error) {
-      console.error('Conversion error:', error); // Log the error
-      res.status(500).send('Error converting image: ' + error.message); // Send error message
+    }));
 
-      // Delete the uploaded SVG file in case of an error
-      fs.unlink(svgFilePath, (err) => {
-          if (err) console.error('Error deleting file:', err);
-      });
-  }
+    // Finalize the archive (finish adding files to the ZIP)
+    await archive.finalize();
+
+  } catch (error) {
+    console.error('Conversion error:', error);
+    res.status(500).send('Error converting images: ' + error.message);
+  }
 };

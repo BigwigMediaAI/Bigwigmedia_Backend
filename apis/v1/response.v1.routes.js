@@ -263,7 +263,7 @@ router.post('/generateFreeEmail',checkLimit,generateFreeEmail);
 router.post('/generateemailreplie',checkLimit,generateemailreplie);  
 router.post("/audioRepharse",checkLimit,upload.single('audio'),audioRepharse)
 router.post('/convertsvgtojpg',checkLimit, upload.single('svg'), convertSvgToJpeg);
-router.post("/convertsvgtopng",checkLimit,upload.single('image'),svgtopngconverter)
+router.post("/convertsvgtopng",checkLimit, upload.array('images'), svgtopngconverter);
 
 
 
