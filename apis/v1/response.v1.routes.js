@@ -89,8 +89,7 @@ router.post("/mergePDF",checkLimit,uploadfile.array('pdfFiles'),mergePDF)
 router.post("/png2pdf",checkLimit,upload.array('images',10),pngtopdfconverter)
 router.post('/convert',checkLimit, upload.single('video'), convertVideoToAudio);
 router.post("/pngtojpg",checkLimit,upload.single("image"),pngtojpgcoverter)
-router.post("/jpgtopng",checkLimit,upload.single("image"),JpgtoPngconverter)
-
+router.post("/jpgtopng",checkLimit, upload.array("images"), JpgtoPngconverter);
 router.post("/fbinstadownload",checkLimit,fbDownloader)
 router.post("/twitterdownload",checkLimit,twitterDownloader)
 router.post("/text2pdf",checkLimit,text2Pdf)

@@ -634,56 +634,65 @@ exports.convertVideoToAudio = async (req, res) => {
 //   jpg to png converter
 
 
-exports.JpgtoPngconverter=async(req,res)=>{
-    try {
-        if (!req.file) {
-          return res.status(400).send('No file uploaded.');
-        }
-    
-        const filePath = req.file.path;
-        const fileExt = path.extname(req.file.originalname).toLowerCase();
-    
-        if (fileExt !== '.jpg' && fileExt !== '.jpeg') {
-          fs.unlink(filePath, (err) => {
-            if (err) {
-              console.error('Error deleting file:', err);
-            }
-          });
-          return res.status(400).send('Only JPG files are allowed.');
-        }
-    
-        const outputFilePath = filePath + '.png'; // Use .png extension
-    
-        await sharp(filePath)
-          .png()
-          .toFile(outputFilePath);
-    
-        res.download(outputFilePath, 'converted.png', (err) => {
-          if (err) {
-            console.error('Error sending file:', err);
-          }
-    
-          // Delay deletion to ensure file is not in use
-          setTimeout(() => {
-            // fs.unlink(filePath, (err) => {
-            //   if (err) {
-            //     console.error('Error deleting original file:', err);
-            //   }
-            // });
-            fs.unlink(outputFilePath, (err) => {
-              if (err) {
-                console.error('Error deleting converted file:', err);
-              }
-            });
-          }, 1000); // 1 second delay
-    
+exports.JpgtoPngconverter = async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).send('No files uploaded.');
+    }
+
+    // Create a zip archive
+    const archive = archiver('zip', {
+      zlib: { level: 9 } // Set the compression level
+    });
+
+    // Set headers to download the ZIP file
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', 'attachment; filename=converted_images.zip');
+
+    archive.pipe(res); // Pipe the archive data to the response
+
+    await Promise.all(req.files.map(async (file) => {
+      const filePath = file.path; // Get the path of the uploaded JPG file
+      const fileExt = path.extname(file.originalname).toLowerCase();
+
+      if (fileExt !== '.jpg' && fileExt !== '.jpeg') {
+        fs.unlink(filePath, (err) => {
+          if (err) console.error('Error deleting file:', err);
         });
-    
-      } catch (error) {
-        console.error('An error occurred:', error);
-        res.status(500).send('An error occurred while processing the file.');
+        throw new Error('Only JPG files are allowed.');
       }
-}
+
+      const outputFilePath = filePath + '.png'; // Use .png extension
+
+      // Convert JPG to PNG using sharp
+      await sharp(filePath)
+        .png()
+        .toFile(outputFilePath);
+
+      // Read the converted PNG file
+      const pngBuffer = fs.readFileSync(outputFilePath);
+
+      // Add the PNG file to the ZIP archive with the original filename as .png
+      const pngFilename = path.parse(file.originalname).name + '.png';
+      archive.append(pngBuffer, { name: pngFilename });
+
+      // Delete the uploaded JPG and the converted PNG file after processing
+      fs.unlink(filePath, (err) => {
+        if (err) console.error('Error deleting original file:', err);
+      });
+      fs.unlink(outputFilePath, (err) => {
+        if (err) console.error('Error deleting converted file:', err);
+      });
+    }));
+
+    // Finalize the archive (finish adding files to the ZIP)
+    await archive.finalize();
+
+  } catch (error) {
+    console.error('An error occurred:', error);
+    res.status(500).send('An error occurred while processing the files.');
+  }
+};
 
 
 // ******** Facebook video downloader **************
