@@ -5313,69 +5313,58 @@ const cleanSvg = (svg) => {
     .trim();
 };
 
-exports.convertSvgToJpeg = (req, res) => {
+exports.convertSvgToJpeg = async (req, res) => {
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).send('No files uploaded.');
+  }
+
+  // Create a zip archive
+  const archive = archiver('zip', {
+    zlib: { level: 9 } // Set the compression level
+  });
+
+  // Set headers to download the ZIP file
+  res.setHeader('Content-Type', 'application/zip');
+  res.setHeader('Content-Disposition', 'attachment; filename=converted_images.zip');
+
+  archive.pipe(res); // Pipe the archive data to the response
+
   try {
-    let svgData;
+    await Promise.all(req.files.map(async (file) => {
+      const svgFilePath = file.path; // Get the path of the uploaded SVG file
+      const sourceBuffer = fs.readFileSync(svgFilePath); // Read the SVG file
 
-    console.log('--- Conversion Request Received ---');
-    console.log('req.file:', req.file);
-    console.log('req.body:', req.body);
+      // Clean the SVG data (optional, but can help with issues in the conversion)
+      const cleanedSvg = cleanSvg(sourceBuffer.toString('utf-8'));
 
-    if (req.file && req.file.buffer) {
-      // SVG uploaded as a file in memory
-      svgData = req.file.buffer.toString('utf-8');
-      console.log('Received SVG as file (buffer):', svgData.slice(0, 100)); // Log first 100 chars
-    } else if (req.file && req.file.path) {
-      // SVG uploaded as a file stored on disk
-      svgData = fs.readFileSync(req.file.path, 'utf-8');
-      console.log('Received SVG as file (path):', svgData.slice(0, 100)); // Log first 100 chars
-    } else if (req.body.svg) {
-      // SVG sent as a string in JSON
-      svgData = req.body.svg;
-      console.log('Received SVG as string:', svgData.slice(0, 100)); // Log first 100 chars
-    } else {
-      console.error('No SVG data provided.');
-      return res.status(400).json({ error: 'No SVG data provided.' });
-    }
+      // Convert SVG to JPG
+      const jpgBuffer = await new Promise((resolve, reject) => {
+        svg2img(cleanedSvg, { format: 'jpeg', quality: 90 }, (error, buffer) => {
+          if (error) {
+            return reject(error);
+          }
+          resolve(buffer);
+        });
+      });
 
-    // Clean the SVG data
-    const cleanedSvg = cleanSvg(svgData);
-    console.log('Cleaned SVG:', cleanedSvg.slice(0, 100)); // Log first 100 chars
+      // Add the JPG file to the zip archive with the original filename as JPG
+      const jpgFilename = path.parse(file.originalname).name + '.jpg';
+      archive.append(jpgBuffer, { name: jpgFilename });
 
-    // Validate cleaned SVG (basic validation)
-    if (!cleanedSvg.startsWith('<svg')) {
-      console.error('Invalid SVG format after cleaning.');
-      return res.status(400).json({ error: 'Invalid SVG format.' });
-    }
+      // Delete the SVG file after processing
+      fs.unlink(svgFilePath, (err) => {
+        if (err) console.error('Error deleting file:', err);
+      });
+    }));
 
-    // Convert SVG to JPEG
-    svg2img(cleanedSvg, { format: 'jpeg', quality: 90 }, (error, buffer) => {
-      if (error) {
-        console.error('Conversion error:', error);
-        return res.status(500).json({ error: 'Failed to convert SVG to JPEG.', details: error.message });
-      }
+    // Finalize the archive (finish adding files to the ZIP)
+    await archive.finalize();
 
-      // Set response headers for JPEG
-      res.set('Content-Type', 'image/jpeg');
-      res.set('Content-Disposition', 'attachment; filename="converted.jpg"');
-      res.send(buffer);
-
-      // Remove the uploaded SVG file from disk after processing
-      if (req.file && req.file.path) {
-        try {
-          fs.unlinkSync(req.file.path);
-          console.log('Successfully deleted the uploaded SVG file:', req.file.path);
-        } catch (unlinkError) {
-          console.error('Error deleting the uploaded SVG file:', unlinkError);
-        }
-      }
-    });
   } catch (error) {
-    console.error('Unexpected error:', error);
-    res.status(500).json({ error: 'An unexpected error occurred.', details: error.message });
+    console.error('Conversion error:', error);
+    res.status(500).send('Error converting images: ' + error.message);
   }
 };
-
 // -----------------------------------------------SVG to JPG ENDS HERE------------------------------------------
 
 
