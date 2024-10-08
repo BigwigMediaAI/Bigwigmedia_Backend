@@ -839,7 +839,7 @@ async function BlogPost({ title, description, keywords, tone, language, wordCoun
                         content: `
                             Title: "${title}"
                             Description: "${description}"
-                            Keywords: "${keywords.join(', ')}"
+                            Keywords: "${keywords}"
                             Word Count: ${wordCount}
                             Include Introduction: ${includeIntroduction}
                             Include Conclusion: ${includeConclusion}
