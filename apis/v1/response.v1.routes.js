@@ -233,7 +233,7 @@ router.post('/generateLinkedinCompanyPageHeadline',checkLimit,generateLinkedinCo
 router.post('/generateLinkedInPageSummary',checkLimit,generateLinkedInPageSummary);
 router.post('/generateLinkedInCompanySummary',checkLimit,generateLinkedInCompanySummary);
 router.post('/generatePostHashtags',checkLimit,generatePostHashtags);
-router.post('/generateBlogPost',checkLimit,upload.single('image'),generateBlogPost);
+router.post('/generateBlogPost', checkLimit, generateBlogPost);
 router.post('/generateArticle',checkLimit,generateArticle);
 router.post('/generatePressRelease',checkLimit,generatePressRelease);
 router.post('/generateNewsletter',checkLimit,generateNewsletter);

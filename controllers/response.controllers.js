@@ -4296,21 +4296,61 @@ exports.generatePostHashtags = async (req, res) => {
 
 exports.generateBlogPost = async (req, res) => {
   try {
-      const {title, description, keywords, tone, language, wordCount, includeIntroduction, includeConclusion, outputCount} = req.body;
+    // Destructuring request body
+    const { 
+      title, 
+      description, 
+      keywords, 
+      tone, 
+      language, 
+      wordCount, 
+      includeIntroduction, 
+      includeConclusion, 
+      outputCount, 
+      generateImage 
+    } = req.body;
 
-      if (!description|| !language || !outputCount|| !title || !keywords || !tone ||!wordCount) {
-          return res.status(400).json({ error: 'Please provide all required fields' });
+    // Check required fields
+    if (!title || !description || !keywords || !tone || !language || !wordCount || !outputCount) {
+      return res.status(400).json({ error: 'Please provide all required fields' });
+    }
+
+    // Handle keywords as array or comma-separated string
+    const keywordArray = Array.isArray(keywords) ? keywords : keywords.split(',').map(k => k.trim());
+
+    // Generate blog post
+    const posts = await BlogPost({
+      title,
+      description,
+      keywords: keywordArray, // Pass keywords as array
+      tone,
+      language,
+      wordCount,
+      includeIntroduction,
+      includeConclusion,
+      outputCount,
+    });
+
+    let imageUrl = null;
+
+    // Conditionally generate image if requested (convert string to boolean)
+    if (generateImage === true || generateImage === 'true') {
+      try {
+        const imageResponse = await generateImageFromPrompt(title);
+        imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
+      } catch (err) {
+        console.error('Error generating image:', err);
+        imageUrl = null; // Fallback if image generation fails
       }
+    }
 
-      const posts = await BlogPost({title, description, keywords, tone, language, wordCount, includeIntroduction, includeConclusion, outputCount});
-      const imageResponse = await generateImageFromPrompt(title);
-      const imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
-      // Send response
-      res.status(200).json({ posts, imageUrl });
+    // Return the generated blog post and image (if applicable)
+    res.status(200).json({ posts, imageUrl });
+    
   } catch (error) {
-      console.error('Error:', error);
-      res.status(500).json({ error: 'Error generating Blog Post' });
-  }
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'Error generating Blog Post' });
+  }
 };
 
 
