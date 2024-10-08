@@ -4356,15 +4356,26 @@ exports.generateBlogPost = async (req, res) => {
 
 exports.generateArticle = async (req, res) => {
   try {
-      const {description, tone, language, outputCount} = req.body;
+      const {description, tone, language, outputCount,generateImage} = req.body;
 
       if (!description|| !language || !outputCount||!tone) {
           return res.status(400).json({ error: 'Please provide all required fields' });
       }
 
       const posts = await ArticleGenerator({description, tone, language, outputCount});
-      const imageResponse = await generateImageFromPrompt(description);
-      const imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
+
+      let imageUrl = null;
+
+      // Conditionally generate image if requested (convert string to boolean)
+      if (generateImage === true || generateImage === 'true') {
+        try {
+          const imageResponse = await generateImageFromPrompt(description);
+          imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
+        } catch (err) {
+          console.error('Error generating image:', err);
+          imageUrl = null; // Fallback if image generation fails
+        }
+      }
 
 
       res.status(200).json({ posts, imageUrl });
@@ -4377,15 +4388,25 @@ exports.generateArticle = async (req, res) => {
 
 exports.generatePressRelease = async (req, res) => {
   try {
-      const {organizationName, eventName, tone, language, outputCount,eventDetails} = req.body;
+      const {organizationName, eventName, tone, language, outputCount,eventDetails,generateImage} = req.body;
 
       if (!organizationName||!eventName || !language || !outputCount||!tone||!eventDetails) {
           return res.status(400).json({ error: 'Please provide all required fields' });
       }
 
       const posts = await PressRelease({organizationName, eventName, tone, language, outputCount,eventDetails});
-      const imageResponse = await generateImageFromPrompt(eventName);
-      const imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
+      let imageUrl = null;
+
+      // Conditionally generate image if requested (convert string to boolean)
+      if (generateImage === true || generateImage === 'true') {
+        try {
+          const imageResponse = await generateImageFromPrompt(eventName);
+          imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
+        } catch (err) {
+          console.error('Error generating image:', err);
+          imageUrl = null; // Fallback if image generation fails
+        }
+      }
       // Send response
       res.status(200).json({ posts, imageUrl });
   } catch (error) {
@@ -4397,15 +4418,25 @@ exports.generatePressRelease = async (req, res) => {
 
 exports.generateNewsletter = async (req, res) => {
   try {
-      const {organizationName, event, tone, language, outputCount} = req.body;
+      const {organizationName, event, tone, language, outputCount,generateImage} = req.body;
 
       if (!organizationName||!event || !language || !outputCount||!tone) {
           return res.status(400).json({ error: 'Please provide all required fields' });
       }
 
       const posts = await Newsletter({organizationName, event, tone, language, outputCount});
-      const imageResponse = await generateImageFromPrompt(event);
-      const imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
+      let imageUrl = null;
+
+      // Conditionally generate image if requested (convert string to boolean)
+      if (generateImage === true || generateImage === 'true') {
+        try {
+          const imageResponse = await generateImageFromPrompt(event);
+          imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
+        } catch (err) {
+          console.error('Error generating image:', err);
+          imageUrl = null; // Fallback if image generation fails
+        }
+      }
 
        // Send response
        res.status(200).json({ posts, imageUrl });
