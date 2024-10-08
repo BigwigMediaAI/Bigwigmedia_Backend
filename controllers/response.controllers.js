@@ -813,40 +813,67 @@ exports.Podcast= async(req,res)=>{
 // ******** Image To SVG converter *************
 
 
-exports.svgConverter=(req,res)=>{
-  if (!req.file) {
-    return res.status(400).send('No file uploaded.');
-}
+exports.svgConverter = async (req, res) => {
+  if (!req.files || req.files.length === 0) {
+      return res.status(400).send('No files uploaded.');
+  }
 
-const inputPath = req.file.path;
-const outputPath = `uploads/${req.file.filename}.svg`;
+  // Create a zip archive
+  const archive = archiver('zip', {
+      zlib: { level: 9 } // Compression level
+  });
 
-sharp(inputPath)
-    .toBuffer()
-    .then(buffer => {
-        potrace.trace(buffer, (err, svg) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).send('An error occurred while processing the image.');
-            }
-            fs.writeFileSync(outputPath, svg);
-            res.sendFile(path.resolve(outputPath), (err) => {
-                if (err) {
-                    console.error(err);
-                    return res.status(500).send('An error occurred while sending the SVG file.');
-                }
-                // fs.unlinkSync(inputPath);
-                fs.unlinkSync(outputPath);
-                
-            });
-        });
-    })
-    .catch(err => {
-        console.error(err);
-        res.status(500).send('An error occurred while processing the image.');
-    });
-}
+  // Set headers to download the ZIP file
+  res.setHeader('Content-Type', 'application/zip');
+  res.setHeader('Content-Disposition', 'attachment; filename=converted_svgs.zip');
 
+  // Pipe the archive data to the response
+  archive.pipe(res);
+
+  try {
+      // Process all files concurrently
+      await Promise.all(req.files.map(file => {
+          return new Promise((resolve, reject) => {
+              const inputPath = file.path; // Path to the uploaded file
+              const outputFileName = `${path.parse(file.originalname).name}.svg`; // Output SVG name
+
+              // Read and convert the image
+              sharp(inputPath)
+                  .toBuffer()
+                  .then(buffer => {
+                      potrace.trace(buffer, (err, svg) => {
+                          if (err) {
+                              console.error('Error converting image:', err);
+                              reject(err); // Reject the promise on error
+                          } else {
+                              // Append the SVG content to the zip archive
+                              archive.append(svg, { name: outputFileName });
+
+                              // Clean up the original file after processing
+                              fs.unlink(inputPath, (err) => {
+                                if (err) {
+                                    console.error('Error deleting the file:', err);
+                                }
+                            });
+                              resolve(); // Resolve the promise after appending
+                          }
+                      });
+                  })
+                  .catch(err => {
+                      console.error('Error processing image with sharp:', err);
+                      reject(err); // Reject the promise on sharp error
+                  });
+          });
+      }));
+
+      // Finalize the archive (signals end of zipping)
+      await archive.finalize(); // Ensure finalize is awaited
+
+  } catch (error) {
+      console.error('An error occurred:', error);
+      res.status(500).send('Error processing images.');
+  }
+};
 
 
 // ************ Zip maker *************

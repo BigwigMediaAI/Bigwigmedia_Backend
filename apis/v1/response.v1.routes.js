@@ -94,7 +94,7 @@ router.post("/fbinstadownload",checkLimit,fbDownloader)
 router.post("/twitterdownload",checkLimit,twitterDownloader)
 router.post("/text2pdf",checkLimit,text2Pdf)
 router.post("/podcast",checkLimit,Podcast)
-router.post("/svgconvert",checkLimit,upload.single('image'),svgConverter)
+router.post("/svgconvert",checkLimit,upload.array('image'),svgConverter)
 router.post("/zip",checkLimit,upload.array('files'),zipmaker)
 router.post("/gif",checkLimit,upload.single("video"),gifConverter)
 router.post("/getSummary",checkLimit, getTextSummary);
