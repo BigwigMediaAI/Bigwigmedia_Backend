@@ -4323,8 +4323,11 @@ exports.generateArticle = async (req, res) => {
       }
 
       const posts = await ArticleGenerator({description, tone, language, outputCount});
+      const imageResponse = await generateImageFromPrompt(description);
+      const imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
 
-      res.status(200).json(posts);
+
+      res.status(200).json({ posts, imageUrl });
   } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ error: 'Error generating Article' });
@@ -4361,8 +4364,11 @@ exports.generateNewsletter = async (req, res) => {
       }
 
       const posts = await Newsletter({organizationName, event, tone, language, outputCount});
+      const imageResponse = await generateImageFromPrompt(event);
+      const imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
 
-      res.status(200).json(posts);
+       // Send response
+       res.status(200).json({ posts, imageUrl });
   } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ error: 'Error generating Newsletter' });
