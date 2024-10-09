@@ -133,7 +133,7 @@ router.post("/detector",checkLimit,AiDetector)
 router.post("/news",checkLimit,newsSummerizer)
 router.post('/infographic',checkLimit, generateTextInfographic);
 router.get('/avatar',checkLimit,createAvatar)
-router.post('/compressImage',checkLimit,upload.single('image'),compressImage)
+router.post('/compressImage',checkLimit, upload.array('image'),compressImage)
 router.post('/generateSWOT',checkLimit, generateSWOT);
 router.post('/generateCoverLetter',checkLimit,generateCoverLetter);
 router.post("/logo",checkLimit, generateLogo);

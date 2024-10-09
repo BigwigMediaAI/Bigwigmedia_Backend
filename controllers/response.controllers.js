@@ -2144,32 +2144,68 @@ exports.createAvatar = async (req, res) => {
 const fsPromises = require('fs').promises; 
 
 exports.compressImage = async (req, res) => {
-    try {
-        const filePath = req.file.path;
+  try {
+      const files = req.files;
+      const compressedImages = [];
 
-        // Read the file from disk into a buffer using the promise-based API
-        const fileBuffer = await fsPromises.readFile(filePath);
+      // Loop through each uploaded file and compress
+      for (const file of files) {
+          const fileBuffer = await fsPromises.readFile(file.path);
+          const compressedImage = await sharp(fileBuffer)
+              .rotate() 
+              .resize({ width: 800 }) // Adjust the width as needed
+              .jpeg({ quality: 70 })  // Adjust the quality as needed
+              .toBuffer();
 
-        // Compress the image using Sharp
-        const compressedImage = await sharp(fileBuffer)
-            .resize({ width: 800 })  // Adjust the width as needed
-            .jpeg({ quality: 70 })  // Adjust the quality as needed
-            .toBuffer();
+          compressedImages.push({
+              originalname: file.originalname,
+              buffer: compressedImage
+          });
 
-        console.log('Image compressed successfully');
+          // Delete the original file after compression
+          await fsPromises.unlink(file.path);
+      }
 
-        // Delete the original file to save space using the promise-based API
-        await fsPromises.unlink(filePath);
+      // Create a zip archive
+      const zipFilePath = path.join(__dirname, 'compressed_images.zip');
+      const output = fs.createWriteStream(zipFilePath);
+      const archive = archiver('zip', {
+          zlib: { level: 9 }  // Compression level
+      });
 
-        // Send the compressed image as a response
-        res.set('Content-Type', 'image/jpeg');
-        res.send(compressedImage);
-    } catch (error) {
-        console.error('Error compressing the image:', error);
-        res.status(500).json({ error: 'Error compressing the image.' });
-    }
+      // Archive error handling
+      archive.on('error', (err) => {
+          throw err;
+      });
+
+      // Pipe archive to the output file stream
+      archive.pipe(output);
+
+      // Append each compressed image to the archive
+      compressedImages.forEach((image) => {
+          archive.append(image.buffer, { name: image.originalname });
+      });
+
+      // Finalize the archive (done appending)
+      await archive.finalize();
+
+      // Send the zip file as a response after finalization
+      output.on('close', () => {
+          res.set('Content-Type', 'application/zip');
+          res.download(zipFilePath, 'compressed_images.zip', async (err) => {
+              if (err) {
+                  console.error('Error sending the zip file:', err);
+              } else {
+                  // Delete the zip file after it is sent to the client
+                  await fsPromises.unlink(zipFilePath);
+              }
+          });
+      });
+  } catch (error) {
+      console.error('Error compressing images:', error);
+      res.status(500).json({ error: 'Error compressing images.' });
+  }
 };
-
 
 // **********SWOT Analysis Generator**********
 
