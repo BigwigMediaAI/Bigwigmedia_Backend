@@ -2152,7 +2152,7 @@ exports.compressImage = async (req, res) => {
       for (const file of files) {
           const fileBuffer = await fsPromises.readFile(file.path);
           const compressedImage = await sharp(fileBuffer)
-              .rotate() 
+              a.rotate() 
               .resize({ width: 800 }) // Adjust the width as needed
               .jpeg({ quality: 70 })  // Adjust the quality as needed
               .toBuffer();
@@ -5415,11 +5415,11 @@ exports.generateemailreplie=async(req,res)=>{
 
 
 // -------------------------------------------------AUDIO REPHRASE-----------------------------------------------
-const {convertToAudio, transcribeToaudio, rephrasetext,textToVoice}=require("../utils.js/AudioRepharse")
+const {convertToAudio, transcribeToaudio, rephrasetext,textToVoice,summarizeTheText}=require("../utils.js/AudioRepharse")
 
 exports.audioRepharse=async(req,res)=>{
   const audioPath = req.file.path; // Uploaded file path
-  const tone = req.body.tone || 'calm'; // Default tone
+  const tone = req.body.tone; // Default tone
   const targetLanguage = req.body.targetLanguage;
   try {
     // Step 1: Convert audio to MP3 if needed (optional if input isn't MP3)
@@ -5588,3 +5588,49 @@ exports.svgtopngconverter = async (req, res) => {
     res.status(500).send('Error converting images: ' + error.message);
   }
 };
+
+
+// ---------------------Video Summary Generator--------------------
+
+exports.videoRepharse = async (req, res) => {
+  const videoPath = req.file.path; // Uploaded video file path
+  const targetLanguage = req.body.targetLanguage || 'en';
+  const audioOutputPath = `uploads/${Date.now()}_converted.mp3`; // Path to store the extracted audio
+
+  try {
+    // Step 1: Convert video to audio
+    await extractAndConvertToMP3(videoPath, audioOutputPath);
+
+    // Step 2: Transcribe the audio to text
+    const transcribedText = await transcribeToaudio(audioOutputPath);
+
+    // Step 3: Rephrase the transcribed text
+    const rephrasedText = await summarizeTheText(transcribedText);
+
+    // Step 4: Optionally translate the rephrased text
+    const translatedText = await translateText(rephrasedText, targetLanguage);
+
+    // Cleanup the uploaded and intermediate files
+    fs.unlinkSync(videoPath); // Delete uploaded video
+    fs.unlinkSync(audioOutputPath); // Delete converted MP3 file
+
+    // Send the summarized text as the response
+    res.set({
+      'Content-Type': 'application/json', 
+    });
+    res.json({ summarizedText: translatedText });
+  } catch (error) {
+    console.error('Error processing video:', error.message);
+
+    // Cleanup in case of error
+    if (fs.existsSync(videoPath)) fs.unlinkSync(videoPath);
+    if (fs.existsSync(audioOutputPath)) fs.unlinkSync(audioOutputPath);
+
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+
+

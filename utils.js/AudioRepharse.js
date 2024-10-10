@@ -80,4 +80,25 @@ function convertToAudio(audioPath, outputPath) {
     }
   }
 
-  module.exports = {convertToAudio, transcribeToaudio, rephrasetext,textToVoice};
+  async function summarizeTheText(text) {
+    try {
+      const response = await openaiClient.chat.completions.create({
+        model: "gpt-4",
+        messages: [
+          {
+            role: "system",
+            content: "You are a helpful assistant that summarizes text concisely while preserving key information."
+          },
+          {
+            role: "user",
+            content: `Summarize the following text:\n\n${text}`
+          }
+        ],
+      });
+      return response.choices[0].message.content.trim();
+    } catch (error) {
+      throw new Error(`Summarization failed: ${error.message}`);
+    }
+  }
+
+  module.exports = {convertToAudio, transcribeToaudio, rephrasetext,textToVoice,summarizeTheText};
