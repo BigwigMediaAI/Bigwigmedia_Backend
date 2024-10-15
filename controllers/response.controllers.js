@@ -1414,6 +1414,7 @@ const { extractAndConvertToMP3, transcribeAudio, MAX_SIZE } = require('../utils.
 exports.video_Text_converter=async(req,res)=>{
   const videoPath = req.file.path;
   const audioPath = `uploads/${Date.now()}_audio.mp3`;
+  const { targetLanguage } = req.body;
 
   try {
     await extractAndConvertToMP3(videoPath, audioPath);
@@ -1421,7 +1422,14 @@ exports.video_Text_converter=async(req,res)=>{
     // Transcribe the audio
     const transcription = await transcribeAudio(audioPath);
 
-    res.json({ transcription: transcription.text });
+    let finalText = transcription.text;
+
+    // If a target language is provided, translate the transcription
+    if (targetLanguage) {
+      finalText = await translateText(finalText, targetLanguage);
+    }
+
+    res.json({ transcription: finalText });
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {
