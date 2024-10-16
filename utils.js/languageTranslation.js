@@ -28,7 +28,6 @@ async function transcribe(audioPath) {
   const formData = new FormData();
   formData.append('file', fs.createReadStream(audioPath));
   formData.append('model', 'whisper-1'); // Adjust the model name as needed
-  formData.append('language', 'en'); // Ensure transcription is done in English
 
   try {
     const response = await axios.post('https://api.openai.com/v1/audio/transcriptions', formData, {

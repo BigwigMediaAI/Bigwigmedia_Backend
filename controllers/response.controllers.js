@@ -1878,20 +1878,23 @@ const {convertToMP3, transcribe, translate, textToSpeech}=require("../utils.js/l
 exports.languageTranslation=async(req,res)=>{
   const videoPath = req.file.path;
   const audioPath = `uploads/${Date.now()}_audio.mp3`;
-  const targetLanguage = req.body.targetLanguage || 'en'; // Default to English if not provided
-  const voiceTone = req.body.voiceTone || 'shimmer'; // Default voice tone
+  const targetLanguage = req.body.targetLanguage 
+  const voiceTone = req.body.voiceTone || 'shimmer'; 
 
   try {
     await convertToMP3(videoPath, audioPath);
 
     // Transcribe the audio
     const transcription = await transcribe(audioPath);
-
+    let textToConvert=transcription.text;
     // Translate the transcribed text
-    const translatedText = await translate(transcription.text, targetLanguage);
+    if (targetLanguage) {
+      textToConvert = await translate(transcription.text, targetLanguage);
+    }
+   
 
     // Convert text to audio using TTS-1
-    const audioFilePath = await textToSpeech(translatedText, voiceTone);
+    const audioFilePath = await textToSpeech(textToConvert, voiceTone);
 
     // Provide download link to the user
     res.download(audioFilePath, 'generated_audio.mp3', (err) => {
