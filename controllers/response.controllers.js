@@ -5643,5 +5643,43 @@ exports.videoRepharse = async (req, res) => {
 
 
 
+// ------------------Speech Converter--------------
+
+exports.speechConverter = async (req, res) => {
+  const { text, targetLanguage, tone } = req.body;
+
+  // Basic input validation
+  if (!text || !targetLanguage || !tone) {
+    return res.status(400).json({ error: 'Please provide text, targetLanguage, and tone' });
+  }
+
+  try {
+    // Translate the text
+    const translatedText = await translate(text, targetLanguage);
+    
+    // Convert translated text to audio
+    const audioFile = await textToSpeech(translatedText, tone);
+
+    // Check if audio file is properly generated
+    if (!fs.existsSync(audioFile)) {
+      throw new Error('Audio file generation failed.');
+    }
+
+    // Send the audio file as response
+    res.sendFile(audioFile, { root: process.cwd() }, (err) => {
+      if (err) {
+        console.error('Error sending audio file:', err);
+        return res.status(500).json({ error: 'Failed to send audio file' });
+      }
+      // Optional: Cleanup the file after sending if it's temporary
+      fs.unlink(audioFile, (unlinkErr) => {
+        if (unlinkErr) console.error('Error deleting audio file:', unlinkErr);
+      });
+    });
+  } catch (error) {
+    console.error('Error in speechConverter:', error);
+    res.status(500).json({ error: error.message || 'Error translating text or generating audio.' });
+  }
+};
 
 
