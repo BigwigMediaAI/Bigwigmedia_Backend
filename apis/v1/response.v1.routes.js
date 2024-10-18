@@ -305,8 +305,8 @@ router.post("/audioRepharse",upload.single('audio'),audioRepharse)
 router.post('/convertsvgtojpg',checkLimit, upload.array('svgs'), convertSvgToJpeg);
 router.post("/convertsvgtopng",checkLimit, upload.array('images'), svgtopngconverter);
 router.post("/videoRepharse",checkLimit, upload.single('video'), videoRepharse);
-router.post("/speech",speechConverter)
-router.post("/background",uploadBack.fields([{ name: 'image' }, { name: 'mask' }]),addBackground)
+router.post("/speech",checkLimit, speechConverter)
+router.post("/background",checkLimit, uploadBack.fields([{ name: 'image' }, { name: 'mask' }]),addBackground)
 
 
 
