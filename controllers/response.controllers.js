@@ -5683,3 +5683,46 @@ exports.speechConverter = async (req, res) => {
 };
 
 
+exports.addBackground=async(req,res)=>{
+  const prompt = req.body.prompt;
+  const numberOfImages = req.body.n || 1; // Default to 1 if not provided
+
+  // Ensure the required image and prompt fields are present
+  if (!req.files.image) {
+    return res.status(400).send('No image file uploaded or file is not a valid PNG image.');
+  }
+
+  if (!prompt) {
+    return res.status(400).send('Prompt is required.');
+  }
+
+  try {
+    // Create form data for sending to OpenAI
+    const formData = new FormData();
+    formData.append('image', fs.createReadStream(req.files.image[0].path)); // Upload the main image
+    formData.append('prompt', prompt); // Add the user prompt
+    formData.append('size', '1024x1024'); // Optional size parameter
+    formData.append('n', numberOfImages); // Add number of images to generate
+
+
+    // Send request to OpenAI
+    const response = await axios.post('https://api.openai.com/v1/images/edits', formData, {
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`, // API Key from env
+        ...formData.getHeaders(),
+      }
+    });
+
+    // Clean up the uploaded image(s) after the request (optional)
+    fs.unlinkSync(req.files.image[0].path);
+
+    // Extract image URLs from the response
+    const imageUrls = response.data.data.map(img => img.url);
+
+    // Send the image URLs as JSON response
+    res.json({ imageUrls });
+  } catch (error) {
+    console.error('Error editing image:', error.response ? error.response.data : error.message);
+    res.status(500).send('Something went wrong while editing the image.');
+  }
+}

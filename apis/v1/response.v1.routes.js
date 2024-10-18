@@ -50,7 +50,8 @@ generatePoll,
 generateBusinessPlan,
 addAudio,
 uploadAndSummarize,chatWithPdf,languageTranslation,audioTranslate,videoTranlator,youtubeTranslator,financeadvisor,AiDetector,newsSummerizer,generateTextInfographic,createAvatar,compressImage,generateSWOT,generateCoverLetter,downloadytdl,generateLinkedInPost,generateLinkedInBio,generateLinkedInRecommendation,generateConnectionRequest,youtubeDownloader,aboutMe,tiktokCaptionGenerate,generateTitle,generateVideoTitle,generateVideoIdeas,generateScriptOutline,CalenderContentGenerator,tiktokhastag,generateReelScript,generateReelIdeas,generateAboutCompanyPage,generateTweetReply,generateSocialMediaPost,generateBulletPoints,generateEventName,generateProfessionalBio,generateSeoBrief,generateCompanyProfile,generateEventInvitationEmail,generateTinderBio,generateEventReminderEmail,generateInstagramHashtags,generateFollowUpEmail,generateJobOfferLetter,generateResumeSkills,generateElevatorPitch,generateEmailSubjectLine,generateReviewResponse,generateJobDescription,generateResignationLetter,generatePerformanceReview,generateCallToAction,generateMeetingInvite,generateProjectReport,generateGMBProductDescription,generateGMBPost,generateProductDescription,generateReferenceLetter,generateProductName,generateCatchyTagline,generateBusinessProposal,generateSOP,generateExperienceLetter,generateMotto,generateProductBrochure,generateBusinessMemo,generatePAS,generateAIDA,generateColdEmail,generateMetaDescription,generateNewsletterName,generateJobSummary,generateJobQualifications,generateJobResponsibilities,generateSubheadings,generateUVP,generateOKR,generateProjectTimeline,uploadImageBG,generateStatistics,generatePRIdeas,transcribeMeeting,pdfToAudio,pdfSign,docsToAudio,generateImagePrompt,extractText,instaImageVideoDownloader,generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost,generateThreadsPost,generateFacebookPost,generateFacebookAdHeadline,generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,generateFacebookPageDescription,generateYouTubePostTitle,generateYouTubePostDescription,generateTwitterBio,generateTwitterPost,generateTwitterThreadsPost,generateTwitterThreadsBio,generateLinkedInPageHeadline,generateLinkedinCompanyPageHeadline,generateLinkedInPageSummary,generateLinkedInCompanySummary,generatePostHashtags,generateBlogPost,generateArticle,generatePressRelease,generateNewsletter,generateGoogleAdsHeadliner,generateGoogleAdDescription,generateMarketingPlan,generateMarketingFunnel,createProductDescription,GenerateArticleIdeas,GenerateArticleOutline,GenerateArticleIntro,GenerateBlogIdeas,GenerateBlogTitles,GenerateBlogOutline,GenerateBlogIntro,GenerateSEOTitleDescription,GeneratePromptGenerator,GenerateReviewReply,GenerateVideoScript,generatePrompts,generateImageFromPrompt,GenerateVideoPromptContent,generateVisiting,generateLetterHead,generateFreeEmail,generateemailreplie,audioRepharse,convertSvgToJpeg,svgtopngconverter
-,videoRepharse,speechConverter
+,videoRepharse,speechConverter,
+addBackground
 
 } = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
@@ -86,6 +87,28 @@ const storage2 = multer.diskStorage({
     limits: { fileSize: 9000000 }, // Limit file size to 9MB
   });
   
+
+  const uploadBack = multer({
+    storage: multer.diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+      },
+      filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); // Set a unique file name
+      }
+    }),
+    limits: { fileSize: 4 * 1024 * 1024 }, // 4MB size limit
+    fileFilter: (req, file, cb) => {
+      const filetypes = /png/;
+      const mimetype = filetypes.test(file.mimetype);
+      const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  
+      if (mimetype && extname) {
+        return cb(null, true);
+      }
+      cb(new Error('Only PNG images are allowed!'));
+    }
+  });
  
 
 
@@ -283,6 +306,7 @@ router.post('/convertsvgtojpg',checkLimit, upload.array('svgs'), convertSvgToJpe
 router.post("/convertsvgtopng",checkLimit, upload.array('images'), svgtopngconverter);
 router.post("/videoRepharse",checkLimit, upload.single('video'), videoRepharse);
 router.post("/speech",speechConverter)
+router.post("/background",uploadBack.fields([{ name: 'image' }, { name: 'mask' }]),addBackground)
 
 
 
