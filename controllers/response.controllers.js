@@ -5727,6 +5727,7 @@ exports.addBackground=async(req,res)=>{
   }
 }
 
+// -------------------JPG/PNG to Webp Converter-----------------------
 
 exports.convertToWebp = async (req, res) => {
   if (!req.files || req.files.length === 0) {
@@ -5772,3 +5773,72 @@ exports.convertToWebp = async (req, res) => {
     res.status(500).send('Error converting images: ' + error.message);
   }
 };
+
+
+// ---------------Webp to JPG/PNG converter------------------
+
+const webp = require('webp-converter');
+
+exports.webpToImages=async(req,res)=>{
+  const { conversionType } = req.body;
+
+    // Validate conversion type
+    if (!['jpg', 'png'].includes(conversionType)) {
+        return res.status(400).send('Invalid conversion type. Please choose either jpg or png.');
+    }
+
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).send('No files uploaded.');
+    }
+
+    const convertedFiles = [];
+    const conversionPromises = req.files.map((file) => {
+        const inputPath = file.path; // Path to the uploaded WebP file
+        const outputPath = path.join('uploads', `${file.filename}.${conversionType}`); // Output path for the converted file
+
+        // Convert the WebP image to the desired format
+        return webp.dwebp(inputPath, outputPath, "-o", logging = "-v").then(() => {
+            convertedFiles.push(outputPath);
+        });
+    });
+
+     // Wait for all images to be converted
+     Promise.all(conversionPromises).then(() => {
+      // Create a zip file to store the converted images
+      const zipPath = path.join(__dirname, 'uploads', 'converted_images.zip');
+      const output = fs.createWriteStream(zipPath);
+      const archive = archiver('zip', { zlib: { level: 9 } });
+
+      output.on('close', () => {
+          // Send the zip file to the client
+          res.download(zipPath, (err) => {
+              // Clean up: delete the zip and all converted images after sending the response
+              fs.unlinkSync(zipPath);
+              convertedFiles.forEach((file) => fs.unlinkSync(file));
+              req.files.forEach((file) => fs.unlinkSync(file.path)); // Delete uploaded WebP files
+              if (err) {
+                  console.error('Error sending file:', err);
+              }
+          });
+      });
+
+      archive.on('error', (err) => {
+        throw err;
+    });
+
+    archive.pipe(output);
+
+    // Append converted files to the zip
+    convertedFiles.forEach((file) => {
+        const fileName = path.basename(file); // Get the filename
+        archive.file(file, { name: fileName });
+    });
+
+    // Finalize the zip archive
+    archive.finalize();
+}).catch((err) => {
+    console.error('Conversion failed:', err);
+    res.status(500).send('Conversion failed.');
+});
+
+}
