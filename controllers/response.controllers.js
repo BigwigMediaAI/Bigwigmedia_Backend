@@ -5726,3 +5726,49 @@ exports.addBackground=async(req,res)=>{
     res.status(500).send('Something went wrong while editing the image.');
   }
 }
+
+
+exports.convertToWebp = async (req, res) => {
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).send('No files uploaded.');
+  }
+
+  // Create a zip archive
+  const archive = archiver('zip', {
+    zlib: { level: 9 } // Set the compression level
+  });
+
+  // Set headers for downloading the ZIP file
+  res.setHeader('Content-Type', 'application/zip');
+  res.setHeader('Content-Disposition', 'attachment; filename=converted_images.zip');
+
+  archive.pipe(res); // Pipe the archive data to the response
+
+  try {
+    await Promise.all(req.files.map(async (file) => {
+      const imageFilePath = file.path; // Get the path of the uploaded image file
+      const imageBuffer = fs.readFileSync(imageFilePath); // Read the image file
+
+      // Convert image to WebP
+      const webpBuffer = await sharp(imageBuffer)
+        .webp({ quality: 80 }) // Set WebP quality (0-100)
+        .toBuffer();
+
+      // Add the WebP file to the zip archive with the original filename as WebP
+      const webpFilename = path.parse(file.originalname).name + '.webp';
+      archive.append(webpBuffer, { name: webpFilename });
+
+      // Delete the original image file after processing
+      fs.unlink(imageFilePath, (err) => {
+        if (err) console.error('Error deleting file:', err);
+      });
+    }));
+
+    // Finalize the archive (finish adding files to the ZIP)
+    await archive.finalize();
+
+  } catch (error) {
+    console.error('Conversion error:', error);
+    res.status(500).send('Error converting images: ' + error.message);
+  }
+};
