@@ -307,7 +307,7 @@ router.post("/convertsvgtopng",checkLimit, upload.array('images'), svgtopngconve
 router.post("/videoRepharse",checkLimit, upload.single('video'), videoRepharse);
 router.post("/speech",checkLimit, speechConverter)
 router.post("/background",checkLimit, uploadBack.fields([{ name: 'image' }, { name: 'mask' }]),addBackground)
-router.post('/convertToWebp', upload.array('images'), convertToWebp);
+router.post('/convertToWebp',checkLimit, upload.array('images'), convertToWebp);
 
 
 module.exports = router;
