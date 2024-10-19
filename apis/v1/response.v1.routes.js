@@ -337,7 +337,7 @@ router.post("/videoRepharse",checkLimit, upload.single('video'), videoRepharse);
 router.post("/speech",checkLimit, speechConverter)
 router.post("/background",checkLimit, uploadBack.fields([{ name: 'image' }, { name: 'mask' }]),addBackground)
 router.post('/convertToWebp',checkLimit, upload.array('images'), convertToWebp);
-router.post('/webpToImages', upload.array('images'), webpToImages);
+router.post('/webpToImages',checkLimit, upload.array('images'), webpToImages);
 
 
 module.exports = router;
