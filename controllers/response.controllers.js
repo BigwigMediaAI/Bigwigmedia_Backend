@@ -2163,7 +2163,7 @@ exports.compressImage = async (req, res) => {
       for (const file of files) {
           const fileBuffer = await fsPromises.readFile(file.path);
           const compressedImage = await sharp(fileBuffer)
-              a.rotate() 
+              .rotate() 
               .resize({ width: 800 }) // Adjust the width as needed
               .jpeg({ quality: 70 })  // Adjust the quality as needed
               .toBuffer();
