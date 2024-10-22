@@ -2223,7 +2223,7 @@ exports.compressImage = async (req, res) => {
 
 // controllers/swotController.js
 
-const { generateSWOTAnalysis } = require('../utils.js/swotAnalysis');
+const { generateSWOTAnalysis, generateSEOSuggestions } = require('../utils.js/swotAnalysis');
 
 exports.generateSWOT = async (req, res) => {
     try {
@@ -5842,3 +5842,23 @@ exports.webpToImages=async(req,res)=>{
 });
 
 }
+
+
+// ----------------AI Based SEO Optimizer---------------
+
+exports.optimizeSEO = async (req, res) => {
+  try {
+      const { content, language, outputCount } = req.body;
+
+      if (!content) {
+          return res.status(400).json({ error: 'Please provide content for SEO optimization' });
+      }
+
+      const seoSuggestions = await generateSEOSuggestions(content, language, outputCount);
+
+      res.status(200).json(seoSuggestions);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating SEO suggestions' });
+  }
+};
