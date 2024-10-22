@@ -340,7 +340,7 @@ router.post('/convertToWebp',checkLimit, upload.array('images'), convertToWebp);
 router.post('/webpToImages',checkLimit, upload.array('images'), webpToImages);
 router.post('/optimizeSEO',checkLimit, optimizeSEO);
 router.post('/improveSEOContent',checkLimit, improveSEOContent);
-router.post('/auditSEO', auditSEO);
+router.post('/auditSEO',checkLimit, auditSEO);
 
 
 
