@@ -338,7 +338,7 @@ router.post("/speech",checkLimit, speechConverter)
 router.post("/background",checkLimit, uploadBack.fields([{ name: 'image' }, { name: 'mask' }]),addBackground)
 router.post('/convertToWebp',checkLimit, upload.array('images'), convertToWebp);
 router.post('/webpToImages',checkLimit, upload.array('images'), webpToImages);
-router.post('/optimizeSEO', optimizeSEO);
+router.post('/optimizeSEO',checkLimit, optimizeSEO);
 
 
 module.exports = router;
