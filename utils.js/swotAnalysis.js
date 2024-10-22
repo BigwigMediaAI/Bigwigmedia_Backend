@@ -106,4 +106,40 @@ async function generateSEOImprovements(content, language, outputCount) {
 }
 
 
-module.exports = { generateSWOTAnalysis, generateSEOSuggestions, generateSEOImprovements };
+async function generateSEOAudit(content, language, outputCount) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are an SEO expert. Perform a detailed SEO audit for the following content in ${language}. Provide recommendations for keyword optimization, meta tags, headings, content structure, and mobile-friendliness.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Content:\n\n${content}`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            // Push the generated SEO audit report into the response array
+            responses.push(completion.choices[0].message.content.trim());
+        }
+
+        return responses;
+    } catch (error) {
+        console.error('Error generating SEO audit:', error);
+        return 'Failed to generate SEO audit';
+    }
+}
+
+
+
+module.exports = { generateSWOTAnalysis, generateSEOSuggestions, generateSEOImprovements, generateSEOAudit };

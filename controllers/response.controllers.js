@@ -2223,7 +2223,7 @@ exports.compressImage = async (req, res) => {
 
 // controllers/swotController.js
 
-const { generateSWOTAnalysis, generateSEOSuggestions,generateSEOImprovements } = require('../utils.js/swotAnalysis');
+const { generateSWOTAnalysis, generateSEOSuggestions,generateSEOImprovements, generateSEOAudit } = require('../utils.js/swotAnalysis');
 
 exports.generateSWOT = async (req, res) => {
     try {
@@ -5881,5 +5881,26 @@ exports.improveSEOContent = async (req, res) => {
     } catch (error) {
         console.error('Error improving SEO content:', error);
         res.status(500).json({ error: 'Error improving SEO content' });
+    }
+};
+
+
+// -----------------AI SEO Audit and Recommendation------------
+
+exports.auditSEO = async (req, res) => {
+    try {
+        const { content, language, outputCount } = req.body;
+
+        // Validate input
+        if (!content) {
+            return res.status(400).json({ error: 'Please provide the content for SEO audit' });
+        }
+
+        const seoAudit = await generateSEOAudit(content, language, outputCount);
+
+        res.status(200).json(seoAudit);
+    } catch (error) {
+        console.error('Error auditing SEO:', error);
+        res.status(500).json({ error: 'Error performing SEO audit' });
     }
 };
