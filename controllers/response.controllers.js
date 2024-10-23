@@ -5928,3 +5928,70 @@ exports.generateGoogleAd = async (req, res) => {
       res.status(500).json({ error: 'Error generating Google Ad headline and description' });
   }
 };
+
+// ------------------Split PDF-------------------------
+async function splitPDF(inputPath) {
+  const pdfBuffer = fs.readFileSync(inputPath);
+  const pdfDoc = await PDFDocument.load(pdfBuffer);
+  const totalPages = pdfDoc.getPageCount();
+  const outputPaths = [];
+
+  for (let i = 0; i < totalPages; i++) {
+      const newPdfDoc = await PDFDocument.create();
+      const [copiedPage] = await newPdfDoc.copyPages(pdfDoc, [i]);
+      newPdfDoc.addPage(copiedPage);
+
+      const outputPath = `output/page-${i + 1}.pdf`;
+      outputPaths.push(outputPath);
+      const pdfBytes = await newPdfDoc.save();
+      fs.writeFileSync(outputPath, pdfBytes);
+  }
+
+  return outputPaths;
+}
+
+
+exports.splitPdf=async(req,res)=>{
+  try {
+    const filePath = req.file.path;
+    const outputFiles = await splitPDF(filePath);
+
+    // Create a ZIP archive with Archiver
+    const zipFileName = `split-pdfs.zip`;
+    const zipFilePath = path.join(__dirname, zipFileName);
+    const output = fs.createWriteStream(zipFilePath);
+    const archive = archiver('zip', { zlib: { level: 9 } });
+
+    output.on('close', () => {
+        // Send the zip file as response
+        res.download(zipFilePath, (err) => {
+            // After sending the response, delete the files and zip
+            if (err) {
+                console.error('Error sending file:', err);
+            }
+
+            // Delete the temporary files
+            outputFiles.forEach((file) => fs.unlinkSync(file));
+            fs.unlinkSync(filePath);
+            fs.unlinkSync(zipFilePath);
+        });
+    });
+
+    archive.on('error', (err) => {
+        throw err;
+    });
+
+    archive.pipe(output);
+
+    // Append each PDF file to the zip
+    outputFiles.forEach((file) => {
+        archive.file(file, { name: path.basename(file) });
+    });
+
+    // Finalize the archive
+    archive.finalize();
+} catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('An error occurred while processing the PDF.');
+}
+}
