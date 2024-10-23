@@ -1546,7 +1546,43 @@ async function VideoScript({ topic, objective, tone, language, outputCount }) {
 }
 
 
+async function generateGoogleAdContent(productOrService, whatsAdFor, targetAudience, tone, language, outputCount) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            // Generate Google Ad content using OpenAI
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `Generate a Google Ad headline and description in ${language} language for a ${productOrService} targeting ${targetAudience}. The ad is for ${whatsAdFor}. The tone should be ${tone}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Please provide a headline and a description. The headline should be catchy and up to 30 characters. The description should be detailed, highlighting key features, benefits, or any special offer related to the product or service in a way that encourages users to take action.`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            responses.push(completion.choices[0].message.content.trim());
+        }
+
+        return responses;
+    } catch (error) {
+        console.error('Error generating Google Ad content:', error);
+        return 'Failed to generate Google Ad headline and description';
+    }
+}
 
 
 
-module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt};
+
+module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt
+    ,generateGoogleAdContent
+};

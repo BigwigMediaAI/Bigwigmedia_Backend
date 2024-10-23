@@ -5904,3 +5904,27 @@ exports.auditSEO = async (req, res) => {
         res.status(500).json({ error: 'Error performing SEO audit' });
     }
 };
+
+
+// ---------------Google Ad Headline and Description Generator--------------
+
+const {generateGoogleAdContent} = require("../utils.js/generativeTools")
+
+exports.generateGoogleAd = async (req, res) => {
+  try {
+      const { productOrService, whatsAdFor, targetAudience, tone, language, outputCount } = req.body;
+
+      // Validate input fields
+      if (!productOrService) {
+          return res.status(400).json({ error: 'Please provide a product or service for the ad.' });
+      }
+
+      // Call the utility function to generate Google Ad content
+      const googleAdContent = await generateGoogleAdContent(productOrService, whatsAdFor, targetAudience, tone, language, outputCount);
+
+      res.status(200).json(googleAdContent);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Google Ad headline and description' });
+  }
+};
