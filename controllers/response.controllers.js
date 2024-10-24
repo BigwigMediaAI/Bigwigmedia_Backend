@@ -2223,7 +2223,7 @@ exports.compressImage = async (req, res) => {
 
 // controllers/swotController.js
 
-const { generateSWOTAnalysis, generateSEOSuggestions,generateSEOImprovements, generateSEOAudit } = require('../utils.js/swotAnalysis');
+const { generateSWOTAnalysis, generateSEOSuggestions,generateSEOImprovements, generateSEOAudit, generateCompetitorAnalysis } = require('../utils.js/swotAnalysis');
 
 exports.generateSWOT = async (req, res) => {
     try {
@@ -6100,3 +6100,23 @@ pages.forEach(page => {
     res.status(500).send('Failed to add watermark');
   }
 }
+
+// ------------------SEO Competitor Analysis--------------------
+
+exports.seoCompetitorAnalysis = async (req, res) => {
+  try {
+      const { competitorUrls, language, outputCount } = req.body;
+
+      // Validate input
+      if (!competitorUrls || competitorUrls.length === 0) {
+          return res.status(400).json({ error: 'Please provide competitor URLs for analysis' });
+      }
+
+      const analysisResults = await generateCompetitorAnalysis(competitorUrls, language, outputCount);
+
+      res.status(200).json(analysisResults);
+  } catch (error) {
+      console.error('Error performing competitor analysis:', error);
+      res.status(500).json({ error: 'Error performing competitor analysis' });
+  }
+};

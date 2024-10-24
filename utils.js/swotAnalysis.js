@@ -141,5 +141,39 @@ async function generateSEOAudit(content, language, outputCount) {
 }
 
 
+async function generateCompetitorAnalysis(competitorUrls, language, outputCount) {
+    let responses = [];
 
-module.exports = { generateSWOTAnalysis, generateSEOSuggestions, generateSEOImprovements, generateSEOAudit };
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are an SEO expert. Analyze the SEO strategies of the following competitors and provide detailed insights for improvement. The analysis should be done in ${language}.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Competitor URLs:\n\n${competitorUrls.join('\n')}`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            // Push the generated SEO competitor analysis into the response array
+            responses.push(completion.choices[0].message.content.trim());
+        }
+
+        return responses;
+    } catch (error) {
+        console.error('Error generating competitor analysis:', error);
+        return 'Failed to generate SEO competitor analysis';
+    }
+}
+
+
+module.exports = { generateSWOTAnalysis, generateSEOSuggestions, generateSEOImprovements, generateSEOAudit, generateCompetitorAnalysis };
