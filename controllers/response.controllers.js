@@ -6120,3 +6120,88 @@ exports.seoCompetitorAnalysis = async (req, res) => {
       res.status(500).json({ error: 'Error performing competitor analysis' });
   }
 };
+
+const { promisify } = require('util');
+const convert = require('heic-convert');
+exports.ConvertHeic=async(req,res)=>{
+  try {
+    const conversionType = req.body.conversionType || 'JPEG'; // Default to JPEG if not provided
+    const format = conversionType.toUpperCase();
+
+    if (format !== 'JPEG' && format !== 'PNG') {
+      return res.status(400).send('Invalid conversion type. Please use "JPEG" or "PNG".');
+    }
+
+    const outputFiles = [];
+
+    // Process each uploaded file
+    for (const file of req.files) {
+      // Read the uploaded HEIC file
+      const inputBuffer = await promisify(fs.readFile)(file.path);
+
+      // Convert the HEIC file to the desired format (JPEG or PNG)
+      const outputBuffer = await convert({
+        buffer: inputBuffer,  // HEIC file buffer
+        format: format,       // Output format (JPEG or PNG)
+        quality: format === 'JPEG' ? 1 : undefined  // JPEG compression quality (for JPEG only)
+      });
+
+      const outputExtension = format === 'JPEG' ? 'jpg' : 'png';
+      const outputFilePath = `./uploads/result-${Date.now()}-${file.originalname}.${outputExtension}`;
+
+      // Write the converted file to the uploads directory
+      await promisify(fs.writeFile)(outputFilePath, outputBuffer);
+
+      // Add the converted file path to the list of output files
+      outputFiles.push({
+        path: outputFilePath,
+        name: path.basename(outputFilePath)
+      });
+
+      // Optionally delete the original HEIC file
+      fs.unlinkSync(file.path);
+    }
+
+    // If there's only one file, send it directly in the response
+    if (outputFiles.length === 1) {
+      const singleFilePath = outputFiles[0].path;
+      res.download(singleFilePath, outputFiles[0].name, () => {
+        // Delete the single file after sending
+        fs.unlinkSync(singleFilePath);
+      });
+    } else {
+      // If there are multiple files, zip them and send the zip file
+      const zipFilePath = `./uploads/converted-images-${Date.now()}.zip`;
+      const output = fs.createWriteStream(zipFilePath);
+      const archive = archiver('zip', { zlib: { level: 9 } });
+
+      // Handle archive finalization and errors
+      archive.on('error', function(err) {
+        throw err;
+      });
+
+      // Pipe the zip file stream to the output file
+      archive.pipe(output);
+
+      // Append each converted file to the zip
+      outputFiles.forEach((file) => {
+        archive.file(file.path, { name: file.name });
+      });
+
+      // Finalize the archive (this will create the zip file)
+      await archive.finalize();
+
+      // When the zip is done, send it to the client and delete the files
+      output.on('close', () => {
+        res.download(zipFilePath, 'converted-images.zip', () => {
+          // Clean up: delete the converted files and the zip file
+          outputFiles.forEach((file) => fs.unlinkSync(file.path));
+          fs.unlinkSync(zipFilePath);
+        });
+      });
+    }
+  } catch (error) {
+    console.error('Error converting files:', error);
+    res.status(500).send('Error converting files');
+  }
+}

@@ -98,7 +98,7 @@ generateLinkedInPageSummary,generateLinkedInCompanySummary,generatePostHashtags,
 generateArticle,generatePressRelease,generateNewsletter,generateGoogleAdsHeadliner,generateGoogleAdDescription,generateMarketingPlan,generateMarketingFunnel,createProductDescription,GenerateArticleIdeas,GenerateArticleOutline,GenerateArticleIntro,GenerateBlogIdeas,GenerateBlogTitles,GenerateBlogOutline,GenerateBlogIntro,GenerateSEOTitleDescription,GeneratePromptGenerator,GenerateReviewReply,GenerateVideoScript,generatePrompts,generateImageFromPrompt,GenerateVideoPromptContent,generateVisiting,generateLetterHead,generateFreeEmail,generateemailreplie,audioRepharse,convertSvgToJpeg,svgtopngconverter
 ,videoRepharse,speechConverter,
 addBackground,convertToWebp,
-webpToImages,optimizeSEO,improveSEOContent,auditSEO,generateGoogleAd,splitPdf,watermarkPdf,seoCompetitorAnalysis
+webpToImages,optimizeSEO,improveSEOContent,auditSEO,generateGoogleAd,splitPdf,watermarkPdf,seoCompetitorAnalysis,ConvertHeic
 
 } = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
@@ -363,6 +363,7 @@ router.post('/generateGoogleAd',checkLimit, generateGoogleAd);
 router.post('/split',checkLimit, upload.single('pdf'), splitPdf);
 router.post('/watermarkPdf',checkLimit, upload.fields([{ name: 'pdf' }, { name: 'image' }]), watermarkPdf);
 router.post('/seoCompetitorAnalysis', seoCompetitorAnalysis);
+router.post('/convert-heic',upload.array('images', 10), ConvertHeic);
 
 
 
