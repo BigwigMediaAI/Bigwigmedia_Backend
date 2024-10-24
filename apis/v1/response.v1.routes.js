@@ -362,8 +362,8 @@ router.post('/auditSEO',checkLimit, auditSEO);
 router.post('/generateGoogleAd',checkLimit, generateGoogleAd);
 router.post('/split',checkLimit, upload.single('pdf'), splitPdf);
 router.post('/watermarkPdf',checkLimit, upload.fields([{ name: 'pdf' }, { name: 'image' }]), watermarkPdf);
-router.post('/seoCompetitorAnalysis', seoCompetitorAnalysis);
-router.post('/convert-heic',upload.array('images', 10), ConvertHeic);
+router.post('/seoCompetitorAnalysis',checkLimit, seoCompetitorAnalysis);
+router.post('/convert-heic',checkLimit,upload.array('images', 10), ConvertHeic);
 
 
 

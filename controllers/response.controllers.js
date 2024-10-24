@@ -6121,6 +6121,9 @@ exports.seoCompetitorAnalysis = async (req, res) => {
   }
 };
 
+
+// -----------------------------HEIC TO JPEG/PNG CONVERSTION---------------------------------  
+
 const { promisify } = require('util');
 const convert = require('heic-convert');
 exports.ConvertHeic=async(req,res)=>{
@@ -6162,44 +6165,35 @@ exports.ConvertHeic=async(req,res)=>{
       fs.unlinkSync(file.path);
     }
 
-    // If there's only one file, send it directly in the response
-    if (outputFiles.length === 1) {
-      const singleFilePath = outputFiles[0].path;
-      res.download(singleFilePath, outputFiles[0].name, () => {
-        // Delete the single file after sending
-        fs.unlinkSync(singleFilePath);
+    // Create a zip file containing all the converted images
+    const zipFilePath = `./uploads/converted-images-${Date.now()}.zip`;
+    const output = fs.createWriteStream(zipFilePath);
+    const archive = archiver('zip', { zlib: { level: 9 } });
+
+    // Handle archive finalization and errors
+    archive.on('error', function(err) {
+      throw err;
+    });
+
+    // Pipe the zip file stream to the output file
+    archive.pipe(output);
+
+    // Append each converted file to the zip
+    outputFiles.forEach((file) => {
+      archive.file(file.path, { name: file.name });
+    });
+
+    // Finalize the archive (this will create the zip file)
+    await archive.finalize();
+
+    // When the zip is done, send it to the client and delete the files
+    output.on('close', () => {
+      res.download(zipFilePath, 'converted-images.zip', () => {
+        // Clean up: delete the converted files and the zip file
+        outputFiles.forEach((file) => fs.unlinkSync(file.path));
+        fs.unlinkSync(zipFilePath);
       });
-    } else {
-      // If there are multiple files, zip them and send the zip file
-      const zipFilePath = `./uploads/converted-images-${Date.now()}.zip`;
-      const output = fs.createWriteStream(zipFilePath);
-      const archive = archiver('zip', { zlib: { level: 9 } });
-
-      // Handle archive finalization and errors
-      archive.on('error', function(err) {
-        throw err;
-      });
-
-      // Pipe the zip file stream to the output file
-      archive.pipe(output);
-
-      // Append each converted file to the zip
-      outputFiles.forEach((file) => {
-        archive.file(file.path, { name: file.name });
-      });
-
-      // Finalize the archive (this will create the zip file)
-      await archive.finalize();
-
-      // When the zip is done, send it to the client and delete the files
-      output.on('close', () => {
-        res.download(zipFilePath, 'converted-images.zip', () => {
-          // Clean up: delete the converted files and the zip file
-          outputFiles.forEach((file) => fs.unlinkSync(file.path));
-          fs.unlinkSync(zipFilePath);
-        });
-      });
-    }
+    });
   } catch (error) {
     console.error('Error converting files:', error);
     res.status(500).send('Error converting files');
