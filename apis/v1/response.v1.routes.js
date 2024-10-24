@@ -361,7 +361,7 @@ router.post('/improveSEOContent',checkLimit, improveSEOContent);
 router.post('/auditSEO',checkLimit, auditSEO);
 router.post('/generateGoogleAd',checkLimit, generateGoogleAd);
 router.post('/split',checkLimit, upload.single('pdf'), splitPdf);
-router.post('/watermarkPdf', upload.fields([{ name: 'pdf' }, { name: 'image' }]), watermarkPdf);
+router.post('/watermarkPdf',checkLimit, upload.fields([{ name: 'pdf' }, { name: 'image' }]), watermarkPdf);
 
 
 
