@@ -5995,3 +5995,108 @@ exports.splitPdf=async(req,res)=>{
     res.status(500).send('An error occurred while processing the PDF.');
 }
 }
+
+
+// -----------------------Watermark PDF-----------------------
+
+function hexToRgb(hex) {
+  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16) / 255,
+    g: parseInt(result[2], 16) / 255,
+    b: parseInt(result[3], 16) / 255
+  } : null;
+}
+
+exports.watermarkPdf = async (req, res) => {
+  try {
+    // Retrieve parameters from the request body
+    const watermarkText = req.body.watermark;
+    const hexColor = req.body.color || '#bfbfbf'; // Default to light gray in hex
+    const color = hexToRgb(hexColor); // Convert hex to RGB
+    const fontSize = parseFloat(req.body.fontSize) || 50; // Default to 50
+    const rotation = parseFloat(req.body.rotation) === 45 ? degrees(45) : degrees(0); // Default to 0 degrees
+
+    // Load the uploaded PDF file
+    const filePath =req.files['pdf'][0].path;
+    const existingPdfBytes = fs.readFileSync(filePath);
+
+    // Load the PDF document
+    const pdfDoc = await PDFDocument.load(existingPdfBytes);
+
+    // Get the total number of pages
+    const pages = pdfDoc.getPages();
+
+    // Check if an image is provided for watermark
+    if (req.files['image']) {
+      const imagePath = req.files['image'][0].path;
+      const imageBytes = fs.readFileSync(imagePath);
+      const image = await pdfDoc.embedPng(imageBytes); // Assuming PNG image, you can use `embedJpg` for JPGs
+      const { width: imageWidth, height: imageHeight } = image.scale(0.5); // Scale image
+
+      // Define the fixed height for the watermark image
+const fixedHeight = 250; // Set your desired fixed height for the image
+
+// Calculate the width based on the image's aspect ratio
+const aspectRatio = imageWidth / imageHeight;
+const scaledWidth = fixedHeight * aspectRatio;
+
+// Add the image watermark to each page, centered with fixed height and proportional width
+pages.forEach(page => {
+  const { width, height } = page.getSize();
+
+  page.drawImage(image, {
+    x: width / 2 - scaledWidth / 2, // Center horizontally
+    y: height / 2 - fixedHeight / 2, // Center vertically
+    width: scaledWidth, // Adjusted width to maintain aspect ratio
+    height: fixedHeight, // Fixed height
+    opacity: 0.3, // Set opacity
+    rotate: rotation, // Custom rotation
+  });
+});
+
+
+      // Clean up the uploaded image file
+      fs.unlinkSync(imagePath);
+    } else if (watermarkText) {
+      // If no image, apply text watermark
+      const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+      // Add the text watermark to each page
+      pages.forEach(page => {
+        const { width, height } = page.getSize();
+
+        page.drawText(watermarkText, {
+          x: width / 2 - 100, // Center horizontally
+          y: height / 2, // Center vertically
+          size: fontSize,
+          font: helveticaFont,
+          color: rgb(color.r, color.g, color.b), // Use converted RGB color
+          opacity: 0.3,
+          rotate: rotation, // Custom rotation
+        });
+      });
+    } else {
+      return res.status(400).send('No watermark text or image provided');
+    }
+
+    // Serialize the PDFDocument to bytes
+    const pdfBytes = await pdfDoc.save();
+
+    // Set headers to indicate a downloadable file
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=watermarked.pdf');
+
+    // Send the modified PDF as response
+    res.send(Buffer.from(pdfBytes));
+
+    // Clean up the uploaded PDF file
+    fs.unlinkSync(filePath);
+  } catch (error) {
+    console.error('Error adding watermark:', error);
+    res.status(500).send('Failed to add watermark');
+  }
+}
