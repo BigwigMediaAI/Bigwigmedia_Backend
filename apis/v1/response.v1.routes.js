@@ -365,7 +365,7 @@ router.post('/split',checkLimit, upload.single('pdf'), splitPdf);
 router.post('/watermarkPdf',checkLimit, upload.fields([{ name: 'pdf' }, { name: 'image' }]), watermarkPdf);
 router.post('/seoCompetitorAnalysis',checkLimit, seoCompetitorAnalysis);
 router.post('/convert-heic',checkLimit,upload.array('images', 10), ConvertHeic);
-router.post('/video-thumbnail',upload.single('video'),videoThumbnail)
+router.post('/video-thumbnail',checkLimit, upload.single('video'),videoThumbnail)
 
 
 
