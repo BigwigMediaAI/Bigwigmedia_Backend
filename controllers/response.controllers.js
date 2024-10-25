@@ -6199,3 +6199,46 @@ exports.ConvertHeic=async(req,res)=>{
     res.status(500).send('Error converting files');
   }
 }
+
+
+// -----------------------Video Thumbnail Generator--------------------
+
+exports.videoThumbnail = async(req, res) => {
+  const { time } = req.body; // Expecting a single time value (HH:MM:SS) in the request body
+  const inputPath = req.file.path; // Path to the uploaded video
+  const outputPath = path.join(__dirname, 'thumbnail.png'); // Output thumbnail image path
+
+  const timeInSeconds = timeToSeconds(time); // Convert the time to seconds
+
+  ffmpeg(inputPath)
+    .on('end', function() {
+      res.download(outputPath, () => {
+        // Clean up files
+        fs.unlink(inputPath, (err) => {
+          if (err) {
+            console.error('Error deleting input file:', err);
+          }
+        });
+        fs.unlink(outputPath, (err) => {
+          if (err) {
+            console.error('Error deleting output file:', err);
+          }
+        });
+      });
+    })
+    .on('error', function(err) {
+      console.error('Error: ' + err.message);
+      res.status(500).send('An error occurred during the thumbnail extraction process.');
+      fs.unlink(inputPath, (err) => {
+        if (err) {
+          console.error('Error deleting input file after error:', err);
+        }
+      });
+    })
+    .screenshots({
+      timestamps: [timeInSeconds.toString()], // Generate thumbnail at the specified time
+      filename: 'thumbnail.png',
+      folder: path.dirname(outputPath),
+      size: '640x360' // Size of the thumbnail image
+    });
+}
