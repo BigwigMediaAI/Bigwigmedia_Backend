@@ -2221,9 +2221,7 @@ exports.compressImage = async (req, res) => {
 // **********SWOT Analysis Generator**********
 
 
-// controllers/swotController.js
-
-const { generateSWOTAnalysis, generateSEOSuggestions,generateSEOImprovements, generateSEOAudit, generateCompetitorAnalysis } = require('../utils.js/swotAnalysis');
+const { generateSWOTAnalysis, generateSEOSuggestions,generateSEOImprovements, generateSEOAudit, generateCompetitorAnalysis, ArticleSummarize } = require('../utils.js/swotAnalysis');
 
 exports.generateSWOT = async (req, res) => {
     try {
@@ -6242,3 +6240,54 @@ exports.videoThumbnail = async(req, res) => {
       size: '640x360' // Size of the thumbnail image
     });
 }
+
+// ---------------------Youtube Video To Article Generator----------------
+
+
+
+exports.videoToArticle = async (req, res) => {
+  const videoPath = req.file.path; // Uploaded video file path
+  const audioOutputPath = `uploads/${Date.now()}_converted.mp3`; // Path to store the extracted audio
+
+  try {
+    // Step 1: Convert video to audio
+    await extractAndConvertToMP3(videoPath, audioOutputPath);
+
+    // Step 2: Transcribe the audio to text
+    const transcribedText = await transcribeToaudio(audioOutputPath);
+
+    // Cleanup files
+    fs.unlinkSync(videoPath); // Delete uploaded video
+    fs.unlinkSync(audioOutputPath); // Delete converted MP3 file
+
+    const posts = await ArticleGenerator({ 
+      description: transcribedText, 
+      tone: req.body.tone || 'neutral', // Default to neutral tone
+      language: req.body.language || 'en', // Default to English
+      outputCount: req.body.outputCount || 1, // Default to one article
+    });
+
+
+    // Step 4: Summarize transcribed text for image generation
+    const summarizedText = await ArticleSummarize(transcribedText);
+    
+    // Step 5: Generate image using summarized text
+    let imageUrl = null;
+    const imageResponse = await generateImageFromPrompt(summarizedText);
+    imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
+
+
+    // Send the article and optional image as the response
+    res.set({ 'Content-Type': 'application/json' });
+    res.json({ article: posts, imageUrl });
+  } catch (error) {
+    console.error('Error processing video:', error.message);
+
+    // Cleanup in case of error
+    if (fs.existsSync(videoPath)) fs.unlinkSync(videoPath);
+    if (fs.existsSync(audioOutputPath)) fs.unlinkSync(audioOutputPath);
+
+    res.status(500).json({ error: error.message });
+  }
+};
+

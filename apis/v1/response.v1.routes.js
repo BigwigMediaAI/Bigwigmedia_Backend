@@ -99,7 +99,7 @@ generateArticle,generatePressRelease,generateNewsletter,generateGoogleAdsHeadlin
 ,videoRepharse,speechConverter,
 addBackground,convertToWebp,
 webpToImages,optimizeSEO,improveSEOContent,auditSEO,generateGoogleAd,splitPdf,watermarkPdf,seoCompetitorAnalysis,ConvertHeic,
-videoThumbnail
+videoThumbnail,videoToArticle
 
 } = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
@@ -366,7 +366,7 @@ router.post('/watermarkPdf',checkLimit, upload.fields([{ name: 'pdf' }, { name: 
 router.post('/seoCompetitorAnalysis',checkLimit, seoCompetitorAnalysis);
 router.post('/convert-heic',checkLimit,upload.array('images', 10), ConvertHeic);
 router.post('/video-thumbnail',checkLimit, upload.single('video'),videoThumbnail)
-
+router.post("/ytVideoToArticle", upload.single('video'), videoToArticle);
 
 
 module.exports = router;

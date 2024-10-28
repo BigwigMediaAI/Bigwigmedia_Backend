@@ -175,5 +175,34 @@ async function generateCompetitorAnalysis(competitorUrls, language, outputCount)
     }
 }
 
+// Summarization function to limit text to 50 words
+async function ArticleSummarize(text) {
+    try {
+      const completion = await openai.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a concise summarizer. Please summarize the following text in 50 words or fewer.'
+          },
+          {
+            role: 'user',
+            content: text
+          }
+        ],
+        model: 'gpt-4',
+      });
+  
+      if (!completion || !completion.choices || completion.choices.length === 0) {
+        throw new Error('Invalid completion response');
+      }
+  
+      return completion.choices[0].message.content.trim();
+    } catch (error) {
+      console.error('Error summarizing text:', error.message);
+      throw new Error('Failed to summarize text for image generation');
+    }
+  }
+  
 
-module.exports = { generateSWOTAnalysis, generateSEOSuggestions, generateSEOImprovements, generateSEOAudit, generateCompetitorAnalysis };
+
+module.exports = { generateSWOTAnalysis, generateSEOSuggestions, generateSEOImprovements, generateSEOAudit, generateCompetitorAnalysis,ArticleSummarize };
