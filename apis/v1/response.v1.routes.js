@@ -99,7 +99,7 @@ generateArticle,generatePressRelease,generateNewsletter,generateGoogleAdsHeadlin
 ,videoRepharse,speechConverter,
 addBackground,convertToWebp,
 webpToImages,optimizeSEO,improveSEOContent,auditSEO,generateGoogleAd,splitPdf,watermarkPdf,seoCompetitorAnalysis,ConvertHeic,
-videoThumbnail,videoToArticle
+videoThumbnail,videoToArticle,genrateYoutubeShortsCaption
 
 } = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
@@ -367,6 +367,7 @@ router.post('/seoCompetitorAnalysis',checkLimit, seoCompetitorAnalysis);
 router.post('/convert-heic',checkLimit,upload.array('images', 10), ConvertHeic);
 router.post('/video-thumbnail',checkLimit, upload.single('video'),videoThumbnail)
 router.post("/ytVideoToArticle", upload.single('video'), videoToArticle);
+router.post("/genrateYoutubeShortsCaption", genrateYoutubeShortsCaption);
 
 
 module.exports = router;

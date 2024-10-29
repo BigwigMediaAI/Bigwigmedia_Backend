@@ -6291,3 +6291,23 @@ exports.videoToArticle = async (req, res) => {
   }
 };
 
+const {youtubeShortsCaptionGenerator}=require("../utils.js/generativeTools")
+
+exports.genrateYoutubeShortsCaption=async(req,res)=>{
+try {
+  const {videoDescription, tone, language, outputCount}=req.body
+if(!videoDescription || !tone || !language || !outputCount){
+  return res.status(400).json({error:"Please fill all required fields"})
+}
+const data=await youtubeShortsCaptionGenerator(videoDescription, tone, language, outputCount)
+return res.status(200).json({
+  success: true,
+  GeneratedResponse: data
+});
+} catch (error) {
+  console.error('Error auditing SEO:', error);
+        res.status(500).json({ error: 'Error generating YoutubeShortsCaption' }); 
+}
+
+}
+

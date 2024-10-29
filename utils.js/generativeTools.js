@@ -1582,7 +1582,42 @@ async function generateGoogleAdContent(productOrService, whatsAdFor, targetAudie
 
 
 
+async function youtubeShortsCaptionGenerator(videoDescription, tone, language, outputCount) {
+    try {
+        let responses = [];
+
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `Generate a YouTube Shorts caption in ${language} with a ${tone} tone. Video description: ${videoDescription}.`
+                    },
+                    {
+                        role: 'user',
+                        content: 'Create a catchy and engaging YouTube Shorts caption that reflects the given video description, tone, and language.'
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            responses.push(completion.choices[0].message.content);
+        }
+        return responses;
+
+    } catch (error) {
+        console.error('Error generating YouTube Shorts captions:', error);
+        throw new Error('Failed to generate YouTube Shorts captions');
+    }
+}
+
+
+
 
 module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt
-    ,generateGoogleAdContent
+    ,generateGoogleAdContent,youtubeShortsCaptionGenerator
 };
