@@ -1616,8 +1616,86 @@ async function youtubeShortsCaptionGenerator(videoDescription, tone, language, o
 }
 
 
+async function formatPressRelease(title, announcement, quotes, companyDetails, tone, language, outputCount) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `Format the following information into a structured press release in ${language} language with a ${tone} tone, including industry-standard headings, sections, and proper placement of quotes.`
+                    },
+                    {
+                        role: 'user',
+                        content: `
+                        Title: ${title}
+                        Announcement: ${announcement}
+                        Quotes: ${quotes.join('\n')}
+                        Company Details: ${companyDetails}
+
+                        Format this into a press release.
+                        `
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            responses.push(completion.choices[0].message.content.trim());
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating press release:', error);
+        return 'Failed to format press release';
+    }
+}
+
+
+async function NewsletterSubjectLine(topic, targetAudience, keyMessage, tone, language, outputCount) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `Generate an engaging subject line for a newsletter in ${language} language with a ${tone} tone.`
+                    },
+                    {
+                        role: 'user',
+                        content: `
+                        Topic: ${topic}
+                        Target Audience: ${targetAudience}
+                        Key Message: ${keyMessage}
+
+                        Create a concise and catchy subject line for a newsletter.
+                        `
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            responses.push(completion.choices[0].message.content.trim());
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating newsletter subject line:', error);
+        return 'Failed to generate subject line';
+    }
+}
+
 
 
 module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt
-    ,generateGoogleAdContent,youtubeShortsCaptionGenerator
+    ,generateGoogleAdContent,youtubeShortsCaptionGenerator,formatPressRelease,NewsletterSubjectLine
 };

@@ -6291,6 +6291,8 @@ exports.videoToArticle = async (req, res) => {
   }
 };
 
+// -------------------Youtube Shorts caption generator-------------------------
+
 const {youtubeShortsCaptionGenerator}=require("../utils.js/generativeTools")
 
 exports.genrateYoutubeShortsCaption=async(req,res)=>{
@@ -6310,4 +6312,51 @@ return res.status(200).json({
 }
 
 }
+
+
+const {formatPressRelease}=require("../utils.js/generativeTools")
+
+exports.GenerateformatPressRelease=async(req,res)=>{
+  try {
+    const {title, announcement, quotes, companyDetails, tone, language, outputCount}=req.body
+
+    if(!title || !announcement || !quotes || !companyDetails || !tone || !language){
+      return res.status(400).json({error:"Please fill all required fields"})
+    }
+    const data=await formatPressRelease(title, announcement, quotes, companyDetails, tone, language, outputCount)
+    return res.status(200).json({
+      success: true,
+      GeneratedResponse: data
+    });
+
+  } catch (error) {
+    console.log("error generating press realease formatter",error)
+    res.status(500).json({error:"error generating press realease formatter"})
+  }
+}
+
+
+
+const {NewsletterSubjectLine}=require("../utils.js/generativeTools")
+
+exports.GenerateNewsletterSubjectLine=async(req,res)=>{
+try {
+  const {topic, targetAudience, keyMessage, tone, language, outputCount}=req.body
+
+  if(!topic ||  !targetAudience || !keyMessage || !tone ||!language ){
+    return res.status(400).json({error:"Please fill all required fields"})
+  }
+    const data =await NewsletterSubjectLine(topic, targetAudience, keyMessage, tone, language, outputCount)
+    return res.status(200).json({
+      success: true,
+      GeneratedResponse: data
+    });
+  }
+ catch (error) {
+  console.log("error generating Newsletter SubjectLine",error)
+  res.status(500).json({error:"error generating Newsletter SubjectLine"})
+}
+
+}
+
 
