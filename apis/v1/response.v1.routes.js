@@ -100,6 +100,8 @@ generateArticle,generatePressRelease,generateNewsletter,generateGoogleAdsHeadlin
 addBackground,convertToWebp,
 webpToImages,optimizeSEO,improveSEOContent,auditSEO,generateGoogleAd,splitPdf,watermarkPdf,seoCompetitorAnalysis,ConvertHeic,
 videoThumbnail,videoToArticle,genrateYoutubeShortsCaption,generatePodcastIntroduction
+,videoThumbnail,videoToArticle,genrateYoutubeShortsCaption,GenerateformatPressRelease,GenerateNewsletterSubjectLine
+
 
 } = require("../../controllers/response.controllers");
 const { checkLimit } = require("../../middleware/limitCheck.middleware");
@@ -369,5 +371,8 @@ router.post('/video-thumbnail',checkLimit, upload.single('video'),videoThumbnail
 router.post("/ytVideoToArticle", upload.single('video'), videoToArticle);
 router.post("/genrateYoutubeShortsCaption", genrateYoutubeShortsCaption);
 router.post('/generatePodcastIntroduction', generatePodcastIntroduction);
+router.post("/GenerateformatPressRelease", GenerateformatPressRelease);
+router.post("/GenerateNewsletterSubjectLine", GenerateNewsletterSubjectLine);
+
 
 module.exports = router;
