@@ -99,7 +99,7 @@ generateArticle,generatePressRelease,generateNewsletter,generateGoogleAdsHeadlin
 ,videoRepharse,speechConverter,
 addBackground,convertToWebp,
 webpToImages,optimizeSEO,improveSEOContent,auditSEO,generateGoogleAd,splitPdf,watermarkPdf,seoCompetitorAnalysis,ConvertHeic,
-videoThumbnail,videoToArticle,genrateYoutubeShortsCaption,generatePodcastIntroduction
+videoThumbnail,videoToArticle,genrateYoutubeShortsCaption,generatePodcastIntroduction,generatePodcastConclusion
 ,GenerateformatPressRelease,GenerateNewsletterSubjectLine
 
 
@@ -370,7 +370,8 @@ router.post('/convert-heic',checkLimit,upload.array('images', 10), ConvertHeic);
 router.post('/video-thumbnail',checkLimit, upload.single('video'),videoThumbnail)
 router.post("/ytVideoToArticle", upload.single('video'), videoToArticle);
 router.post("/genrateYoutubeShortsCaption", genrateYoutubeShortsCaption);
-router.post('/generatePodcastIntroduction', generatePodcastIntroduction);
+router.post('/generatePodcastIntroduction',checkLimit, generatePodcastIntroduction);
+router.post('/generatePodcastConclusion',checkLimit, generatePodcastConclusion);
 router.post("/GenerateformatPressRelease", GenerateformatPressRelease);
 router.post("/GenerateNewsletterSubjectLine", GenerateNewsletterSubjectLine);
 

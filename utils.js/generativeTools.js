@@ -1654,6 +1654,44 @@ async function PodcastIntroduction({ title, description, targetAudience, tone, l
       return 'Failed to generate podcast introduction';
     }
   }
+
+  async function PodcastConclusion({ title, description, targetAudience, tone, language, outputCount }) {
+    let responses = [];
+  
+    try {
+      for (let i = 0; i < outputCount; i++) {
+        const completion = await openai.chat.completions.create({
+          messages: [
+            {
+              role: 'system',
+              content: `You are a professional podcast writer. Craft an engaging, attention-grabbing podcast conclusion in ${language} with a ${tone} tone that targets the specified audience.`
+            },
+            {
+              role: 'user',
+              content: `
+                Title: "${title}"
+                Description: "${description}"
+                Target Audience: "${targetAudience}"
+              `
+            }
+          ],
+          model: 'gpt-4'
+        });
+  
+        if (!completion || !completion.choices || completion.choices.length === 0) {
+          throw new Error('Invalid completion response');
+        }
+  
+        let generatedIntroduction = completion.choices[0].message.content.trim();
+  
+        responses.push(generatedIntroduction);
+      }
+      return responses;
+    } catch (error) {
+      console.error('Error generating podcast conclusion:', error);
+      return 'Failed to generate podcast conclusion';
+    }
+  }
   
   async function formatPressRelease(title, announcement, quotes, companyDetails, tone, language, outputCount) {
     let responses = [];
@@ -1734,7 +1772,7 @@ async function NewsletterSubjectLine(topic, targetAudience, keyMessage, tone, la
 }
 
 module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt
-    ,generateGoogleAdContent,youtubeShortsCaptionGenerator, PodcastIntroduction,formatPressRelease,NewsletterSubjectLine}
+    ,generateGoogleAdContent,youtubeShortsCaptionGenerator, PodcastIntroduction,PodcastConclusion,formatPressRelease,NewsletterSubjectLine}
 
 
 

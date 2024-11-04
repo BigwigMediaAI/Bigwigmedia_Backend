@@ -3979,7 +3979,7 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
 // -----------Instagram Caption Generator--------------
 const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt
-,PodcastIntroduction,formatPressRelease,NewsletterSubjectLine
+,PodcastIntroduction,PodcastConclusion,formatPressRelease,NewsletterSubjectLine
 } = require('../utils.js/generativeTools');
 
 exports.generateCaption = async (req, res) => {
@@ -6350,7 +6350,45 @@ exports.generatePodcastIntroduction = async (req, res) => {
   }
 };
 
+// ------------------Podcast Conclusion Generator--------------
 
+exports.generatePodcastConclusion = async (req, res) => {
+  try {
+    // Destructuring request body
+    const {
+      title,
+      description,
+      targetAudience,
+      tone,
+      language,
+      outputCount
+    } = req.body;
+
+    // Check required fields
+    if (!title || !description || !targetAudience || !tone || !language || !outputCount) {
+      return res.status(400).json({ error: 'Please provide all required fields' });
+    }
+
+    // Generate podcast introduction
+    const conclusions = await PodcastConclusion({
+      title,
+      description,
+      targetAudience,
+      tone,
+      language,
+      outputCount
+    });
+
+    // Return the generated conclusions
+    res.status(200).json({ conclusions });
+    
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'Error generating Podcast Conclusion' });
+  }
+};
+
+// ---------------Press Release Formattor-------------------
 
 exports.GenerateformatPressRelease=async(req,res)=>{
   try {
@@ -6372,6 +6410,7 @@ exports.GenerateformatPressRelease=async(req,res)=>{
 }
 
 
+// ---------------------Newsletter subject Line Generator----------------
 
 exports.GenerateNewsletterSubjectLine=async(req,res)=>{
 try {
