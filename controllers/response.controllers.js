@@ -3979,7 +3979,7 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
 // -----------Instagram Caption Generator--------------
 const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt
-
+,PodcastIntroduction
 } = require('../utils.js/generativeTools');
 
 exports.generateCaption = async (req, res) => {
@@ -6311,3 +6311,40 @@ return res.status(200).json({
 
 }
 
+
+// ----------------------Podcast Introduction Generator--------------
+exports.generatePodcastIntroduction = async (req, res) => {
+  try {
+    // Destructuring request body
+    const {
+      title,
+      description,
+      targetAudience,
+      tone,
+      language,
+      outputCount
+    } = req.body;
+
+    // Check required fields
+    if (!title || !description || !targetAudience || !tone || !language || !outputCount) {
+      return res.status(400).json({ error: 'Please provide all required fields' });
+    }
+
+    // Generate podcast introduction
+    const introductions = await PodcastIntroduction({
+      title,
+      description,
+      targetAudience,
+      tone,
+      language,
+      outputCount
+    });
+
+    // Return the generated introductions
+    res.status(200).json({ introductions });
+    
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'Error generating Podcast Introduction' });
+  }
+};
