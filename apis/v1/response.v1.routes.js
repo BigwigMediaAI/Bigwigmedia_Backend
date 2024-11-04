@@ -100,7 +100,7 @@ generateArticle,generatePressRelease,generateNewsletter,generateGoogleAdsHeadlin
 addBackground,convertToWebp,
 webpToImages,optimizeSEO,improveSEOContent,auditSEO,generateGoogleAd,splitPdf,watermarkPdf,seoCompetitorAnalysis,ConvertHeic,
 videoThumbnail,videoToArticle,genrateYoutubeShortsCaption,generatePodcastIntroduction
-,videoThumbnail,videoToArticle,genrateYoutubeShortsCaption,GenerateformatPressRelease,GenerateNewsletterSubjectLine
+,GenerateformatPressRelease,GenerateNewsletterSubjectLine
 
 
 } = require("../../controllers/response.controllers");
