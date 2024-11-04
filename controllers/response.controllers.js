@@ -6432,3 +6432,50 @@ try {
 
 }
 
+
+// --------------------Background Image-----------------
+exports.background = async (req, res) => {
+  try {
+      const mainImagePath = req.files.mainImage[0].path;
+      const backgroundImagePath = req.files.backgroundImage[0].path;
+
+      // Load the background image
+      const background = sharp(backgroundImagePath);
+
+      // Get dimensions of background image
+      const backgroundMetadata = await background.metadata();
+
+      // Resize the main image to fit within the background
+      const mainImage = await sharp(mainImagePath)
+          .resize({
+              width: backgroundMetadata.width,
+              height: backgroundMetadata.height,
+              fit: 'cover'
+          })
+          .toBuffer();
+
+      // Overlay the main image onto the background
+      const outputImage = await background
+          .composite([{ input: mainImage, blend: 'over' }])
+          .toBuffer();
+
+      // Set the response headers
+      res.set('Content-Type', 'image/png');
+      res.set('Content-Disposition', 'attachment; filename="overlay-image.png"');
+
+      // Send the generated image as a response
+      res.send(outputImage);
+
+      // Delete the uploaded and generated files after sending the response
+      fs.unlink(mainImagePath, (err) => {
+          if (err) console.error(`Failed to delete main image: ${err}`);
+      });
+      fs.unlink(backgroundImagePath, (err) => {
+          if (err) console.error(`Failed to delete background image: ${err}`);
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error processing images' });
+  }
+};
+
