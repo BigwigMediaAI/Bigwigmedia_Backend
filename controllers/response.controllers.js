@@ -6557,9 +6557,10 @@ exports.generateBlogPostConclusion = async (req, res) => {
   }
 };
 
+// ---------------------------Video convert into formats------------------------------
 
 exports.videoConvertion=async(req,res)=>{
-  const outputFormat = req.body.format; // Desired output format (e.g., 'mkv', 'avi')
+  const outputFormat = req.body.format; // Desired output format (e.g., 'flv', 'avi','mp4','mov','m4v',)
   const inputPath = req.file.path; // Path of the uploaded video
   const outputFileName = `output.${outputFormat}`;
   const outputPath = path.join(__dirname, 'uploads', outputFileName);
