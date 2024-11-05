@@ -6556,3 +6556,32 @@ exports.generateBlogPostConclusion = async (req, res) => {
     return res.status(500).json({ error: 'Error generating Blog Post Conclusion' });
   }
 };
+
+
+exports.videoConvertion=async(req,res)=>{
+  const outputFormat = req.body.format; // Desired output format (e.g., 'mkv', 'avi')
+  const inputPath = req.file.path; // Path of the uploaded video
+  const outputFileName = `output.${outputFormat}`;
+  const outputPath = path.join(__dirname, 'uploads', outputFileName);
+
+  // Convert the video
+  ffmpeg(inputPath)
+    .toFormat(outputFormat)
+    .on('end', () => {
+      // Send the converted file as a response
+      res.download(outputPath, (err) => {
+        // Clean up files after response
+        fs.unlinkSync(inputPath);
+        fs.unlinkSync(outputPath);
+        if (err) {
+          console.error('Error sending file:', err);
+        }
+      });
+    })
+    .on('error', (err) => {
+      console.error('Error during conversion:', err);
+      res.status(500).send('Video conversion failed');
+      fs.unlinkSync(inputPath);
+    })
+    .save(outputPath);
+}
