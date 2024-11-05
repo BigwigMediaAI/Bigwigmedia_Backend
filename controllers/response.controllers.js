@@ -3979,7 +3979,7 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
 // -----------Instagram Caption Generator--------------
 const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt
-,PodcastIntroduction,PodcastConclusion,formatPressRelease,NewsletterSubjectLine,BlogIntroduction
+,PodcastIntroduction,PodcastConclusion,formatPressRelease,NewsletterSubjectLine,BlogIntroduction,BlogPostConclusion
 } = require('../utils.js/generativeTools');
 
 exports.generateCaption = async (req, res) => {
@@ -6518,3 +6518,41 @@ exports.generateBlogIntroduction = async (req, res) => {
   }
 };
 
+
+// ---------------------Blog Post Conclusion Generator--------------------
+
+exports.generateBlogPostConclusion = async (req, res) => {
+  try {
+    // Destructuring request body
+    const {
+      title,
+      mainPoints,
+      targetAudience,
+      tone,
+      language,
+      outputCount
+    } = req.body;
+
+    // Check required fields
+    if (!title || !mainPoints || !targetAudience || !tone || !language || !outputCount) {
+      return res.status(400).json({ error: 'Please provide all required fields' });
+    }
+
+    // Generate blog post conclusions
+    const conclusions = await BlogPostConclusion({
+      title,
+      mainPoints,
+      targetAudience,
+      tone,
+      language,
+      outputCount
+    });
+
+    // Return the generated conclusions
+    res.status(200).json({ conclusions });
+    
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'Error generating Blog Post Conclusion' });
+  }
+};
