@@ -1771,8 +1771,48 @@ async function NewsletterSubjectLine(topic, targetAudience, keyMessage, tone, la
     }
 }
 
+
+async function BlogIntroduction({ title, mainPoints, targetAudience, tone, language, outputCount }) {
+    let responses = [];
+  
+    try {
+      for (let i = 0; i < outputCount; i++) {
+        const completion = await openai.chat.completions.create({
+          messages: [
+            {
+              role: 'system',
+              content: `You are a professional content writer. Craft an engaging blog post introduction in ${language} with a ${tone} tone aimed at the specified audience.`
+            },
+            {
+              role: 'user',
+              content: `
+                Title: "${title}"
+                Main Points: "${mainPoints}"
+                Target Audience: "${targetAudience}"
+              `
+            }
+          ],
+          model: 'gpt-4'
+        });
+  
+        if (!completion || !completion.choices || completion.choices.length === 0) {
+          throw new Error('Invalid completion response');
+        }
+  
+        let generatedIntroduction = completion.choices[0].message.content.trim();
+        responses.push(generatedIntroduction);
+      }
+  
+      return responses;
+    } catch (error) {
+      console.error('Error generating blog introduction:', error);
+      return 'Failed to generate blog introduction';
+    }
+  }
+  
+
 module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt
-    ,generateGoogleAdContent,youtubeShortsCaptionGenerator, PodcastIntroduction,PodcastConclusion,formatPressRelease,NewsletterSubjectLine}
+    ,generateGoogleAdContent,youtubeShortsCaptionGenerator, PodcastIntroduction,PodcastConclusion,formatPressRelease,NewsletterSubjectLine,BlogIntroduction}
 
 
 

@@ -3979,7 +3979,7 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
 // -----------Instagram Caption Generator--------------
 const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt
-,PodcastIntroduction,PodcastConclusion,formatPressRelease,NewsletterSubjectLine
+,PodcastIntroduction,PodcastConclusion,formatPressRelease,NewsletterSubjectLine,BlogIntroduction
 } = require('../utils.js/generativeTools');
 
 exports.generateCaption = async (req, res) => {
@@ -6476,6 +6476,45 @@ exports.background = async (req, res) => {
   } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Error processing images' });
+  }
+};
+
+
+// -----------------Blog Post Introduction Generator--------------
+
+exports.generateBlogIntroduction = async (req, res) => {
+  try {
+    // Destructuring request body
+    const {
+      title,
+      mainPoints,
+      targetAudience,
+      tone,
+      language,
+      outputCount
+    } = req.body;
+
+    // Check required fields
+    if (!title || !mainPoints || !targetAudience || !tone || !language || !outputCount) {
+      return res.status(400).json({ error: 'Please provide all required fields' });
+    }
+
+    // Generate blog introduction
+    const introductions = await BlogIntroduction({
+      title,
+      mainPoints,
+      targetAudience,
+      tone,
+      language,
+      outputCount
+    });
+
+    // Return the generated introductions
+    res.status(200).json({ introductions });
+    
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'Error generating blog post introduction' });
   }
 };
 
