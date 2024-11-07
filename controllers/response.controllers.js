@@ -6560,29 +6560,40 @@ exports.generateBlogPostConclusion = async (req, res) => {
 // ---------------------------Video convert into formats------------------------------
 
 exports.videoConvertion=async(req,res)=>{
-  const outputFormat = req.body.format; // Desired output format (e.g., 'flv', 'avi','mp4','mov','m4v',)
+  const outputFormat = req.body.format; // Desired output format (e.g., 'mp4')
   const inputPath = req.file.path; // Path of the uploaded video
-  const outputFileName = `output.${outputFormat}`;
+  const outputFileName = output.${outputFormat};
   const outputPath = path.join(__dirname, 'uploads', outputFileName);
 
-  // Convert the video
+  console.log('Starting video conversion...');
+
+  // Convert the video with optimized options
   ffmpeg(inputPath)
     .toFormat(outputFormat)
+    .outputOptions('-preset', 'ultrafast') // Set preset to 'ultrafast' for faster encoding
+    .outputOptions('-crf', '28')           // Reduce quality to reduce processing load
+    .outputOptions('-vf', 'scale=1280:-1') // Resize video width to 1280px while maintaining aspect ratio
+    .outputOptions('-threads', '1')        // Limit to a single thread for lower CPU usage
     .on('end', () => {
-      // Send the converted file as a response
-      res.download(outputPath, (err) => {
-        // Clean up files after response
-        fs.unlinkSync(inputPath);
-        fs.unlinkSync(outputPath);
-        if (err) {
-          console.error('Error sending file:', err);
-        }
+      console.log(Conversion to ${outputFormat} completed.);
+
+      // Stream the converted file to the client
+      res.setHeader('Content-Disposition', attachment; filename="${outputFileName}");
+      const fileStream = fs.createReadStream(outputPath);
+      fileStream.pipe(res).on('finish', () => {
+        console.log('File sent successfully. Starting cleanup...');
+        // Clean up the temporary files
+        fs.unlink(inputPath, (err) => { if (err) console.error(err); });
+        fs.unlink(outputPath, (err) => { if (err) console.error(err); });
       });
     })
     .on('error', (err) => {
       console.error('Error during conversion:', err);
-      res.status(500).send('Video conversion failed');
-      fs.unlinkSync(inputPath);
+      res.status(500).json({ error: 'Video conversion failed' });
+      // Clean up the input file if conversion fails
+      fs.unlink(inputPath, (unlinkErr) => {
+        if (unlinkErr) console.error('Error cleaning up input file:', unlinkErr);
+      });
     })
     .save(outputPath);
 }
