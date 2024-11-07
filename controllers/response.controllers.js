@@ -6562,7 +6562,7 @@ exports.generateBlogPostConclusion = async (req, res) => {
 exports.videoConvertion=async(req,res)=>{
   const outputFormat = req.body.format; // Desired output format (e.g., 'mp4')
   const inputPath = req.file.path; // Path of the uploaded video
-  const outputFileName = output.${outputFormat};
+  const outputFileName = `output.${outputFormat}`;
   const outputPath = path.join(__dirname, 'uploads', outputFileName);
 
   console.log('Starting video conversion...');
@@ -6575,10 +6575,10 @@ exports.videoConvertion=async(req,res)=>{
     .outputOptions('-vf', 'scale=1280:-1') // Resize video width to 1280px while maintaining aspect ratio
     .outputOptions('-threads', '1')        // Limit to a single thread for lower CPU usage
     .on('end', () => {
-      console.log(Conversion to ${outputFormat} completed.);
+      console.log(`Conversion to ${outputFormat} completed.`);
 
       // Stream the converted file to the client
-      res.setHeader('Content-Disposition', attachment; filename="${outputFileName}");
+      res.setHeader('Content-Disposition', `attachment; filename="${outputFileName}"`);
       const fileStream = fs.createReadStream(outputPath);
       fileStream.pipe(res).on('finish', () => {
         console.log('File sent successfully. Starting cleanup...');
