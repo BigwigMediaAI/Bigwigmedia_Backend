@@ -369,8 +369,8 @@ router.post('/watermarkPdf',checkLimit, upload.fields([{ name: 'pdf' }, { name: 
 router.post('/seoCompetitorAnalysis',checkLimit, seoCompetitorAnalysis);
 router.post('/convert-heic',checkLimit,upload.array('images', 10), ConvertHeic);
 router.post('/video-thumbnail',checkLimit, upload.single('video'),videoThumbnail)
-router.post("/ytVideoToArticle", upload.single('video'), videoToArticle);
-router.post("/genrateYoutubeShortsCaption", genrateYoutubeShortsCaption);
+router.post("/ytVideoToArticle",checkLimit, upload.single('video'), videoToArticle);
+router.post("/genrateYoutubeShortsCaption",checkLimit, genrateYoutubeShortsCaption);
 router.post('/generatePodcastIntroduction',checkLimit, generatePodcastIntroduction);
 router.post('/generatePodcastConclusion',checkLimit, generatePodcastConclusion);
 router.post("/GenerateformatPressRelease",checkLimit, GenerateformatPressRelease);
