@@ -4446,13 +4446,13 @@ exports.generateBlogPost = async (req, res) => {
 
 exports.generateArticle = async (req, res) => {
   try {
-      const {description, tone, language, outputCount,generateImage} = req.body;
+      const {description, tone, language, outputCount,generateImage, includeIntroduction, includeConclusion} = req.body;
 
       if (!description|| !language || !outputCount||!tone) {
           return res.status(400).json({ error: 'Please provide all required fields' });
       }
 
-      const posts = await ArticleGenerator({description, tone, language, outputCount});
+      const posts = await ArticleGenerator({description, tone, language, outputCount, includeIntroduction, includeConclusion});
 
       let imageUrl = null;
 

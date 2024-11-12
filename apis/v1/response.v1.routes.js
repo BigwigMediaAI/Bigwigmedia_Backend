@@ -326,7 +326,7 @@ router.post('/generateLinkedInPageSummary',checkLimit,generateLinkedInPageSummar
 router.post('/generateLinkedInCompanySummary',checkLimit,generateLinkedInCompanySummary);
 router.post('/generatePostHashtags',checkLimit,generatePostHashtags);
 router.post('/generateBlogPost', checkLimit, generateBlogPost);
-router.post('/generateArticle',checkLimit,generateArticle);
+router.post('/generateArticle',checkLimit, generateArticle);
 router.post('/generatePressRelease',checkLimit,generatePressRelease);
 router.post('/generateNewsletter',checkLimit,generateNewsletter);
 router.post('/generateGoogleAdsHeadliner',checkLimit,generateGoogleAdsHeadliner);

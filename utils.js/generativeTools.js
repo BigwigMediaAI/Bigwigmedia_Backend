@@ -864,16 +864,19 @@ async function BlogPost({ title, description, keywords, tone, language, wordCoun
     }
 }
 
-async function ArticleGenerator({ description, tone, language, outputCount }) {
+async function ArticleGenerator({ description, tone, language, outputCount, includeIntroduction, includeConclusion }) {
     let responses = [];
 
     try {
         for (let i = 0; i < outputCount; i++) {
+            const introText = includeIntroduction ? "Include a brief and engaging introduction." : "";
+            const conclusionText = includeConclusion ? "Conclude with a summary or final thoughts." : "";
+
             const completion = await openai.chat.completions.create({
                 messages: [
                     {
                         role: 'system',
-                        content: `You are a skilled article writer. Generate a well-researched and engaging article in ${language} with a ${tone} tone. The article should be informative, clear, and relevant to the target audience.`
+                        content: `You are a skilled article writer. Generate a well-researched and engaging article in ${language} with a ${tone} tone. ${introText} ${conclusionText} The article should be informative, clear, and relevant to the target audience.`
                     },
                     {
                         role: 'user',
