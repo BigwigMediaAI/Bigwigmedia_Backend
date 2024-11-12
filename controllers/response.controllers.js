@@ -6676,3 +6676,118 @@ exports.generateArticleConclusion = async (req, res) => {
     return res.status(500).json({ error: 'Error generating Artilce Conclusion' });
   }
 };
+
+
+// -----------------------------------Audio Merge---------------------------------
+
+const ffprobePath = require('@ffprobe-installer/ffprobe').path;
+ffmpeg.setFfprobePath(ffprobePath);
+
+
+function timeIntoSeconds(time) {
+  if (!time || typeof time !== 'string') throw new Error("Invalid time format");
+
+  const parts = time.split(':').map(Number);
+  console.log("Converting time:", time, "to seconds. Parts:", parts);
+
+  if (parts.some(isNaN)) throw new Error("Invalid time format: contains NaN parts");
+
+  if (parts.length === 2) { // mm:ss format
+    return parts[0] * 60 + parts[1];
+  } else if (parts.length === 3) { // hh:mm:ss format
+    return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  } else {
+    throw new Error("Invalid time format: incorrect parts length");
+  }
+}
+
+
+exports.AudioMerge=async(req,res)=>{
+  const audio1Path = req.files.audio1[0].path;
+  const audio2Path = req.files.audio2[0].path;
+  const { start1, end1, start2, end2 } = req.body;
+
+  try {
+    // Convert start and end times to seconds
+    const start1Sec = timeIntoSeconds(start1);
+    const end1Sec = timeIntoSeconds(end1);
+    const start2Sec = timeIntoSeconds(start2);
+    const end2Sec = timeIntoSeconds(end2);
+
+    // Calculate durations
+    const duration1 = end1Sec - start1Sec;
+    const duration2 = end2Sec - start2Sec;
+
+    // Validate durations
+    if (duration1 <= 0 || duration2 <= 0) {
+      return res.status(400).json({ error: 'Invalid start or end times' });
+    }
+
+    const trimmedAudio1Path = `uploads/trimmed_audio1_${Date.now()}.mp3`;
+    const trimmedAudio2Path = `uploads/trimmed_audio2_${Date.now()}.mp3`;
+
+    // Trim the first audio file
+    ffmpeg(audio1Path)
+      .setStartTime(start1Sec)
+      .duration(duration1)
+      .save(trimmedAudio1Path)
+      .on('end', () => {
+        
+        // Trim the second audio file
+        ffmpeg(audio2Path)
+          .setStartTime(start2Sec)
+          .duration(duration2)
+          .save(trimmedAudio2Path)
+          .on('end', () => {
+            
+            // Merge the two trimmed audio files
+            const outputPath = `uploads/merged_audio_${Date.now()}.mp3`;
+            ffmpeg()
+              .input(trimmedAudio1Path)
+              .input(trimmedAudio2Path)
+              .mergeToFile(outputPath)
+              .on('end', () => {
+                // Send the merged file to the client
+                res.download(outputPath, (err) => {
+                  if (err) throw err;
+
+                  // Clean up temporary files
+                  cleanUpFiles(audio1Path, audio2Path, trimmedAudio1Path, trimmedAudio2Path, outputPath);
+                });
+              })
+              .on('error', (err) => {
+                console.error('Error merging audio files:', err.message);
+                res.status(500).json({ error: 'Failed to merge audio files' });
+                cleanUpFiles(audio1Path, audio2Path, trimmedAudio1Path, trimmedAudio2Path);
+              });
+          })
+          .on('error', (err) => {
+            console.error('Error trimming second audio:', err.message);
+            res.status(500).json({ error: 'Failed to trim second audio' });
+            cleanUpFiles(audio1Path, audio2Path, trimmedAudio1Path);
+          });
+      })
+      .on('error', (err) => {
+        console.error('Error trimming first audio:', err.message);
+        res.status(500).json({ error: 'Failed to trim first audio' });
+        cleanUpFiles(audio1Path, audio2Path);
+      });
+  } catch (err) {
+    console.error('Error processing times:', err.message);
+    res.status(400).json({ error: 'Invalid time format provided. Use hh:mm:ss or mm:ss format.' });
+  }
+
+  // Helper function to clean up temporary files
+function cleanUpFiles(...files) {
+  files.forEach((file) => {
+    try {
+      if (fs.existsSync(file)) {
+        fs.unlinkSync(file);
+        console.log(`Deleted file: ${file}`);
+      }
+    } catch (err) {
+      console.error(`Error deleting file: ${file}`, err.message);
+    }
+  });
+}
+}
