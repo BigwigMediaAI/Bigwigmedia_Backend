@@ -100,7 +100,8 @@ generateArticle,generatePressRelease,generateNewsletter,generateGoogleAdsHeadlin
 addBackground,convertToWebp,
 webpToImages,optimizeSEO,improveSEOContent,auditSEO,generateGoogleAd,splitPdf,watermarkPdf,seoCompetitorAnalysis,ConvertHeic,
 videoThumbnail,videoToArticle,genrateYoutubeShortsCaption,generatePodcastIntroduction,generatePodcastConclusion
-,GenerateformatPressRelease,GenerateNewsletterSubjectLine,background,generateBlogIntroduction,generateBlogPostConclusion,videoConvertion
+,GenerateformatPressRelease,GenerateNewsletterSubjectLine,background,generateBlogIntroduction,generateBlogPostConclusion,videoConvertion,
+generateArticleConclusion,generateArticleIntroduction
 
 
 } = require("../../controllers/response.controllers");
@@ -378,4 +379,6 @@ router.post("/overlay",upload.fields([{ name: 'mainImage' }, { name: 'background
 router.post('/generateBlogIntroduction', generateBlogIntroduction);
 router.post('/generateBlogPostConclusion', generateBlogPostConclusion);
 router.post("/videoConvertion",upload.single('video'), videoConvertion);
+router.post('/generateArticleIntroduction', generateArticleIntroduction);
+router.post('/generateArticleConclusion', generateArticleConclusion);
 module.exports = router;

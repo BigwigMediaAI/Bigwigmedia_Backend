@@ -3979,7 +3979,8 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 
 // -----------Instagram Caption Generator--------------
 const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt
-,PodcastIntroduction,PodcastConclusion,formatPressRelease,NewsletterSubjectLine,BlogIntroduction,BlogPostConclusion
+,PodcastIntroduction,PodcastConclusion,formatPressRelease,NewsletterSubjectLine,BlogIntroduction,BlogPostConclusion,
+ArticleConclusion,ArticleIntroduction
 } = require('../utils.js/generativeTools');
 
 exports.generateCaption = async (req, res) => {
@@ -6597,3 +6598,81 @@ exports.videoConvertion=async(req,res)=>{
     })
     .save(outputPath);
 }
+
+
+// -----------------Article Introduction Generator--------------
+
+exports.generateArticleIntroduction = async (req, res) => {
+  try {
+    // Destructuring request body
+    const {
+      title,
+      keyPoints,
+      targetAudience,
+      tone,
+      language,
+      outputCount
+    } = req.body;
+
+    // Check required fields
+    if (!title || !keyPoints || !targetAudience || !tone || !language || !outputCount) {
+      return res.status(400).json({ error: 'Please provide all required fields' });
+    }
+
+    // Generate blog introduction
+    const introductions = await ArticleIntroduction({
+      title,
+      keyPoints,
+      targetAudience,
+      tone,
+      language,
+      outputCount
+    });
+
+    // Return the generated introductions
+    res.status(200).json({ introductions });
+    
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'Error generating Article introduction' });
+  }
+};
+
+
+// ---------------------Article Conclusion Generator--------------------
+
+exports.generateArticleConclusion = async (req, res) => {
+  try {
+    // Destructuring request body
+    const {
+      title,
+      keyPoints,
+      targetAudience,
+      tone,
+      language,
+      outputCount
+    } = req.body;
+
+    // Check required fields
+    if (!title || !keyPoints || !targetAudience || !tone || !language || !outputCount) {
+      return res.status(400).json({ error: 'Please provide all required fields' });
+    }
+
+    // Generate blog post conclusions
+    const conclusions = await ArticleConclusion({
+      title,
+      keyPoints,
+      targetAudience,
+      tone,
+      language,
+      outputCount
+    });
+
+    // Return the generated conclusions
+    res.status(200).json({ conclusions });
+    
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'Error generating Artilce Conclusion' });
+  }
+};

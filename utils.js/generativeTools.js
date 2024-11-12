@@ -1848,10 +1848,85 @@ async function BlogIntroduction({ title, mainPoints, targetAudience, tone, langu
     }
   }
   
+  async function ArticleIntroduction({ title, mainPoints, targetAudience, tone, language, outputCount }) {
+    let responses = [];
   
+    try {
+      for (let i = 0; i < outputCount; i++) {
+        const completion = await openai.chat.completions.create({
+          messages: [
+            {
+              role: 'system',
+              content: `You are a professional Article writer. Craft an engaging Article introduction in ${language} with a ${tone} tone aimed at the specified audience.`
+            },
+            {
+              role: 'user',
+              content: `
+                Title: "${title}"
+                Main Points: "${mainPoints}"
+                Target Audience: "${targetAudience}"
+              `
+            }
+          ],
+          model: 'gpt-4'
+        });
+  
+        if (!completion || !completion.choices || completion.choices.length === 0) {
+          throw new Error('Invalid completion response');
+        }
+  
+        let generatedIntroduction = completion.choices[0].message.content.trim();
+        responses.push(generatedIntroduction);
+      }
+  
+      return responses;
+    } catch (error) {
+      console.error('Error generating article introduction:', error);
+      return 'Failed to generate article introduction';
+    }
+  }
+
+  async function ArticleConclusion({ title, mainPoints, targetAudience, tone, language, outputCount }) {
+    let responses = [];
+  
+    try {
+      for (let i = 0; i < outputCount; i++) {
+        const completion = await openai.chat.completions.create({
+          messages: [
+            {
+              role: 'system',
+              content: `You are an experienced Article writer. Create a thoughtful and engaging conclusion for a Article in ${language} with a ${tone} tone. The conclusion should summarize key points and provide a closing thought tailored to the target audience.`
+            },
+            {
+              role: 'user',
+              content: `
+                Title: "${title}"
+                Main Points: "${mainPoints}"
+                Target Audience: "${targetAudience}"
+              `
+            }
+          ],
+          model: 'gpt-4'
+        });
+  
+        if (!completion || !completion.choices || completion.choices.length === 0) {
+          throw new Error('Invalid completion response');
+        }
+  
+        let generatedConclusion = completion.choices[0].message.content.trim();
+  
+        responses.push(generatedConclusion);
+      }
+      return responses;
+    } catch (error) {
+      console.error('Error generating article conclusion:', error);
+      return 'Failed to generate article conclusion';
+    }
+  }
 
 module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt
-    ,generateGoogleAdContent,youtubeShortsCaptionGenerator, PodcastIntroduction,PodcastConclusion,formatPressRelease,NewsletterSubjectLine,BlogIntroduction,BlogPostConclusion}
+    ,generateGoogleAdContent,youtubeShortsCaptionGenerator, PodcastIntroduction,PodcastConclusion,formatPressRelease,NewsletterSubjectLine,BlogIntroduction,BlogPostConclusion,
+ArticleIntroduction,ArticleConclusion}
 
 
 
