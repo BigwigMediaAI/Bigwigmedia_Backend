@@ -6813,3 +6813,72 @@ exports.podcastNewsletter = async(req, res) => {
     return res.status(500).json({ error: 'Failed to generate podcast newsletter' });
   }
 }
+
+// -------------------------------------video watermark-------------------------------------
+
+exports.VideoWatermark=async(req,res)=>{
+    if (!req.files || !req.files.video || !req.files.video[0]) {
+    return res.status(400).send('No video file uploaded.');
+  }
+
+  const videoFile = req.files.video[0].path;
+  const watermarkFile = req.files.watermark ? req.files.watermark[0].path : null;
+
+  const {
+    watermarkType = 'image',
+    position = 'bottom-right',
+    text = 'Watermark Text',
+    textColor = 'white',
+    fontSize = 24
+  } = req.body;
+
+  const outputFilePath = `./output/watermarked_${Date.now()}.mp4`;
+
+  const overlayPositions = {
+    'top-left': '10:10',
+    'top-right': 'main_w-overlay_w-10:10',
+    'bottom-left': '10:main_h-overlay_h-10',
+    'bottom-right': 'main_w-overlay_w-10:main_h-overlay_h-10'
+  };
+  
+
+  const selectedPosition = overlayPositions[position] || overlayPositions['bottom-right'];
+  let ffmpegCommand = ffmpeg(videoFile);
+
+  if (watermarkType === 'image' && watermarkFile) {
+    ffmpegCommand
+      .input(watermarkFile)
+      .complexFilter([
+        '[1:v] scale=iw*0.3:ih*0.3 [watermark];'+
+        '[watermark] format=rgba, colorchannelmixer=aa=0.5 [watermark_opacity];'+
+        `[0:v][watermark_opacity] overlay=${selectedPosition}`
+      ]);
+  }
+   else if (watermarkType === 'text') {
+    ffmpegCommand
+      .complexFilter([
+        `drawtext=text='${text}':fontcolor=${textColor}:fontsize=${fontSize}:x=${selectedPosition.split(':')[0]}:y=${selectedPosition.split(':')[1]}`
+      ]);
+  } else {
+    return res.status(400).send('Invalid watermark type or missing watermark file.');
+  }
+
+  ffmpegCommand
+    .outputOptions('-preset', 'fast')
+    .on('start', (cmd) => {
+    //   console.log("FFmpeg command:", cmd);
+    })
+    .on('error', (err) => {
+      console.error("FFmpeg error:", err.message);
+      res.status(500).send('Error processing video. Please check the file format and paths.');
+    })
+    .on('end', () => {
+      res.download(outputFilePath, (err) => {
+        if (err) console.error(err);
+        fs.unlinkSync(videoFile);
+        if (watermarkFile) fs.unlinkSync(watermarkFile);
+        fs.unlinkSync(outputFilePath);
+      });
+    })
+    .save(outputFilePath);
+}
