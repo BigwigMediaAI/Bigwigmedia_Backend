@@ -1,25 +1,43 @@
+
 const OpenAI = require('openai');
 require('dotenv').config();
 
 const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
-async function generatePost(platform, topic, keywords, tone, language, outputCount) {
+async function generatePost(platform, description, tone, language, outputCount, includeEmoji, includeHashtag) {
     let posts = [];
 
     try {
         for (let i = 0; i < outputCount; i++) {
+            // Build the initial part of the prompt
+            let prompt = `Generate a social media post for ${platform} in ${language}. `;
+            prompt += `The post should be about "${description}" and have a ${tone} tone. `;
+
+            // Explicitly tell the model to avoid adding emojis and hashtags if they are false
+            if (includeEmoji) {
+                prompt += "Include relevant emojis in the post. ";
+            } else {
+                prompt += "Do not use emojis in the post. ";
+            }
+
+            if (includeHashtag) {
+                prompt += "Add relevant hashtags to the post. ";
+            } else {
+                prompt += "Do not use hashtags in the post. ";
+            }
+
             const completion = await openai.chat.completions.create({
                 messages: [
                     {
                         role: 'system',
-                        content: `Generate a social media post for ${platform} in ${language}. The post should be about ${topic}, include the following keywords: ${keywords}, and have a ${tone} tone.`
+                        content: prompt
                     },
                     {
                         role: 'user',
-                        content: `${topic}`
+                        content: description
                     }
                 ],
-                model: 'gpt-4o'
+                model: 'gpt-4'
             });
 
             if (!completion || !completion.choices || completion.choices.length === 0) {
@@ -35,4 +53,4 @@ async function generatePost(platform, topic, keywords, tone, language, outputCou
     }
 }
 
-module.exports = { generatePost };
+module.exports = { generatePost };

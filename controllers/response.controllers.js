@@ -2659,24 +2659,41 @@ exports.generateTweetReply = async (req, res) => {
 };
 
 // ------------Social Media Post Generator---------
-const { generatePost } = require('../utils.js/socialMediaPostGenerator');
+const {generatePost} = require("../utils.js/socialMediaPostGenerator")
 
 exports.generateSocialMediaPost = async (req, res) => {
-    try {
-        const { platform, topic, keywords, tone, language, outputCount } = req.body;
+  try {
+      const { platform, description, tone, language, outputCount, includeEmoji, includeHashtag, generateImage } = req.body;
 
-        if (!platform || !topic || !keywords || !tone || !language || !outputCount) {
-            return res.status(400).json({ error: 'Please provide all required fields' });
-        }
+      // Check for required fields
+      if (!platform || !description || !tone || !language || !outputCount) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
 
-        const socialMediaPosts = await generatePost(platform, topic, keywords, tone, language, outputCount);
+      // Generate social media posts
+      const socialMediaPosts = await generatePost(platform, description, tone, language, outputCount, includeEmoji, includeHashtag);
 
-        res.status(200).json(socialMediaPosts);
-    } catch (error) {
-        console.error('Error generating social media post:', error);
-        res.status(500).json({ error: 'Error generating social media post' });
-    }
+      let imageUrl = null;
+
+      // Conditionally generate image if requested
+      if (generateImage === true || generateImage === 'true') {
+          try {
+              const imageResponse = await generateImageFromPrompt(description); // Assuming topic is used as the prompt
+              imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
+          } catch (err) {
+              console.error('Error generating image:', err);
+              imageUrl = null; // Fallback if image generation fails
+          }
+      }
+
+      // Return the generated posts along with the image URL if generated
+      res.status(200).json({ posts: socialMediaPosts, imageUrl });
+  } catch (error) {
+      console.error('Error generating social media post:', error);
+      res.status(500).json({ error: 'Error generating social media post' });
+  }
 };
+
 
 
 // ------Bullet points generatro----
