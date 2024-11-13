@@ -101,7 +101,7 @@ addBackground,convertToWebp,
 webpToImages,optimizeSEO,improveSEOContent,auditSEO,generateGoogleAd,splitPdf,watermarkPdf,seoCompetitorAnalysis,ConvertHeic,
 videoThumbnail,videoToArticle,genrateYoutubeShortsCaption,generatePodcastIntroduction,generatePodcastConclusion
 ,GenerateformatPressRelease,GenerateNewsletterSubjectLine,background,generateBlogIntroduction,generateBlogPostConclusion,videoConvertion,
-generateArticleConclusion,generateArticleIntroduction,AudioMerge
+generateArticleConclusion,generateArticleIntroduction,AudioMerge,podcastNewsletter
 
 
 } = require("../../controllers/response.controllers");
@@ -382,4 +382,5 @@ router.post("/videoConvertion",upload.single('video'), videoConvertion);
 router.post('/generateArticleIntroduction', generateArticleIntroduction);
 router.post('/generateArticleConclusion', generateArticleConclusion);
 router.post('/AudioMerge',upload.fields([{ name: 'audio1' }, { name: 'audio2' }]), AudioMerge);
+router.post('/podcastNewsletter', podcastNewsletter)
 module.exports = router;
