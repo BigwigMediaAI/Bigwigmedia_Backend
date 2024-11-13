@@ -1927,9 +1927,50 @@ async function BlogIntroduction({ title, mainPoints, targetAudience, tone, langu
     }
   }
 
+
+  async function generatePodcastNewsletter({ podcastName, episodeTitle, episodeSummary, tone, language, outputCount }) {
+    let responses = [];
+  
+    try {
+      for (let i = 0; i < outputCount; i++) {
+        const completion = await openai.chat.completions.create({
+          messages: [
+            {
+              role: 'system',
+              content: `You are an expert content writer. Create a newsletter for a podcast episode in ${language} with a ${tone} tone. The newsletter should include a catchy introduction, a summary of the episode, and a closing thought with a call to action encouraging the reader to listen to the episode.`
+            },
+            {
+              role: 'user',
+              content: `
+                Podcast Name: "${podcastName}"
+                Episode Title: "${episodeTitle}"
+                Episode Summary: "${episodeSummary}"
+              `
+            }
+          ],
+          model: 'gpt-4'
+        });
+  
+        if (!completion || !completion.choices || completion.choices.length === 0) {
+          throw new Error('Invalid completion response');
+        }
+  
+        let generatedNewsletter = completion.choices[0].message.content.trim();
+        
+        responses.push(generatedNewsletter);
+      }
+  
+      return responses;
+    } catch (error) {
+      console.error('Error generating podcast newsletter:', error);
+      return 'Failed to generate podcast newsletter';
+    }
+  }
+  
+
 module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt
     ,generateGoogleAdContent,youtubeShortsCaptionGenerator, PodcastIntroduction,PodcastConclusion,formatPressRelease,NewsletterSubjectLine,BlogIntroduction,BlogPostConclusion,
-ArticleIntroduction,ArticleConclusion}
+ArticleIntroduction,ArticleConclusion, generatePodcastNewsletter}
 
 
 
