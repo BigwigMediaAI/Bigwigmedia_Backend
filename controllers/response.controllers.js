@@ -3980,7 +3980,7 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 // -----------Instagram Caption Generator--------------
 const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt
 ,PodcastIntroduction,PodcastConclusion,formatPressRelease,NewsletterSubjectLine,BlogIntroduction,BlogPostConclusion,
-ArticleConclusion,ArticleIntroduction
+ArticleConclusion,ArticleIntroduction,generatePodcastNewsletter
 } = require('../utils.js/generativeTools');
 
 exports.generateCaption = async (req, res) => {
@@ -6793,3 +6793,23 @@ function cleanUpFiles(...files) {
 }
 
 // -----------------------------------Audio Merge Ends Here---------------------------------
+
+// ------------------Podcast Newsletter Generator--------------
+
+exports.podcastNewsletter = async(req, res) => {
+  const { podcastName, episodeTitle, episodeSummary, tone, language, outputCount } = req.body;
+
+  // Validate the input fields
+  if (!podcastName || !episodeTitle || !episodeSummary || !tone || !language || !outputCount) {
+    return res.status(400).json({ error: 'All fields are required: podcastName, episodeTitle, episodeSummary, tone, language, and outputCount.' });
+  }
+
+  try {
+    // Call the utility function to generate newsletters
+    const newsletters = await generatePodcastNewsletter({ podcastName, episodeTitle, episodeSummary, tone, language, outputCount });
+    return res.status(200).json({ newsletters });
+  } catch (error) {
+    console.error('Error generating newsletter:', error);
+    return res.status(500).json({ error: 'Failed to generate podcast newsletter' });
+  }
+}
