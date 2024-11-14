@@ -4040,7 +4040,7 @@ exports.generateInstagramBio = async (req, res) => {
 
 exports.generateInstagramStory = async (req, res) => {
   try {
-      const { story, tone, language, outputCount, useEmoji, useHashtags } = req.body;
+      const { story, tone, language, outputCount, useEmoji, useHashtags,generateImage } = req.body;
 
       if (!story || !tone || !language || !outputCount || useEmoji === undefined || useHashtags === undefined) {
           return res.status(400).json({ error: 'Please provide all required fields' });
@@ -4048,7 +4048,21 @@ exports.generateInstagramStory = async (req, res) => {
 
       const stories = await generateInstagramStory({ story, tone, language, outputCount, useEmoji, useHashtags });
 
-      res.status(200).json(stories);
+      let imageUrl = null;
+
+      // Conditionally generate image if requested
+      if (generateImage === true || generateImage === 'true') {
+          try {
+              const imageResponse = await generateImageFromPrompt(story); // Assuming topic is used as the prompt
+              imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
+          } catch (err) {
+              console.error('Error generating image:', err);
+              imageUrl = null; // Fallback if image generation fails
+          }
+      }
+
+      // Return the generated posts along with the image URL if generated
+      res.status(200).json({ posts: stories, imageUrl });
   } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ error: 'Error generating Instagram stories' });
