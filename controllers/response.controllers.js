@@ -6833,8 +6833,8 @@ exports.podcastNewsletter = async(req, res) => {
 
 // -------------------------------------video watermark-------------------------------------
 
-exports.VideoWatermark=async(req,res)=>{
-    if (!req.files || !req.files.video || !req.files.video[0]) {
+exports.VideoWatermark = async (req, res) => {
+  if (!req.files || !req.files.video || !req.files.video[0]) {
     return res.status(400).send('No video file uploaded.');
   }
 
@@ -6857,24 +6857,32 @@ exports.VideoWatermark=async(req,res)=>{
     'bottom-left': '10:main_h-overlay_h-10',
     'bottom-right': 'main_w-overlay_w-10:main_h-overlay_h-10'
   };
-  
 
-  const selectedPosition = overlayPositions[position] || overlayPositions['bottom-right'];
+  const textPositions = {
+    'top-left': '10:10',
+    'top-right': 'main_w-text_w-10:10',
+    'bottom-left': '10:main_h-text_h-10',
+    'bottom-right': 'main_w-text_w-10:main_h-text_h-10'
+  };
+
+  const selectedPosition = watermarkType === 'text' ? textPositions[position] || textPositions['bottom-right'] : overlayPositions[position] || overlayPositions['bottom-right'];
   let ffmpegCommand = ffmpeg(videoFile);
 
   if (watermarkType === 'image' && watermarkFile) {
     ffmpegCommand
       .input(watermarkFile)
       .complexFilter([
-        '[1:v] scale=iw*0.3:ih*0.3 [watermark];'+
-        '[watermark] format=rgba, colorchannelmixer=aa=0.5 [watermark_opacity];'+
+        '[1:v] scale=iw*0.3:ih*0.3 [watermark];' +
+        '[watermark] format=rgba, colorchannelmixer=aa=0.5 [watermark_opacity];' +
         `[0:v][watermark_opacity] overlay=${selectedPosition}`
       ]);
-  }
-   else if (watermarkType === 'text') {
+  } else if (watermarkType === 'text') {
+    // Escape special characters in text
+    const escapedText = text.replace(/'/g, "\\'").replace(/:/g, '\\:');
+
     ffmpegCommand
       .complexFilter([
-        `drawtext=text='${text}':fontcolor=${textColor}:fontsize=${fontSize}:x=${selectedPosition.split(':')[0]}:y=${selectedPosition.split(':')[1]}`
+        `drawtext=text='${escapedText}':fontcolor=${textColor}:fontsize=${fontSize}:x=${selectedPosition.split(':')[0]}:y=${selectedPosition.split(':')[1]}`
       ]);
   } else {
     return res.status(400).send('Invalid watermark type or missing watermark file.');
@@ -6883,10 +6891,10 @@ exports.VideoWatermark=async(req,res)=>{
   ffmpegCommand
     .outputOptions('-preset', 'fast')
     .on('start', (cmd) => {
-    //   console.log("FFmpeg command:", cmd);
+      console.log('FFmpeg command:', cmd);
     })
     .on('error', (err) => {
-      console.error("FFmpeg error:", err.message);
+      console.error('FFmpeg error:', err.message);
       res.status(500).send('Error processing video. Please check the file format and paths.');
     })
     .on('end', () => {
@@ -6898,4 +6906,4 @@ exports.VideoWatermark=async(req,res)=>{
       });
     })
     .save(outputFilePath);
-}
+};
