@@ -306,7 +306,7 @@ router.post('/instadownloader',checkLimit,instaImageVideoDownloader);
 router.post('/generateCaption',checkLimit,generateCaption);
 router.post('/generateInstagramBio',checkLimit,generateInstagramBio);
 router.post('/generateInstagramStory',checkLimit,generateInstagramStory);
-router.post('/generateReelPost',checkLimit,generateReelPost);
+router.post('/generateReelPost',generateReelPost);
 router.post('/generateThreadsPost',checkLimit,generateThreadsPost);
 router.post('/generateFacebookPost',checkLimit,generateFacebookPost);
 router.post('/generateFacebookAdHeadline',checkLimit,generateFacebookAdHeadline);
