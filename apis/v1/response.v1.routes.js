@@ -380,7 +380,7 @@ router.post('/generateBlogIntroduction',checkLimit, generateBlogIntroduction);
 router.post('/generateBlogPostConclusion',checkLimit, generateBlogPostConclusion);
 router.post("/videoConvertion",checkLimit, upload.single('video'), videoConvertion);
 router.post('/generateArticleIntroduction',checkLimit, generateArticleIntroduction);
-router.post('/generateArticleConclusion', generateArticleConclusion);
+router.post('/generateArticleConclusion',checkLimit, generateArticleConclusion);
 router.post('/AudioMerge',upload.fields([{ name: 'audio1' }, { name: 'audio2' }]), AudioMerge);
 router.post('/podcastNewsletter', podcastNewsletter)
 router.post('/add-watermark',upload.fields([{ name: 'video' }, { name: 'watermark' }]), VideoWatermark)
