@@ -378,7 +378,7 @@ router.post("/GenerateNewsletterSubjectLine",checkLimit, GenerateNewsletterSubje
 router.post("/overlay",checkLimit, upload.fields([{ name: 'mainImage' }, { name: 'backgroundImage' }]), background);
 router.post('/generateBlogIntroduction',checkLimit, generateBlogIntroduction);
 router.post('/generateBlogPostConclusion',checkLimit, generateBlogPostConclusion);
-router.post("/videoConvertion",upload.single('video'), videoConvertion);
+router.post("/videoConvertion",checkLimit, upload.single('video'), videoConvertion);
 router.post('/generateArticleIntroduction', generateArticleIntroduction);
 router.post('/generateArticleConclusion', generateArticleConclusion);
 router.post('/AudioMerge',upload.fields([{ name: 'audio1' }, { name: 'audio2' }]), AudioMerge);
