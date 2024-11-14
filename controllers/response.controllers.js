@@ -6891,10 +6891,8 @@ exports.VideoWatermark = async (req, res) => {
   ffmpegCommand
     .outputOptions('-preset', 'fast')
     .on('start', (cmd) => {
-      console.log('FFmpeg command:', cmd);
     })
     .on('error', (err) => {
-      console.error('FFmpeg error:', err.message);
       res.status(500).send('Error processing video. Please check the file format and paths.');
     })
     .on('end', () => {
