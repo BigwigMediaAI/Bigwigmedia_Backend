@@ -101,7 +101,7 @@ addBackground,convertToWebp,
 webpToImages,optimizeSEO,improveSEOContent,auditSEO,generateGoogleAd,splitPdf,watermarkPdf,seoCompetitorAnalysis,ConvertHeic,
 videoThumbnail,videoToArticle,genrateYoutubeShortsCaption,generatePodcastIntroduction,generatePodcastConclusion
 ,GenerateformatPressRelease,GenerateNewsletterSubjectLine,background,generateBlogIntroduction,generateBlogPostConclusion,videoConvertion,
-generateArticleConclusion,generateArticleIntroduction,AudioMerge,podcastNewsletter,VideoWatermark
+generateArticleConclusion,generateArticleIntroduction,AudioMerge,podcastNewsletter,VideoWatermark,AddLogoToImage
 
 
 } = require("../../controllers/response.controllers");
@@ -384,4 +384,5 @@ router.post('/generateArticleConclusion',checkLimit, generateArticleConclusion);
 router.post('/AudioMerge',upload.fields([{ name: 'audio1' }, { name: 'audio2' }]), AudioMerge);
 router.post('/podcastNewsletter', podcastNewsletter)
 router.post('/add-watermark',upload.fields([{ name: 'video' }, { name: 'watermark' }]), VideoWatermark)
+router.post('/overlayImage',upload.fields([{ name: 'image' }, { name: 'logo' }]), AddLogoToImage)
 module.exports = router;

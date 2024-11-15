@@ -7017,3 +7017,61 @@ exports.VideoWatermark = async (req, res) => {
     })
     .save(outputFilePath);
 };
+
+// ---------------------------------------------Add logo to Image--------------------------
+exports.AddLogoToImage=async(req,res)=>{
+  const {
+    logoPosition = 'top-left',
+    logoSize = 100,
+    border = false
+  } = req.body;
+
+  const imagePath = req.files['image'][0].path;
+  const logoPath = req.files['logo'][0].path;
+
+  try {
+    // Load base image metadata to dynamically position the logo
+    const { width, height } = await sharp(imagePath).metadata();
+
+    // Define positions for the logo
+    const logoPositions = {
+      'top-left': { left: 10, top: 10 },
+      'top-right': { left: width - logoSize - 20, top: 10 },
+      'bottom-left': { left: 10, top: height - logoSize - 10 },
+      'bottom-right': { left: width - logoSize - 10, top: height - logoSize - 10 },
+      'bottom-middle': { left: width / 2 - logoSize / 2, top: height - logoSize - 10 },
+      'top-middle': { left: width / 2 - logoSize / 2, top: 10 }
+    };
+
+    const logoPositionCoords = logoPositions[logoPosition] || logoPositions['top-left'];
+
+    // Prepare the logo with a border if specified
+    let logo = await sharp(logoPath).resize(parseInt(logoSize));
+    if (border) {
+      logo = logo.extend({
+        top: 5, bottom: 5, left: 5, right: 5,
+        background: 'black' // Border color can be changed as needed
+      });
+    }
+    logo = await logo.toBuffer();
+
+    // Apply the logo as an overlay
+    const finalImage = await sharp(imagePath)
+      .composite([
+        { input: logo, ...logoPositionCoords }
+      ])
+      .png()
+      .toBuffer();
+
+    // Send the final image back as the response
+    res.set('Content-Type', 'image/png').send(finalImage);
+  } catch (error) {
+    console.error("Error processing the image:", error);
+    res.status(500).json({ error: "Image processing failed." });
+  } finally {
+    // Clean up uploaded files to avoid clutter
+    fs.unlink(imagePath, () => {});
+    fs.unlink(logoPath, () => {});
+  }
+
+}
