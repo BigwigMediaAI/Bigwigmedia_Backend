@@ -2328,9 +2328,23 @@ exports.generateLinkedInPost = async (req, res) => {
             return res.status(400).json({ error: 'Please provide a topic and content for LinkedIn post' });
         }
 
-        const linkedinPosts = await generateLinkedInPostContent(topic, content, tone, language, outputCount);
+        const linkedinPosts = await generateLinkedInPostContent(topic, content, tone, language, outputCount, generateImage);
 
-        res.status(200).json(linkedinPosts);
+        let imageUrl = null;
+
+        // Conditionally generate image if requested
+        if (generateImage === true || generateImage === 'true') {
+            try {
+                const imageResponse = await generateImageFromPrompt(content); // Assuming topic is used as the prompt
+                imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
+            } catch (err) {
+                console.error('Error generating image:', err);
+                imageUrl = null; // Fallback if image generation fails
+            }
+        }
+  
+        // Return the generated posts along with the image URL if generated
+        res.status(200).json({ posts: linkedinPosts, imageUrl });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Error generating LinkedIn post' });
