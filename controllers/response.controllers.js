@@ -4011,7 +4011,7 @@ exports.instaImageVideoDownloader=async(req,res)=>{
 // -----------Instagram Caption Generator--------------
 const { generateCaption,generateInstagramBio,generateInstagramStory, generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt
 ,PodcastIntroduction,PodcastConclusion,formatPressRelease,NewsletterSubjectLine,BlogIntroduction,BlogPostConclusion,
-ArticleConclusion,ArticleIntroduction,generatePodcastNewsletter
+ArticleConclusion,ArticleIntroduction,generatePodcastNewsletter,generateSnapchatPost
 } = require('../utils.js/generativeTools');
 
 exports.generateCaption = async (req, res) => {
@@ -7089,3 +7089,35 @@ exports.AddLogoToImage=async(req,res)=>{
   }
 
 }
+
+// ------------------------Snapchat Post Generator---------------------
+exports.generateSnapchatPost = async (req, res) => {
+  try {
+      const { story, tone, language, outputCount, generateImage } = req.body;
+
+      if (!story || !tone || !language || !outputCount) {
+          return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+
+      const posts = await generateSnapchatPost({ story, tone, language, outputCount });
+
+      let imageUrl = null;
+
+      // Conditionally generate image if requested
+      if (generateImage === true || generateImage === 'true') {
+          try {
+              const imageResponse = await generateImageFromPrompt(story); // Assuming story is used as the prompt
+              imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
+          } catch (err) {
+              console.error('Error generating image:', err);
+              imageUrl = null; // Fallback if image generation fails
+          }
+      }
+
+      // Return the generated posts along with the image URL if generated
+      res.status(200).json({ posts, imageUrl });
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error generating Snapchat posts' });
+  }
+};

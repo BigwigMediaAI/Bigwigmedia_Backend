@@ -1968,9 +1968,42 @@ async function BlogIntroduction({ title, mainPoints, targetAudience, tone, langu
   }
   
 
+  async function generateSnapchatPost({ story, tone, language, outputCount}) {
+    let responses = [];
+
+    try {
+        for (let i = 0; i < outputCount; i++) {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    {
+                        role: 'system',
+                        content: `Generate a Snapchat post in ${language} with a ${tone} tone.`
+                    },
+                    {
+                        role: 'user',
+                        content: `Post Content: ${story}`
+                    }
+                ],
+                model: 'gpt-4'
+            });
+
+            if (!completion || !completion.choices || completion.choices.length === 0) {
+                throw new Error('Invalid completion response');
+            }
+
+            responses.push(completion.choices[0].message.content.trim());
+        }
+        return responses;
+    } catch (error) {
+        console.error('Error generating Snapchat post:', error);
+        return 'Failed to generate Snapchat post';
+    }
+}
+
+
 module.exports = { generateCaption,generateInstagramBio,generateInstagramStory,generateReelPost, generateThreadsPost, generateFacebookPost, generateFacebookAdHeadline, generateFacebookBio,generateFacebookGroupPost,generateFacebookGroupDescription,FacebookPageDescription,YouTubePostTitle,YouTubePostDescription,TwitterBio,TwitterPost,TwitterThreadsPost,TwitterThreadsBio,LinkedInPageHeadline,LinkedinCompanyPageHeadline,LinkedInPageSummary,LinkedInCompanySummary,PostHashtags,BlogPost,ArticleGenerator,PressRelease,Newsletter,GoogleAdsHeadline,GoogleAdDescription,MarketingPlan,MarketingFunnel,ProductDescription,ArticleIdeas,ArticleOutline,ArticleIntro,BlogIdeas,BlogTitles,BlogOutline,BlogIntro,SEOTitleDescription,PromptGenerator,ReviewReply,VideoScript,generateImageFromPrompt
     ,generateGoogleAdContent,youtubeShortsCaptionGenerator, PodcastIntroduction,PodcastConclusion,formatPressRelease,NewsletterSubjectLine,BlogIntroduction,BlogPostConclusion,
-ArticleIntroduction,ArticleConclusion, generatePodcastNewsletter}
+ArticleIntroduction,ArticleConclusion, generatePodcastNewsletter, generateSnapchatPost}
 
 
 
