@@ -2322,7 +2322,7 @@ const { generateLinkedInPostContent } = require('../utils.js/linkedinPostGenerat
 
 exports.generateLinkedInPost = async (req, res) => {
     try {
-        const { topic, content, tone, language, outputCount } = req.body;
+        const { topic, content, tone, language, outputCount, generateImage } = req.body;
 
         if (!topic || !content) {
             return res.status(400).json({ error: 'Please provide a topic and content for LinkedIn post' });
