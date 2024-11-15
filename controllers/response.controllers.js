@@ -4224,7 +4224,7 @@ exports.generateFacebookGroupPost = async (req, res) => {
         // Conditionally generate image if requested
         if (generateImage === true || generateImage === 'true') {
             try {
-                const imageResponse = await generateImageFromPrompt(theme); // Assuming topic is used as the prompt
+                const imageResponse = await generateImageFromPrompt(description); // Assuming topic is used as the prompt
                 imageUrl = imageResponse === 'Failed to generate image' ? null : imageResponse.url;
             } catch (err) {
                 console.error('Error generating image:', err);
