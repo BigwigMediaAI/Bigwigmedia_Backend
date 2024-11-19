@@ -7121,3 +7121,64 @@ exports.generateSnapchatPost = async (req, res) => {
       res.status(500).json({ error: 'Error generating Snapchat posts' });
   }
 };
+
+
+// ------------------Subtitle generator--------------------
+
+const { transcribeTheAudio, generateSubtitles, addSubtitlesToVideo, getVideoDuration, extractAudio} = require("../utils.js/subtitleGenerator")
+
+exports.subtitleGenerator=async(req,res)=>{
+  try {
+    if (!req.file) {
+      throw new Error('No file uploaded. Please check the "video" field in your request.');
+    }
+
+    const { language } = req.body; // User specifies the target language
+    if (!language) {
+      throw new Error('No language preference provided. Please specify a target language.');
+    }
+
+    const videoPath = req.file.path;
+    const audioPath = `${videoPath}.wav`;
+    const subtitlePath = `${videoPath}.srt`;
+    const outputDir = 'output';
+    const outputVideoPath = path.join(outputDir, `${Date.now()}_${req.file.originalname}`);
+
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+  
+    // Step 1: Extract audio from video
+    await extractAudio(videoPath, audioPath);
+
+    // Step 2: Transcribe audio to text using Whisper API
+    const transcription = await transcribeTheAudio(audioPath);
+
+    // Step 3: Translate transcription to the desired language
+    const translatedText = await translatetext(transcription, language);
+
+    // Step 4: Get video duration
+    const videoDuration = await getVideoDuration(videoPath);
+    // Step 5: Generate subtitles from translated transcription
+    await generateSubtitles(translatedText, subtitlePath, videoDuration);
+
+  // Step 6: Embed subtitles into the video
+  await addSubtitlesToVideo(videoPath, subtitlePath, outputVideoPath);
+    
+  // Clean up temporary files
+  fs.unlinkSync(videoPath);
+  fs.unlinkSync(audioPath);
+  fs.unlinkSync(subtitlePath);
+
+  // Send the resulting video
+  res.download(outputVideoPath, (err) => {
+    if (err) console.error(err);
+    fs.unlinkSync(outputVideoPath); // Clean up after download
+  });
+  } catch (error) {
+  console.error('Error processing video:', error);
+  res.status(500).send(`An error occurred: ${error.message}`);
+  }
+};
+
+

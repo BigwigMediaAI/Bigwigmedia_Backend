@@ -102,7 +102,7 @@ webpToImages,optimizeSEO,improveSEOContent,auditSEO,generateGoogleAd,splitPdf,wa
 videoThumbnail,videoToArticle,genrateYoutubeShortsCaption,generatePodcastIntroduction,generatePodcastConclusion
 ,GenerateformatPressRelease,GenerateNewsletterSubjectLine,background,generateBlogIntroduction,generateBlogPostConclusion,videoConvertion,
 generateArticleConclusion,generateArticleIntroduction,AudioMerge,podcastNewsletter,VideoWatermark,AddLogoToImage,
-generateSnapchatPost
+generateSnapchatPost,subtitleGenerator
 
 
 } = require("../../controllers/response.controllers");
@@ -387,4 +387,5 @@ router.post('/podcastNewsletter', podcastNewsletter)
 router.post('/add-watermark',upload.fields([{ name: 'video' }, { name: 'watermark' }]), VideoWatermark)
 router.post('/overlayImage',upload.fields([{ name: 'image' }, { name: 'logo' }]), AddLogoToImage)
 router.post('/generateSnapchatPost',checkLimit, generateSnapchatPost);
+router.post('/subtitle',upload.single('video'), subtitleGenerator)
 module.exports = router;
